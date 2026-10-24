@@ -27,7 +27,11 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - 🔥 Sērkociņi: koks 10, māja jo lielāka, jo vairāk.
 - 🪟 Logi: caur tiem var redzēt un šaut. Mežā atrod klučus, logus, durvis un sērkociņus.
 - 🌻 Daži cilvēki ir saimnieki: viņi veido saimniecību meža malā ar žogu, nekaro, bet aizstāvas.
-- 🐺 Vilkači medī dzīvniekus un, tos apēdot, atgūst spēkus.
+- 🐺 Vilkači medī dzīvniekus un, tos apēdot, atgūst spēkus (govis un cūkas iekāro visvairāk).
+- 🌾 Raža: 🍎 āboli (no izauguša koka), 🥚 olas (vistas), 🥛 piens (govs), 🍄 sēnes (cūka), 🌸 puķes (noplūc ziedošu puķi). Ražu pārdod jebkuram tirgotājam, ābolu var arī apēst.
+- 🌱 Koks izaug vienas spēles dienas laikā, puķe dažās stundās.
+- 🏠 Suņa būda: naktī suns sargā pie būdas un rej uz ienaidniekiem arī tad, ja tevis tur nav.
+- 📈 Cenas mainās: ko daudz pērk, tas kļūst dārgāks (⬆), ko daudz pārdod, par to maksā mazāk (⬇). Katru rītu cenas pamazām atgriežas.
 
 ## Spēlēt kopā (līdz 4 spēlētājiem)
 
@@ -65,6 +69,7 @@ Pasauli skaita tā cilvēka ierīce, kurš uzaicināja. Ja viņš aizver lapu, s
 | `js/17_tikls.js` | Spēlēšana kopā (savienojums, ko sūta saimnieks un viesi) |
 | `js/18_uguns.js` | Sērkociņi un dedzināšana |
 | `js/19_zveri_burvestibas.js` | Nauda, tirgotāji, zvēri, vistas, sēklas, saimnieki |
+| `js/20_saimnieciba.js` | Raža, tirgus cenas, govis un cūkas, augšana, suņa būda |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 

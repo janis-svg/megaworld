@@ -3,7 +3,7 @@
 const pets=[],chickens=[],plants=[],traders=[];let petId=0,plantId=0,petT=0,botSpT=0;
 // tirgotāji ielu galos meža malā: [stends x,z, māja x,z]
 const TRADER_DEF=[['seeds',20,-170,27,-173],['animals',-20,170,-27,173],['weapons',170,20,173,27],['wizard',-170,-20,-173,-27]];
-const SHOPS={seeds:[['grow',15],['flow',8],['match',10]],animals:[['dog',25],['bear',100],['chicken',8]],weapons:[['pistol',30],['m16',60],['shot',50],['rpg',90],['a_pistol',8],['a_m16',12],['armor',40]],wizard:[['poly',40],['grow',15],['match',10]]};
+const SHOPS={seeds:[['grow',15],['flow',8],['match',10]],animals:[['dog',25],['bear',100],['chicken',8],['pig',40],['cow',60],['dh',10]],weapons:[['pistol',30],['m16',60],['shot',50],['rpg',90],['a_pistol',8],['a_m16',12],['armor',40]],wizard:[['poly',40],['grow',15],['match',10]]};
 const TCOL2={seeds:0x2e7d32,animals:0x8d6e63,weapons:0x37474f,wizard:0x6c3483};
 function nearTrader(x,z){return TRADER_DEF.some(d=>Math.hypot(d[1]-x,d[2]-z)<5||Math.hypot(d[3]-x,d[4]-z)<4);}
 // ---------- modeļi ----------
@@ -20,6 +20,7 @@ function bearMesh(){const g=new THREE.Group(),c=0x4e342e,legs=[];
  for(const x of [-.25,.25]){const e=cube(.18,.18,.1,c,1);e.position.set(x,1.8,-.9);g.add(e);}
  for(const [x,z] of [[-.32,-.55],[.32,-.55],[-.32,.55],[.32,.55]]){const l=cube(.3,.7,.3,c,1);l.position.set(x,.35,z);g.add(l);legs.push(l);}
  g.userData.legs=legs;scene.add(g);return g;}
+function liveMesh(k){if(k==='cow'||k==='pig')return bigLiveMesh(k);return chickenMesh();}
 function chickenMesh(){const g=new THREE.Group(),legs=[];
  const b=cube(.34,.3,.42,0xf5f5f5,1);b.position.y=.42;g.add(b);const h=cube(.18,.2,.18,0xf5f5f5,1);h.position.set(0,.66,-.2);g.add(h);
  const k=cube(.06,.08,.1,0xe53935,1);k.position.set(0,.8,-.2);g.add(k);const bk=cube(.06,.05,.1,0xffb300,1);bk.position.set(0,.64,-.33);g.add(bk);
@@ -71,19 +72,23 @@ function stallNear(x,z){for(const tr of traders){const b=tr.b;if(b&&!b.dead&&!b.
 function renderShop(kind){
  const el=$('shop');if(!el)return;const list=SHOPS[kind]||[];el.dataset.kind=kind;
  let h='<button class="corner" data-x="1" style="float:right;margin:0">✖</button><b>🛒 '+t('tr_'+kind)+'</b> · 🪙 '+(PT.coins||0);
- for(const [k,p] of list)h+='<div class="row"><span>'+t('shop_'+k)+' · '+p+' 🪙</span><button class="corner" data-k="'+k+'"'+((PT.coins||0)<p?' style="opacity:.45"':'')+'>'+t('buy')+'</button></div>';
+ for(const [k] of list){const p=priceOf(k,kind);h+='<div class="row"><span>'+t('shop_'+k)+' · '+p+' 🪙'+trendIc(k)+'</span><button class="corner" data-k="'+k+'"'+((PT.coins||0)<p?' style="opacity:.45"':'')+'>'+t('buy')+'</button></div>';}
+ const pr=(inv.prod||{});h+='<div style="margin-top:8px"><b>'+t('sellt')+'</b></div>';
+ for(const k of PROD){const n=pr[k]||0,p=sellPrice(k);h+='<div class="row"><span>'+PRODIC[k]+' '+t('pr_'+k)+' ('+n+') · '+p+' 🪙'+trendIc('s_'+k)+'</span><button class="corner" data-s="'+k+'"'+(n?'':' style="opacity:.45"')+'>'+t('sell')+'</button></div>';}
  el.innerHTML=h;el.style.display='block';$('inv').style.display='none';$('team').style.display='none';
  el.querySelectorAll('button').forEach(b=>b.onpointerdown=e=>{e.stopPropagation();e.preventDefault();if(b.dataset.x){el.style.display='none';return;}
+  if(b.dataset.s){if(NET.role==='guest'){netSend({t:'sell',k:b.dataset.s});return;}say(sell(b.dataset.s,'P'),1.5);renderShop(kind);renderInv();return;}
   if(NET.role==='guest'){netSend({t:'buy',k:b.dataset.k,kind});return;}say(buy(b.dataset.k,'P',kind),2);renderShop(kind);renderInv();updateHealth();});
 }
 // pirkums: owner = 'P' (saimnieks) vai drauga objekts G
 function buy(k,owner,kind){
- const it=(SHOPS[kind]||[]).find(s=>s[0]===k);if(!it)return '';const pr=it[1];if((PT.coins||0)<pr)return t('nocoins');
+ const it=(SHOPS[kind]||[]).find(s=>s[0]===k);if(!it)return '';const pr=priceOf(k,kind);if((PT.coins||0)<pr)return t('nocoins');
  const I=owner==='P'?inv:owner.I,pos=owner==='P'?player.position:owner.pos;
  if((k==='dog'||k==='bear')&&pets.filter(p=>p.owner===owner).length>=3)return t('petmax');
- PT.coins-=pr;
+ PT.coins-=pr;bumpPrice(k);
  if(k==='dog'||k==='bear')spawnPet(k,pos.x+1.5,pos.z+1.5,owner);
- else if(k==='chicken'){const c=spawnChicken(pos.x+1.2,pos.z+1.2);c.home=[pos.x,pos.z];c.owned=true;if(NET.role==='host')netQ.push({e:'ck',id:c.id,x:r2(c.g.position.x),z:r2(c.g.position.z)});}
+ else if(k==='chicken'||k==='pig'||k==='cow'){const c=spawnChicken(pos.x+1.2,pos.z+1.2,null,k);c.home=[pos.x,pos.z];c.owned=true;if(NET.role==='host')netQ.push({e:'ck',id:c.id,x:r2(c.g.position.x),z:r2(c.g.position.z)});}
+ else if(k==='dh'){const a=owner==='P'?yaw:(owner.yaw||0);placeDoghouse(Math.round(pos.x-Math.sin(a)*2.2),Math.round(pos.z-Math.cos(a)*2.2),owner);}
  else if(k==='poly'){I.has.poly=true;I.ammo.poly=Math.min(20,(I.ammo.poly||0)+3);}
  else if(k==='grow'||k==='flow'){I.has[k]=true;I.ammo[k]=Math.min(40,(I.ammo[k]||0)+5);}
  else giveLoot(k,I,PT);
@@ -103,14 +108,15 @@ function updatePets(dt){
   for(const z of zombies){const u=z.userData;if(u.dead||u.rise>0)continue;const d=Math.hypot(z.position.x-pos.x,z.position.z-pos.z);if(d<ed){ed=d;en=z;}}
   let tx,tz,sp;
   if(p.kind==='bear'&&en&&p.owner){tx=en.position.x;tz=en.position.z;sp=4.5;p.cd-=dt;if(ed<2.2&&p.cd<=0){p.cd=1;dmgMonster(en,25,false);}}
-  else if(op){p.slot+=dt*.2;tx=op.x+Math.cos(p.slot)*2.6;tz=op.z+Math.sin(p.slot)*2.6;sp=Math.hypot(tx-pos.x,tz-pos.z)>8?8:4.5;if(Math.hypot(tx-pos.x,tz-pos.z)>60){pos.x=tx;pos.z=tz;}}
+  else if(p.kind==='dog'&&p.owner&&(hour>=21||hour<7)&&doghouseOf(p.owner)){const dh=doghouseOf(p.owner);tx=dh.x;tz=dh.z+1.3;sp=5;p.guard=true;}
+  else if(op){p.guard=false;p.slot+=dt*.2;tx=op.x+Math.cos(p.slot)*2.6;tz=op.z+Math.sin(p.slot)*2.6;sp=Math.hypot(tx-pos.x,tz-pos.z)>8?8:4.5;if(Math.hypot(tx-pos.x,tz-pos.z)>60){pos.x=tx;pos.z=tz;}}
   else{if(Math.hypot(p.wx-pos.x,p.wz-pos.z)<1){p.wx=pos.x+(Math.random()-.5)*14;p.wz=pos.z+(Math.random()-.5)*14;}tx=p.wx;tz=p.wz;sp=1.6;}
   const ox=pos.x,oz=pos.z;if(Math.hypot(tx-pos.x,tz-pos.z)>.6)stepTo(pos,tx,tz,sp,dt,p.kind==='bear'?.6:.3,tm,p.st);
   const mv=Math.hypot(pos.x-ox,pos.z-oz)>.002;if(mv)g.rotation.y=Math.atan2(-(pos.x-ox),-(pos.z-oz));
   const sw=mv?Math.sin(clock.elapsedTime*14+p.id)*.6:0;g.userData.legs.forEach((l,k)=>l.rotation.x=k%2?sw:-sw);if(g.userData.tail)g.userData.tail.rotation.y=Math.sin(clock.elapsedTime*10)*.5;
   // suns rej, kad tuvojas ienaidnieks (monstrs vai pretinieks)
-  p.bark-=dt;if(p.kind==='dog'&&p.owner&&p.bark<=0){let foe=en;if(!foe&&tm)for(const b of humans)if(tm.enemies.has(b.team)&&Math.hypot(b.g.position.x-pos.x,b.g.position.z-pos.z)<18){foe=b;break;}
-   if(foe){p.bark=2.5;if(Math.hypot(pos.x-player.position.x,pos.z-player.position.z)<35){woof();popup('🐕 '+t('woof'),pos.clone().add(new THREE.Vector3(0,1.4,0)));}if(NET.role==='host')netQ.push({e:'bark',x:r2(pos.x),z:r2(pos.z)});}}
+  p.bark-=dt;if(p.kind==='dog'&&p.owner&&p.bark<=0){if(p.guard&&!en)for(const z of zombies){const u=z.userData;if(!u.dead&&!(u.rise>0)&&Math.hypot(z.position.x-pos.x,z.position.z-pos.z)<25){en=z;break;}}let foe=en;if(!foe&&tm)for(const b of humans)if(tm.enemies.has(b.team)&&Math.hypot(b.g.position.x-pos.x,b.g.position.z-pos.z)<18){foe=b;break;}
+   if(foe){p.bark=2.5;if(Math.hypot(pos.x-player.position.x,pos.z-player.position.z)<35){woof();popup('🐕 '+t('woof'),pos.clone().add(new THREE.Vector3(0,1.4,0)));}else if(p.guard&&p.owner==='P'&&gtime>(p.alertT||0)){p.alertT=gtime+25;say(t('dhbark'),2.5);}if(NET.role==='host')netQ.push({e:'bark',x:r2(pos.x),z:r2(pos.z)});}}
   // ienaidnieki suni nogalina ar vienu šāvienu vai kodienu; lāci tikai pamazām
   for(const b of bullets){if(b.team===tm||b.rocket)continue;if(Math.hypot(b.m.position.x-pos.x,b.m.position.z-pos.z)<.6){p.hp-=p.kind==='dog'?99:b.dmg;b.life=0;}}
   for(const z of zombies){const u=z.userData;if(!u.dead&&!(u.rise>0)&&Math.hypot(z.position.x-pos.x,z.position.z-pos.z)<1.4+(p.kind==='bear'?.6:0)){if(p.kind==='dog'){if(p.owner&&Math.random()<dt*1.5)p.hp=0;}else p.hp-=10*dt;}}
@@ -119,38 +125,39 @@ function updatePets(dt){
  }
  for(let i=chickens.length-1;i>=0;i--){const c=chickens[i],pos=c.g.position;
   if(Math.hypot(c.wx-pos.x,c.wz-pos.z)<.5||Math.random()<dt*.3){const hx=c.home?c.home[0]:pos.x,hz=c.home?c.home[1]:pos.z;c.wx=hx+(Math.random()-.5)*6;c.wz=hz+(Math.random()-.5)*6;}
-  const ox=pos.x,oz=pos.z;stepTo(pos,c.wx,c.wz,1.2,dt,.2,null,c.st);if(Math.hypot(pos.x-ox,pos.z-oz)>.001)c.g.rotation.y=Math.atan2(-(pos.x-ox),-(pos.z-oz));
+  const ox=pos.x,oz=pos.z;stepTo(pos,c.wx,c.wz,c.kind==='cow'?.8:1.2,dt,c.kind==='cow'?.5:.2,null,c.st);if(Math.hypot(pos.x-ox,pos.z-oz)>.001)c.g.rotation.y=Math.atan2(-(pos.x-ox),-(pos.z-oz));
   const sw=Math.sin(clock.elapsedTime*16+i)*.5;c.g.userData.legs[0].rotation.x=sw;c.g.userData.legs[1].rotation.x=-sw;
-  // saimniecības vista ik pa laikam izdēj olu, ko var pārdot (monēta)
-  if(c.home){c.egg=(c.egg??(50+Math.random()*40))-dt;if(c.egg<=0){c.egg=60+Math.random()*40;dropCoins(pos.x,pos.z,2);}}
-  let shot=false;for(const b of bullets)if(Math.hypot(b.m.position.x-pos.x,b.m.position.z-pos.z)<.5){b.life=0;shot=true;break;}
+  // saimniecības lopi dod ražu: vista olas, govs pienu, cūka izrok sēnes (pārdod tirgotājam)
+  if(c.home){const pk=LIVE[c.kind||'chicken'];c.egg=(c.egg??(pk.t*.8+Math.random()*30))-dt;if(c.egg<=0){c.egg=pk.t+Math.random()*30;dropItem(pos.x+(Math.random()-.5),pos.z+(Math.random()-.5),pk.p);}}
+  let shot=false;const big=c.kind==='cow'||c.kind==='pig';for(const b of bullets)if(Math.hypot(b.m.position.x-pos.x,b.m.position.z-pos.z)<(big?.9:.5)){b.life=0;c.hp=(c.hp??(big?3:1))-1;if(c.hp<=0)shot=true;break;}
   for(const z of zombies)if(!z.userData.dead&&Math.hypot(z.position.x-pos.x,z.position.z-pos.z)<1.2&&Math.random()<dt){shot=true;break;}
   if(shot)removeChicken(c);}
  // iestādītie koki ik pa laikam nomet ābolu (+15 dzīvības)
- for(const p of plants)if(p.k==='tree'){p.ap=(p.ap??(80+Math.random()*60))-dt;if(p.ap<=0){p.ap=110+Math.random()*60;const a=Math.random()*6.283;dropItem(p.x+Math.cos(a)*1.4,p.z+Math.sin(a)*1.4,'apple');}}
+ for(const p of plants)if(p.k==='tree'&&(p.gr||0)>=1){p.ap=(p.ap??(80+Math.random()*60))-dt;if(p.ap<=0){p.ap=110+Math.random()*60;const a=Math.random()*6.283;dropItem(p.x+Math.cos(a)*1.4,p.z+Math.sin(a)*1.4,'apple');}}
  if(NET.role==='host'&&NET.guests.size){petT-=dt;if(petT<=0){petT=.1;
-  const E=pets.map(p=>[p.id,p.kind==='dog'?0:1,r2(p.g.position.x),r2(p.g.position.z),r2(p.g.rotation.y),p.owner?1:0]),C=chickens.map(c=>[c.id,r2(c.g.position.x),r2(c.g.position.z)]),D=drops.filter(d=>d.kind).map(d=>[d.id,d.kind,r2(d.x),r2(d.z)]);
-  for(const G of NET.guests.values())if(G.ready)netTo(G,{t:'pe',E,C,D,co:PT.coins||0});}}
+  const E=pets.map(p=>[p.id,p.kind==='dog'?0:1,r2(p.g.position.x),r2(p.g.position.z),r2(p.g.rotation.y),p.owner?1:0]),C=chickens.map(c=>[c.id,r2(c.g.position.x),r2(c.g.position.z),LIVEK.indexOf(c.kind||'chicken')]),D=drops.filter(d=>d.kind).map(d=>[d.id,d.kind,r2(d.x),r2(d.z)]);
+  for(const G of NET.guests.values())if(G.ready)netTo(G,{t:'pe',E,C,D,co:PT.coins||0,pr:prices});}}
 }
 function woof(){tone(520,.08,'square',.09,300);tone(480,.1,'square',.08,260,.15);}
-function spawnChicken(x,z,id){const g=chickenMesh();g.position.set(x,0,z);const c={id:id||++petId,g,wx:x,wz:z,st:{}};chickens.push(c);explosionFx(x,.8,z,1.2,0xce93d8);return c;}
+function spawnChicken(x,z,id,kind){kind=kind||'chicken';const g=liveMesh(kind);g.position.set(x,0,z);const c={id:id||++petId,g,wx:x,wz:z,st:{},kind};chickens.push(c);explosionFx(x,.8,z,1.2,0xce93d8);return c;}
 function removeChicken(c){const i=chickens.indexOf(c);if(i<0)return;chickens.splice(i,1);debris(c.g.position.x,.5,c.g.position.z,0xffffff,6);scene.remove(c.g);freeObj(c.g);}
 // ---------- nauda un āboli zemē (izmanto drops sarakstu) ----------
 let dropId=0;
-function dropItem(x,z,kind,coins){const m=kind==='apple'?(()=>{const g=new THREE.Group(),a=cube(.25,.25,.25,0xd32f2f,.6),s=cube(.04,.1,.04,0x5d4037,1);s.position.y=.17;g.add(a,s);return g;})():coinMesh();m.position.set(x,.4,z);scene.add(m);const d={m,x,z,I:newInv(),kind,coins:coins||0,id:++dropId};drops.push(d);return d;}
+function dropItem(x,z,kind,coins){const m=kind==='coin'?coinMesh():prodMesh(kind);m.position.set(x,.4,z);scene.add(m);const d={m,x,z,I:newInv(),kind,coins:coins||0,id:++dropId};drops.push(d);return d;}
 function dropCoins(x,z,n){return dropItem(x,z,'coin',n);}
 const _takeDrop=takeDrop;takeDrop=function(d,who){
  if(!d.kind)return _takeDrop(d,who);
  const i=drops.indexOf(d);if(i<0)return;scene.remove(d.m);freeObj(d.m);drops.splice(i,1);
  const tm=who?who.team:PT;
  if(d.kind==='coin'){tm.coins=(tm.coins||0)+d.coins;if(!who){say('+'+d.coins+' 🪙',1.2);sfx('pick');}}
- else{if(who&&who.g)who.hp=Math.min(100,(who.hp||0)+15);else if(who&&who.I&&who.pos)who.hp=Math.min(100,who.hp+15);else if(!who){health=Math.min(100,health+15);updateHealth();say('🍎 +15',1.2);sfx('heal');}}
+ else if(who&&who.g){tm.coins=(tm.coins||0)+sellPrice(d.kind);} // boti ražu uzreiz pārdod
+ else{const I=who?who.I:inv;I.prod=I.prod||{};I.prod[d.kind]=(I.prod[d.kind]||0)+1;if(!who){say(PRODIC[d.kind]+' +1',1.2);sfx('pick');renderInv();}}
 };
 // ---------- augi ----------
-function addPlant(k,x,z,id){
- const g=plantMesh(k);g.position.set(x,0,z);const p={id:id||('p'+(++plantId)),k,x,z,g,ob:null,s:1};
+function addPlant(k,x,z,id,born){
+ const g=plantMesh(k);g.position.set(x,0,z);const p={id:id||('p'+(++plantId)),k,x,z,g,ob:null,s:1,born:born??(day*24+hour),gr:0};growPlant(p);
  if(k==='tree'){p.ob={x,z,hx:.3,hz:.3};addOb(p.ob);}plants.push(p);
- if(NET.role==='host'&&NET.guests.size)netQ.push({e:'plant',id:p.id,k,x:r2(x),z:r2(z)});return p;}
+ if(NET.role==='host'&&NET.guests.size)netQ.push({e:'plant',id:p.id,k,x:r2(x),z:r2(z),b:r2(p.born)});return p;}
 function removePlant(p){const i=plants.indexOf(p);if(i>=0)plants.splice(i,1);if(p.ob){remOb(p.ob);p.ob.dead=true;}scene.remove(p.g);freeObj(p.g);}
 // ---------- burvestības un sēklas ----------
 function polyTarget(px,pz,a,team){
@@ -227,7 +234,7 @@ function farmThink(b){
 // spēles sākumā: tirgotāji, savvaļas suņi, saimnieki, botiem burvestības un sēklas
 const _spawnBots=spawnBots;spawnBots=function(){
  _spawnBots();
- for(const p of pets){scene.remove(p.g);freeObj(p.g);}pets.length=0;for(const c of [...chickens])removeChicken(c);for(const p of [...plants])removePlant(p);
+ for(const p of pets){scene.remove(p.g);freeObj(p.g);}pets.length=0;clearDoghouses();resetPrices();for(const c of [...chickens])removeChicken(c);for(const p of [...plants])removePlant(p);
  for(const d of [...drops]){scene.remove(d.m);freeObj(d.m);}drops.length=0;
  spawnTraders(true);PT.coins=0;
  for(let i=0;i<9;i++){const [x,z]=roadPoint(0,0,1e9);spawnPet('dog',x+(Math.random()-.5)*6,z+(Math.random()-.5)*6,null);}
@@ -236,7 +243,8 @@ const _spawnBots=spawnBots;spawnBots=function(){
  for(const T of teams.filter(x=>!x.isPlayer&&!x.friendly&&!x.calm&&!x.pal&&!x.traderT).sort((a,b)=>a.members.length-b.members.length)){if(fN>=need)break;if(fN+T.members.length>need)continue;
   T.farm=true;T.calm=true;T.noOffer=true;fN+=T.members.length;T.base=farmSpot();T.inner=0;T.blocks=60;makePlan(T);
   for(const m of T.members){m.I.has.grow=true;m.I.ammo.grow=20;m.I.has.flow=true;m.I.ammo.flow=20;m.role='build';relabel(m);}
-  for(let k=0;k<3;k++){const c=spawnChicken(T.base.x+(Math.random()-.5)*4,T.base.z+(Math.random()-.5)*4);c.home=[T.base.x,T.base.z];}}
+  for(const k of ['chicken','chicken','chicken','pig','cow']){const c=spawnChicken(T.base.x+(Math.random()-.5)*4,T.base.z+(Math.random()-.5)*4,null,k);c.home=[T.base.x,T.base.z];}
+  const fm=T.members[0];placeDoghouse(Math.round(T.base.x)+1,Math.round(T.base.z)-1,fm);spawnPet('dog',T.base.x,T.base.z,fm);}
  for(const b of humans){if(b.trader||b.team.farm)continue;const q=Math.random();if(q<.15){b.I.has.poly=true;b.I.ammo.poly=2;}else if(q<.3){b.I.has.grow=true;b.I.ammo.grow=5;}}
  // pilsētā izmētātas dažas monētas sākumam
  for(let i=0;i<14;i++){const [x,z]=roadPoint(0,0,1e9);dropCoins(x+(Math.random()-.5)*3,z+(Math.random()-.5)*3,5+Math.floor(Math.random()*6));}
@@ -268,21 +276,22 @@ const _netHostFrame=netHostFrame;netHostFrame=function(dt){
  for(const G of NET.guests.values())if(G.ready&&!G.dead&&G.y<1.5)for(const d of [...drops])if(d.kind&&Math.hypot(d.x-G.pos.x,d.z-G.pos.z)<1.5){const c0=PT.coins||0;takeDrop(d,{I:G.I,team:PT,pos:G.pos,hp:G.hp});if(d.kind==='apple')G.hp=Math.min(100,G.hp+15);netTo(G,{t:'msg',s:d.kind==='coin'?'+'+((PT.coins||0)-c0)+' 🪙':'🍎 +15',d:1.2});netMe(G);}
  _netHostFrame(dt);
 };
-const _netWelcome=netWelcome;netWelcome=function(G){_netWelcome(G);netTo(G,{t:'pl',P:plants.map(p=>[p.id,p.k,r2(p.x),r2(p.z)])});};
+const _netWelcome=netWelcome;netWelcome=function(G){_netWelcome(G);netTo(G,{t:'pl',P:plants.map(p=>[p.id,p.k,r2(p.x),r2(p.z),r2(p.born)]),DH:doghouses.map(d=>[d.x,d.z])});};
 const netPets=new Map(),netCk=new Map(),netDr=new Map();
 const _netGuestMsg=netGuestMsg;netGuestMsg=function(d){
  if(d&&d.t==='wel'){_netGuestMsg(d);for(const M of [netPets,netCk,netDr]){for(const o of M.values()){scene.remove(o.g);freeObj(o.g);}M.clear();}for(const p of [...plants])removePlant(p);if(!traders.length)spawnTraders(false);return;}
- if(d&&d.t==='pe'){PT.coins=d.co;
+ if(d&&d.t==='pe'){PT.coins=d.co;if(d.pr)Object.assign(prices,d.pr);
   for(const [id,k,x,z,ry] of d.E){let o=netPets.get(id);if(!o){o={g:k?bearMesh():dogMesh()};o.g.position.set(x,0,z);netPets.set(id,o);}o.tx=x;o.tz=z;o.ry=ry;o.seen=gtime;}
-  for(const [id,x,z] of d.C){let o=netCk.get(id);if(!o){o={g:chickenMesh()};o.g.position.set(x,0,z);netCk.set(id,o);}o.tx=x;o.tz=z;o.seen=gtime;}
+  for(const [id,x,z,ki] of d.C){let o=netCk.get(id);if(!o){o={g:liveMesh(LIVEK[ki||0])};o.g.position.set(x,0,z);netCk.set(id,o);}o.tx=x;o.tz=z;o.seen=gtime;}
   for(const [id,k,x,z] of d.D){let o=netDr.get(id);if(!o){const g=k==='coin'?coinMesh():(()=>{const q=new THREE.Group();q.add(cube(.25,.25,.25,0xd32f2f,.6));return q;})();g.position.set(x,.4,z);scene.add(g);o={g,coin:1};netDr.set(id,o);}o.tx=x;o.tz=z;o.seen=gtime;}
   return;}
- if(d&&d.t==='pl'){for(const [id,k,x,z] of d.P)if(!plants.some(p=>p.id===id))addPlant(k,x,z,id);return;}
+ if(d&&d.t==='pl'){for(const [id,k,x,z,b] of d.P)if(!plants.some(p=>p.id===id))addPlant(k,x,z,id,b);if(d.DH)for(const [x,z] of d.DH)placeDoghouse(x,z,null);return;}
  if(d&&d.t==='shop'){renderShop(d.kind);return;}
  _netGuestMsg(d);
 };
 function netExtraEv2(e){
- if(e.e==='plant'){if(!plants.some(p=>p.id===e.id))addPlant(e.k,e.x,e.z,e.id);}
+ if(e.e==='plant'){if(!plants.some(p=>p.id===e.id))addPlant(e.k,e.x,e.z,e.id,e.b);}
+ else if(e.e==='dh')placeDoghouse(e.x,e.z,null);
  else if(e.e==='ck')explosionFx(e.x,.8,e.z,1.2,0xce93d8);
  else if(e.e==='bark'){if(Math.hypot(e.x-player.position.x,e.z-player.position.z)<35)woof();}
 }
@@ -309,13 +318,13 @@ const _makePlan=makePlan;makePlan=function(Tm){
  for(let dx=-s;dx<=s;dx++)for(let dz=-s;dz<=s;dz++){if(Math.max(Math.abs(dx),Math.abs(dz))!==s)continue;const x=bx+dx,z=bz+dz;if(colTop(x,z)>0)continue;Tm.plan.push({x,z,l:0,door:dx===0&&dz===s});}
 };
 // vilkači medī dzīvniekus: apēdot vistu vai suni, atgūst dzīvību
-function nearestAnimal(p,r){let best=null,bd=r;for(const c of chickens){const d=Math.hypot(c.g.position.x-p.x,c.g.position.z-p.z);if(d<bd){bd=d;best={a:c,ck:true,d};}}
+function nearestAnimal(p,r){let best=null,bd=r+9;for(const c of chickens){const big=c.kind==='cow'||c.kind==='pig',d=Math.hypot(c.g.position.x-p.x,c.g.position.z-p.z),dd=big?d-9:d;if(dd<bd&&d<(big?r+9:r)){bd=dd;best={a:c,ck:true,d,big};}}
  for(const q of pets){if(q.kind!=='dog')continue;const d=Math.hypot(q.g.position.x-p.x,q.g.position.z-p.z);if(d<bd){bd=d;best={a:q,ck:false,d};}}return best;}
 const _updateWolf=updateWolf;updateWolf=function(z,u,dt){
  if(NET.role!=='guest'&&!(u.heal>0)){const an=nearestAnimal(z.position,16),td=u.tg&&okH(u.tg)?Math.hypot(u.tg.p.x-z.position.x,u.tg.p.z-z.position.z):1e9;
   if(an&&an.d+5<td){const ap=an.a.g.position;stepTo(z.position,ap.x,ap.z,u.speed*1.4,dt,.4,null,u,1.05);z.rotation.y=Math.atan2(-(ap.x-z.position.x),-(ap.z-z.position.z));
    const sw=Math.sin(clock.elapsedTime*12+u.phase)*.6;u.legs[0].rotation.x=sw;u.legs[1].rotation.x=-sw;z.position.y=groundAt(z.position.x,z.position.z,1.15,.4);
-   if(an.d<1.4){if(an.ck)removeChicken(an.a);else killPet(an.a);u.hp=Math.min(u.max,u.hp+60);sfxAt('roar',z.position.x,z.position.z,40);if(Math.hypot(z.position.x-player.position.x,z.position.z-player.position.z)<40)say(t('weat'),1.5);}
+   if(an.d<1.4){if(an.ck)removeChicken(an.a);else killPet(an.a);u.hp=Math.min(u.max,u.hp+(an.big?100:60));sfxAt('roar',z.position.x,z.position.z,40);if(Math.hypot(z.position.x-player.position.x,z.position.z-player.position.z)<40)say(t('weat'),1.5);}
    return;}}
  _updateWolf(z,u,dt);
 };
