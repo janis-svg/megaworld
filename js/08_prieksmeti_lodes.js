@@ -52,7 +52,7 @@ function updateBullets(dt){
 }
 function rocketBoom(p,team,pl){
  const x=p.x,z=p.z;explosionFx(x,p.y,z,3,0xff8a2a);sfxAt('boom',x,z,70);
- for(const m of [...zombies]){const d=Math.hypot(m.position.x-x,m.position.z-z);if(d<4.5)dmgMonster(m,(pl?260:150)*(1-d/5.5),pl);}
+ for(const m of [...zombies]){const d=Math.hypot(m.position.x-x,m.position.z-z);if(d<4.5)dmgMonster(m,m.userData.kind==='c'?(d<3.5?1:0):(pl?260:150)*(1-d/5.5),pl,true);}
  for(const h of [...HL]){if(h.team===team)continue;const d=Math.hypot(h.p.x-x,h.p.z-z);if(d<3.5)hurt(h,(pl?80:55)*(1-d/4.5),team,pl);}
  const hitB=new Set();eachOb(x,z,2.4,o=>{if(o.y1!==undefined&&!o.dead&&o.team!==team&&Math.hypot(o.x-x,o.z-z)<2.4&&o.y0<p.y+2)hitB.add(o);return false;});hitB.forEach(o=>damageBlock(o,o.door?170:120));
  for(const ch of chunks.values())for(const o of ch.inter)if(o.type==='door'&&o.hp>0&&Math.hypot(o.x-x,o.z-z)<3){o.hp=0;o.dob.off=true;o.piv.visible=false;o.r=0;o.open=true;}

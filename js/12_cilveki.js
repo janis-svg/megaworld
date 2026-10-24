@@ -17,7 +17,7 @@ function leader(Tm){const n=Tm.members.length;return n?Tm.members[0].name+(n>1?'
 function teamSize(Tm){return Tm.members.length+(Tm.isPlayer?1:0);}
 function strI(I,hp){let s=hp*.4+I.armor*.4+I.meds*8;for(const w of GUNS)if(I.has[w])s+=WP[w].val+I.ammo[w]*WP[w].av;return s;}
 function teamStr(Tm){let s=0;for(const m of Tm.members)s+=strI(m.I,m.hp);if(Tm.isPlayer&&inv)s+=strI(inv,health);return s;}
-function relabel(b){delLabel(b.lab);const foe=PT&&PT.enemies.has(b.team);b.lab=mkLabel((b.team.isPlayer?'★ ':foe?'⚔️ ':b.team.offer>gtime?'🤝 ':'')+b.name,b.team.color);b.bar.f.material.color.setHex(b.team.isPlayer?0x2ecc71:foe?0xe74c3c:0xf1c40f);b.gn.visible=GUNS.some(w=>b.I.has[w]);}
+function relabel(b){delLabel(b.lab);const foe=PT&&PT.enemies.has(b.team);b.lab=mkLabel((b.team.isPlayer?'★ ':foe?'⚔️ ':b.team.offer>gtime?'🤝 ':b.team.calm?'🕊️ ':'')+b.name,b.team.color);b.bar.f.material.color.setHex(b.team.isPlayer?0x2ecc71:foe?0xe74c3c:0xf1c40f);b.gn.visible=GUNS.some(w=>b.I.has[w]);}
 function dropTeam(Tm){const i=teams.indexOf(Tm);if(i>=0)teams.splice(i,1);for(const o of teams)o.enemies.delete(Tm);}
 function setTeam(b,Tm){const o=b.team;if(o===Tm)return;if(o){const i=o.members.indexOf(b);if(i>=0)o.members.splice(i,1);if(!o.members.length&&!o.isPlayer)dropTeam(o);}b.team=Tm;Tm.members.push(b);b.uni.forEach(m=>m.color.setHex(Tm.color));relabel(b);b.bi=null;b.co=null;b.gx=null;}
 function newBot(Tm,x,z,name,I,helmet){
@@ -61,6 +61,9 @@ function spawnBots(){
  // ~10% cilvēku ir draudzīgi vientuļnieki: kamēr vieni, paši nāk piedāvāt draudzību
  const solos=teams.filter(x=>!x.isPlayer&&!x.friendly&&x.members.length===1).sort(()=>Math.random()-.5);
  solos.slice(0,Math.max(1,Math.round((humans.length-1)*.1))).forEach(x=>{x.friendly=true;x.pal=true;});
+ // ~10% cilvēku ir mierīgi: paši neuzbrūk nevienam, bet aizsargājas, ja viņiem šauj
+ let calmN=0;const need=Math.max(1,Math.round((humans.length-1)*.1));
+ for(const x of teams.filter(x=>!x.isPlayer&&!x.friendly).sort((a,b)=>a.members.length-b.members.length)){if(calmN+x.members.length>need)continue;x.calm=true;calmN+=x.members.length;x.members.forEach(relabel);if(calmN>=need)break;}
 }
 function war(A,B){
  if(A===B||A.enemies.has(B))return;A.enemies.add(B);B.enemies.add(A);
@@ -74,7 +77,7 @@ function askJoin(b){
  if(PT.members.length+Tm.members.length>9){say(t('full'));return;}
  const my=teamStr(PT),th=teamStr(Tm);
  if(Tm.offer>gtime)Tm.friendly=true;
- if(!Tm.friendly&&th>my*1.25){Tm.askT=gtime+25;if(Math.random()<.5){war(Tm,PT);say(tf('ra',{n:b.name}));}else say(tf('rf',{n:b.name}));return;}
+ if(!Tm.friendly&&th>my*1.25){Tm.askT=gtime+25;if(!Tm.calm&&Math.random()<.5){war(Tm,PT);say(tf('ra',{n:b.name}));}else say(tf('rf',{n:b.name}));return;}
  if(!Tm.friendly&&th>my*.8&&Math.random()<.4){Tm.askT=gtime+25;say(tf('rf',{n:b.name}));return;}
  const n=leader(Tm);[...Tm.members].forEach(m=>{setTeam(m,PT);m.cmd='follow';});
  PT.members.forEach((m,i)=>m.slot=i*6.283/Math.max(3,PT.members.length));
@@ -97,8 +100,8 @@ function teamTick(){
   const A=teams[i],B=teams[j];if(A.enemies.has(B))continue;const k=A.id+'-'+B.id;if((pairCd.get(k)||0)>gtime)continue;
   const pa=pos(A),pb=pos(B);if(!pa.length||!pb.length)continue;let md=1e9;for(const p of pa)for(const q of pb)md=Math.min(md,Math.hypot(p.x-q.x,p.z-q.z));if(md>20)continue;
   pairCd.set(k,gtime+40);
-  if(A.isPlayer||B.isPlayer){const O=A.isPlayer?B:A;if(O.friendly)continue;if(O.members.length>teamSize(PT)&&teamStr(O)>teamStr(PT)*1.1&&Math.random()<.45)war(O,PT);continue;}
-  if(A.friendly||B.friendly)continue;
+  if(A.isPlayer||B.isPlayer){const O=A.isPlayer?B:A;if(O.friendly||O.calm)continue;if(O.members.length>teamSize(PT)&&teamStr(O)>teamStr(PT)*1.1&&Math.random()<.45)war(O,PT);continue;}
+  if(A.friendly||B.friendly||A.calm||B.calm)continue;
   const big=A.members.length>=B.members.length?A:B,sm=big===A?B:A,sb=teamStr(big),ss=teamStr(sm);
   if(big.members.length+sm.members.length<=10&&Math.random()<.4){if(ss>sb*1.2)war(big,sm);else{mergeTeams(sm,big);return;}}
   else if(big.members.length>sm.members.length&&sb>ss*1.1&&Math.random()<.5)war(big,sm);
@@ -108,11 +111,14 @@ const valid=e=>e.m?!e.m.userData.dead:e.pl?active:!e.b.dead;
 function nearestThreat(b){
  // mērķis: tuvs un ievainots (visi šauj pa vienu), uzbrucējs komandai priekšā
  const p=b.g.position,Tm=b.team,mr=hour>=19||hour<7?30:24,al=Tm.alarm&&Tm.alarm.until>gtime?Tm.alarm.T:null;let e=null,es=1e9,ed=0,foes=0;
- for(const z of zombies){const u=z.userData;if(u.rise>0||u.dead||u.flee>0)continue;const d=Math.hypot(z.position.x-p.x,z.position.z-p.z);if(d<mr){const s=d+u.hp/u.max*6;if(s<es){es=s;ed=d;e={p:z.position,y:0,m:z};}}}
+ b.fearC=null;const rk=b.I.has.rpg&&b.I.ammo.rpg>0;
+ for(const z of zombies){const u=z.userData;if(u.rise>0||u.dead||u.flee>0||u.sink>0)continue;const d=Math.hypot(z.position.x-p.x,z.position.z-p.z);
+  if(u.kind==='c'&&!rk){if(d<16)b.fearC=z;continue;} // cilvēkēdāju bez raķetēm nevar uzvarēt: bēg
+  if(d<mr){const s=d+u.hp/u.max*6;if(s<es){es=s;ed=d;e={p:z.position,y:0,m:z};}}}
  for(const h of HL){if(h.team===Tm||!Tm.enemies.has(h.team))continue;const d=Math.hypot(h.p.x-p.x,h.p.z-p.z),lim=h.team===al?50:26;if(d<lim){if(d<20)foes++;const s=d+(h.pl?health:h.b.hp)/100*6-(h.team===al?6:0);if(s<es){es=s;ed=d;e=h;}}}
  return e?{e,ed,foes}:null;
 }
-function bestW(b,e,d){const I=b.I,big=e.m&&e.m.userData.kind==='zw';
+function bestW(b,e,d){const I=b.I,big=e.m&&(e.m.userData.kind==='zw'||e.m.userData.kind==='c');
  if(I.has.rpg&&I.ammo.rpg>0&&big)return'rpg';
  if(I.has.shot&&I.ammo.shot>0&&d<9)return'shot';
  if(I.has.m16&&I.ammo.m16>0)return'm16';
@@ -137,6 +143,7 @@ function botThink(b){
  const p=b.g.position,Tm=b.team,I=b.I;
  if(b.hp<55&&I.meds>0){I.meds--;b.hp=Math.min(100,b.hp+40);}
  const th=nearestThreat(b);b.tg=th?th.e:null;
+ if(b.fearC){const c=b.fearC.position,ax=p.x-c.x,az=p.z-c.z,l=Math.hypot(ax,az)||1;b.follow=false;b.tg=null;goal(b,p.x+ax/l*12,p.z+az/l*12);return;}
  if(th){const d=th.ed;b.w=bestW(b,th.e,d);const W=WP[b.w];
   // atkāpjas nocietinājumā, ja ievainots, pārspēts vai bez ložām pret bruņotu cilvēku
   let mates=0;for(const o of Tm.members)if(o!==b&&Math.hypot(o.g.position.x-p.x,o.g.position.z-p.z)<20)mates++;if(Tm.isPlayer&&active&&Math.hypot(player.position.x-p.x,player.position.z-p.z)<20)mates++;
@@ -220,9 +227,10 @@ function botMove(b,dt,i){
  b.lab.visible=b.bar.bg.visible=b.bar.f.visible=vis;if(vis){setBar(b.bar,p.x,2.45,p.z,b.hp/100);b.lab.position.set(p.x,2.8,p.z);}
 }
 function updateBots(dt){for(let i=humans.length-1;i>=0;i--){const b=humans[i];if(!b||b.dead)continue;b.th-=dt;if(b.th<=0){b.th=.4;botThink(b);}if(!b.dead)botMove(b,dt,i);}}
-function hurt(h,dmg,src,pl){if(h.pl)damagePlayer(dmg,src);else hurtBot(h.b,dmg,src,pl);}
-function hurtBot(b,dmg,src,pl){
- if(b.dead)return;const a=Math.min(b.I.armor,dmg*.6);b.I.armor-=a;b.hp-=dmg-a;
+// pierce: sitiens iet cauri bruņām (cilvēkēdājs)
+function hurt(h,dmg,src,pl,pierce){if(h.pl)damagePlayer(dmg,src,pierce);else hurtBot(h.b,dmg,src,pl,pierce);}
+function hurtBot(b,dmg,src,pl,pierce){
+ if(b.dead)return;const a=pierce?0:Math.min(b.I.armor,dmg*.6);b.I.armor-=a;b.hp-=dmg-a;
  const p=b.g.position;if(Math.hypot(p.x-player.position.x,p.z-player.position.z)<25)popup('-'+Math.round(dmg)+' HP',p.clone().add(new THREE.Vector3(0,2.3,0)));
  if(src&&src!==b.team){war(b.team,src);b.team.alarm={T:src,until:gtime+15};}
  if(b.hp<=0)killBot(b,src);
@@ -239,8 +247,8 @@ function killBot(b,src){
  else if(Math.hypot(p.x-player.position.x,p.z-player.position.z)<40)say(tf('kb',{n:b.name}));
  if(!Tm.members.length&&!Tm.isPlayer)dropTeam(Tm);
 }
-function damagePlayer(dmg,src){
- if(invul>0||!active)return;const a=Math.min(inv.armor,dmg*.6);inv.armor-=a;dmg-=a;
+function damagePlayer(dmg,src,pierce){
+ if(invul>0||!active)return;const a=pierce?0:Math.min(inv.armor,dmg*.6);inv.armor-=a;dmg-=a;
  health=Math.max(0,health-dmg);updateHealth();flashHurt();sfx('hurt');
  popup('-'+Math.round(dmg)+' HP',player.position.clone().add(new THREE.Vector3(0,2,0)));
  if(src&&src!==PT){war(PT,src);PT.alarm={T:src,until:gtime+15};}

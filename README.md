@@ -9,7 +9,9 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - Diena ilgst 5 minūtes, nakts 5 minūtes. Pulkstenis ir augšā.
 - Dienā zombiju nav. Meklē ieročus, lodes, bruņas un klucīšus mājās, atvilknēs un plauktos.
 - Cilvēkus vari aicināt komandā (līdz 9). Vājāki paši atnāk un piedāvā pievienoties.
+- 🤝 Daži cilvēki ir draudzīgi un paši nāk piedāvāt draudzību. 🕊️ Mierīgie nekad neuzbrūk pirmie, bet aizsargājas, ja viņiem šauj.
 - No 22:00 nāk zombiji, skeleti un vilkači. 3 zombiji + 2 vilkači var saplūst zombvilkā.
+- 👺 Vienu reizi naktī parādās cilvēkēdājs: lēns, bet 3 sitieni nogalina. Viņu var nogalināt tikai ar 2 raķetēm.
 - Rītā zombiji sprāgst, turies pa gabalu.
 
 **Telefons:** kloķis kustībai, lielā poga šauj, 🔄 maina ieroci, 🔨 būvē, 🤚 atver un aicina, ⬆ lec.
@@ -38,6 +40,8 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 | `js/15_vadiba.js` | Telefona pogas un kloķis |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
+
+**Svarīgi pēc katras izmaiņas:** `index.html` failā pie visiem failiem ir `?v=3`. Kad kaut ko maini, nomaini skaitli visur uz nākamo (`?v=4`, tad `?v=5`...). Citādi telefons var paturēt vecos failus un spēle salūzīs.
 
 ## Kā mainīt spēli ar AI
 
