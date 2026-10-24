@@ -41,6 +41,17 @@ function makeTower(ch,x,z,R,low){
  for(let i=0;i<3;i++){const v=cube(1.5+R()*2,1+R(),1.5+R()*2,0x2f6b2f,1);v.castShadow=false;v.position.set(x+(R()-.5)*w*.8,h+.4,z+(R()-.5)*d*.8);ch.group.add(v);}
  for(let i=0;i<4;i++){const f=R()<.5,vh=2+R()*Math.min(8,h-H0-1),s2=R()<.5?1:-1;const v=cube(f?.5+R()*.8:.15,vh,f?.15:.5+R()*.8,0x2c6a30,1);v.castShadow=false;
   v.position.set(f?x+(R()-.5)*w*.8:x+s2*(w/2+.08),H0+vh/2+R()*(h-H0-vh)*.8,f?z+s2*(d/2+.08):z+(R()-.5)*d*.8);ch.group.add(v);}
+ return {h,bx:x,bz:z,bw:w,bd:d};
+}
+// māja kā atsevišķa vienība (savs mesh grupas zars, šķēršļi, durvis, atvilknes), lai to var nodedzināt
+function bld(ch,kind,fn){
+ const realG=ch.group,bg=new THREE.Group();realG.add(bg);ch.group=bg;const o0=ch.obs.length,i0=ch.inter.length;
+ const info=fn()||{};ch.group=realG;ch.blds=ch.blds||[];
+ const b={id:ch.key+'h'+ch.blds.length,g:bg,obs:ch.obs.slice(o0),inter:ch.inter.slice(i0),kind,h:info.h||2.4};
+ let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;for(const o of b.obs){x0=Math.min(x0,o.x-o.hx);x1=Math.max(x1,o.x+o.hx);z0=Math.min(z0,o.z-o.hz);z1=Math.max(z1,o.z+o.hz);}
+ b.x=(x0+x1)/2;b.z=(z0+z1)/2;b.hx=(x1-x0)/2;b.hz=(z1-z0)/2;
+ b.cost=kind==='hut'?15:kind==='low'?25:30+Math.round(b.h/5)*5; // jo lielāka māja, jo vairāk sērkociņu
+ bg.userData.bld=b;ch.blds.push(b);return b;
 }
 function makeCar(ch,x,z,alongX,R){
  const g=new THREE.Group(),c=[0x6b4a32,0x5c4a3c,0x4a4f4d,0x7a5538][Math.floor(R()*4)];
@@ -81,16 +92,21 @@ function makeBillboard(ch,x,z,R){
  ch.obs.push({x,z:z-3.3,hx:.3,hz:.3},{x,z:z+3.3,hx:.3,hz:.3});
 }
 // mežs aiz pilsētas (koki kā instanced mesh, lai spēle nebremzē)
+// koki kā instanced mesh (ātri); katru koku var arī nodedzināt (ch.trees)
+function makeTreesIM(ch,pts,tc,cc,ts,cs){
+ const tr=new THREE.InstancedMesh(new THREE.CylinderGeometry(.28,.38,2.2,ts),mat(tc,.95),Math.max(1,pts.length)),co=new THREE.InstancedMesh(new THREE.ConeGeometry(1.5,1.8,cs),mat(cc,.9),Math.max(1,pts.length*2));
+ tr.count=pts.length;co.count=pts.length*2;ch.trees=ch.trees||[];
+ const M=new THREE.Matrix4(),Q=new THREE.Quaternion(),S=new THREE.Vector3(),P=new THREE.Vector3();
+ pts.forEach(([x,z,s,ob],i)=>{S.set(s,s,s);P.set(x,1.1*s,z);M.compose(P,Q,S);tr.setMatrixAt(i,M);for(let j=0;j<2;j++){const k=1-j*.27;S.set(s*k,s,s*k);P.set(x,(2.5+j)*s,z);M.compose(P,Q,S);co.setMatrixAt(i*2+j,M);}
+  ch.trees.push({id:ch.key+'t'+ch.trees.length,x,z,i,ob,tr,co,s});});
+ tr.castShadow=co.castShadow=true;tr.receiveShadow=co.receiveShadow=true;ch.group.add(tr,co);
+}
 function genWild(ch,R,ox,oz,deep,free,key){
  const gr=new THREE.Mesh(new THREE.PlaneGeometry(CS,CS),new THREE.MeshStandardMaterial({color:0x2f4a2a,roughness:1}));gr.rotation.x=-Math.PI/2;gr.position.set(ox+20,.005,oz+20);gr.receiveShadow=true;ch.group.add(gr);
- if(!deep&&R()<.3)makeHut(ch,ox+20,oz+20,R,false,key);
+ if(!deep&&R()<.3)bld(ch,'hut',()=>makeHut(ch,ox+20,oz+20,R,false,key));
  const pts=[],n=deep?60:42;
- for(let i=0;i<n;i++){const x=ox+R()*CS,z=oz+R()*CS;if(!free(x,z))continue;const s=.8+R()*.7;pts.push([x,z,s]);ch.obs.push({x,z,hx:.3*s,hz:.3*s});}
- const tr=new THREE.InstancedMesh(new THREE.CylinderGeometry(.28,.38,2.2,6),mat(0x5a3f28,.95),Math.max(1,pts.length)),co=new THREE.InstancedMesh(new THREE.ConeGeometry(1.5,1.8,7),mat(0x173f22,.9),Math.max(1,pts.length*2));
- tr.count=pts.length;co.count=pts.length*2;
- const M=new THREE.Matrix4(),Q=new THREE.Quaternion(),S=new THREE.Vector3(),P=new THREE.Vector3();
- pts.forEach(([x,z,s],i)=>{S.set(s,s,s);P.set(x,1.1*s,z);M.compose(P,Q,S);tr.setMatrixAt(i,M);for(let j=0;j<2;j++){const k=1-j*.27;S.set(s*k,s,s*k);P.set(x,(2.5+j)*s,z);M.compose(P,Q,S);co.setMatrixAt(i*2+j,M);}});
- tr.castShadow=co.castShadow=true;tr.receiveShadow=co.receiveShadow=true;ch.group.add(tr,co);
+ for(let i=0;i<n;i++){const x=ox+R()*CS,z=oz+R()*CS;if(!free(x,z))continue;const s=.8+R()*.7,ob={x,z,hx:.3*s,hz:.3*s};pts.push([x,z,s,ob]);ch.obs.push(ob);}
+ makeTreesIM(ch,pts,0x5a3f28,0x173f22,6,7);
  for(let i=0;i<8;i++){const x=ox+R()*CS,z=oz+R()*CS;if(!free(x,z))continue;const b=new THREE.Mesh(new THREE.IcosahedronGeometry(.6+R()*.7,0),mat(0x234a22,1));b.position.set(x,.3,z);b.scale.y=.7;ch.group.add(b);}
  for(let i=0;i<4;i++){const x=ox+R()*CS,z=oz+R()*CS;if(!free(x,z))continue;const r=new THREE.Mesh(new THREE.DodecahedronGeometry(.3+R()*.6,0),mat(0x6b7280,.95));r.position.set(x,.25,z);r.rotation.set(R()*3,R()*3,R()*3);r.castShadow=true;ch.group.add(r);}
  if(!deep&&R()<.45){const x=ox+R()*CS,z=oz+R()*CS;if(free(x,z))makeItem(ch,R()<.45?pickWeapon(R):pickGround(R),x,z,key+'f');}
@@ -110,17 +126,17 @@ function genChunk(cx,cz){
  for(let q=0;q<4;q++){
   const qx=ox+(q&1?24:0)+8,qz=oz+(q&2?24:0)+8,r=R();
   if(ns(qx,qz))continue;
-  if(r<.1)makeHut(ch,qx,qz,R,false,key);
-  else if(r<.5)makeTower(ch,qx,qz,R,false);
-  else if(r<.68)makeTower(ch,qx,qz,R,true);
+  if(r<.1)bld(ch,'hut',()=>makeHut(ch,qx,qz,R,false,key));
+  else if(r<.5)bld(ch,'tall',()=>makeTower(ch,qx,qz,R,false));
+  else if(r<.68)bld(ch,'low',()=>makeTower(ch,qx,qz,R,true));
  }
  const start=cx===0&&cz===0;
- if(start)makeHut(ch,10,-14,R,true,key);
+ if(start)bld(ch,'hut',()=>makeHut(ch,10,-14,R,true,key));
  for(let i=0;i<2;i++){const hz=R()<.5,a=R()*CS,bn=17.5+R()*5,x=hz?ox+a:ox+bn,z=hz?oz+bn:oz+a;if(!ns(x,z))makeCar(ch,x,z,hz,R);}
  if(R()<.2){const hz=R()<.5,a=5+R()*30,bn=18+R()*4,x=hz?ox+a:ox+bn,z=hz?oz+bn:oz+a;if(!ns(x,z))makeBus(ch,x,z,hz);}
  for(let i=0;i<2;i++){const hz=R()<.5,a=R()*CS,e=R()<.5?15.4:24.6,x=hz?ox+a:ox+e,z=hz?oz+e:oz+a;if(!ns(x,z))makeLamp(ch,x,z,R);}
  if(R()<.2){const bx=ox+14.8,bz=oz+(R()<.5?4+R()*8:28+R()*8);if(!ns(bx,bz)&&free(bx,bz))makeBillboard(ch,bx,bz,R);}
- for(let i=0;i<4;i++){const[x,z]=P();if(ns(x,z)||!free(x,z))continue;tree(ch.group,x,z);ch.obs.push({x,z,hx:.3,hz:.3});}
+ {const tp=[];for(let i=0;i<4;i++){const[x,z]=P();if(ns(x,z)||!free(x,z))continue;const ob={x,z,hx:.3,hz:.3};tp.push([x,z,1,ob]);ch.obs.push(ob);}makeTreesIM(ch,tp,0x6b4a2f,0x1e5c2e,7,8);}
  for(let i=0;i<6;i++){const[x,z]=P();if(!free(x,z))continue;const b=new THREE.Mesh(new THREE.IcosahedronGeometry(.6+R()*.7,0),mat(0x2f5f2c,1));b.position.set(x,.3,z);b.scale.y=.7;ch.group.add(b);}
  for(let i=0;i<3;i++){const[x,z]=P();if(!free(x,z))continue;const r=new THREE.Mesh(new THREE.DodecahedronGeometry(.3+R()*.5,0),mat(0x6b7280,.95));r.position.set(x,.25,z);r.rotation.set(R()*3,R()*3,R()*3);r.castShadow=true;ch.group.add(r);}
  if(R()<.5){const[x,z]=P();if(free(x,z))makeItem(ch,pickGround(R),x,z,key+'g');}
@@ -135,8 +151,10 @@ function genChunk(cx,cz){
 // ātrumam: nekustīgās detaļas ar vienādu materiālu apvieno vienā ģeometrijā (simtiem zīmējumu vietā daži desmiti)
 function mergeChunk(ch){
  if(/nomerge/.test(location.search))return;
- const g=ch.group;g.updateMatrixWorld(true);
- const skip=new Set();g.traverse(o=>{if(o.userData.dyn)o.traverse(c=>skip.add(c));});
+ ch.group.updateMatrixWorld(true);mergeInto(ch.group);for(const b of ch.blds||[])mergeInto(b.g); // katru māju atsevišķi, lai to var nodedzināt
+}
+function mergeInto(g){
+ const skip=new Set();g.traverse(o=>{if(o.userData.dyn||(o!==g&&o.userData.bld))o.traverse(c=>skip.add(c));});
  const groups=new Map();
  g.traverse(o=>{
   if(!o.isMesh||o.isInstancedMesh||skip.has(o)||Array.isArray(o.material))return;

@@ -203,7 +203,7 @@ function start(){
  health=100;score=0;coins=0;yaw=0;pitch=0;vy=0;pY=0;onGround=true;
  $('score').textContent=0;$('coins').textContent=0;
  player.position.set(0,0,0);
- chunks.forEach(c=>{scene.remove(c.group);freeObj(c.group);});chunks.clear();taken.clear();OG.clear();
+ chunks.forEach(c=>{scene.remove(c.group);freeObj(c.group);});chunks.clear();taken.clear();OG.clear();burnt.clear();fires.length=0;
  bullets.forEach(b=>scene.remove(b.m));bullets.length=0;
  blocks.forEach(c=>c.forEach(b=>{if(b.mesh)scene.remove(b.mesh);}));blocks.clear();doors.length=0;if(BIM){BIM.count=0;blkArr.length=0;}
  humans.forEach(b=>{scene.remove(b.g);freeObj(b.g);delBar(b.bar);delLabel(b.lab);});humans.length=0;teams.length=0;pairCd.clear();

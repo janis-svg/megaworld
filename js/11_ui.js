@@ -30,11 +30,13 @@ function nearInter(){
  for(const tk of tanks){const d=Math.hypot(tk.g.position.x-px,tk.g.position.z-pz);if(d<3.6&&d<bd&&pY<1.5){bd=d;best={type:'tank',t:tk};}}
  for(const ch of chunks.values())for(const o of ch.inter){const d=Math.hypot(o.x-px,o.z-pz);if(d<o.r&&d<bd){bd=d;best=o;}}
  if(pY<1.5)for(const b of humans){if(b.team===PT||PT.enemies.has(b.team))continue;const d=Math.hypot(b.g.position.x-px,b.g.position.z-pz);if(d<2.6&&d<bd){bd=d;best={type:'bot',b};}}
+ if(!best&&pY<1.5)best=findBurnable(px,pz); // ja nekā cita nav: koks vai māja, ko aizdedzināt
  return best;
 }
 let actIc='';
 function setAct(ic){if(ic===actIc)return;actIc=ic;const a=$('act');a.textContent=ic||'🤚';a.classList.toggle('on',!!ic);}
 function updateHint(){const o=nearInter(),h=$('hint'),key=TOUCH?'':'E / ';if(!o){h.style.display='none';setAct('');return;}
+ if(o.type==='burn'){const ok=(inv.matches||0)>=o.cost;h.textContent=key+'🔥 '+t('burn_'+o.k)+' ('+o.cost+' 🔥)'+(ok?'':' · '+t('needm')+' ('+(inv.matches||0)+')');h.style.display='block';setAct(ok?'🔥':'');return;}
  if(o.type==='exit'){h.textContent=key+t('tank_out')+' · 💣 '+inTank.shells;h.style.display='block';setAct('⬇️');return;}
  if(o.type==='tank'){h.textContent=key+(o.t.dead?'🚜 '+t('tank_dead'):tf('tank_in',{n:o.t.shells}));h.style.display='block';setAct(o.t.dead?'':'🚜');return;}
  if(o.type==='bot'){const Tm=o.b.team,n=Tm.members.length,off=Tm.offer>gtime,strong=!off&&!Tm.friendly&&teamStr(Tm)>teamStr(PT)*1.25;
@@ -43,6 +45,7 @@ function updateHint(){const o=nearInter(),h=$('hint'),key=TOUCH?'':'E / ';if(!o)
  h.textContent=key+(o.type==='door'?'🚪 ':'📦 ')+t(k);h.style.display='block';setAct(o.type==='door'?'🚪':o.open?'':'📦');}
 function interact(){
  if(!active)return;if(NET.role==='guest'){netSend({t:'act'});return;}const o=nearInter();if(!o)return;
+ if(o.type==='burn'){if((inv.matches||0)<o.cost){say(t('needm')+' ('+(inv.matches||0)+'/'+o.cost+')',1.5);return;}inv.matches-=o.cost;startBurn(o.k,o.o,false);renderInv();return;}
  if(o.type==='exit'){exitTank();return;}
  if(o.type==='tank'){enterTank(o.t);return;}
  if(o.type==='bot'){askJoin(o.b);return;}

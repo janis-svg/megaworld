@@ -61,7 +61,7 @@ function netHostMsg(G,d){
 function netWelcome(G){
  const bl=[];blocks.forEach(c=>c.forEach(b=>bl.push([b.x,b.z,b.y0,b.door?1:0,b.team.id,b.team.color,b.win?1:0])));bl.sort((a,b)=>a[2]-b[2]);
  const dr=[];for(const ch of chunks.values())for(const o of ch.inter)if(o.type==='door'&&(o.open||o.hp<100))dr.push([o.id,o.open?1:0,o.hp]);
- netTo(G,{t:'wel',id:G.id,col:G.col,pt:[PT.id,PT.color],h:r2(hour),d:day,bl,tk:[...taken],dr,sp:[r2(G.pos.x),r2(G.pos.z)]});
+ netTo(G,{t:'wel',id:G.id,col:G.col,pt:[PT.id,PT.color],h:r2(hour),d:day,bl,tk:[...taken],br:[...burnt],dr,sp:[r2(G.pos.x),r2(G.pos.z)]});
  netMe(G);
 }
 function netWelcomeAll(){for(const G of NET.guests.values()){if(!G.ready)continue;G.hp=100;G.dead=false;G.I=newInv();G.pos.set(player.position.x+2,0,player.position.z+2);netWelcome(G);}}
@@ -91,7 +91,9 @@ function guestAct(G){
  for(const tk of tanks){const d=Math.hypot(tk.g.position.x-px,tk.g.position.z-pz);if(d<3.6&&d<bd){bd=d;best={type:'tank'};}}
  for(const ch of chunks.values())for(const o of ch.inter){const d=Math.hypot(o.x-px,o.z-pz);if(d<o.r&&d<bd){bd=d;best=o;}}
  for(const b of humans){if(b.team===PT||PT.enemies.has(b.team))continue;const d=Math.hypot(b.g.position.x-px,b.g.position.z-pz);if(d<2.6&&d<bd){bd=d;best={type:'bot',b};}}
+ if(!best)best=findBurnable(px,pz);
  if(!best)return;
+ if(best.type==='burn'){if((G.I.matches||0)<best.cost){netTo(G,{t:'msg',s:t('needm')+' ('+(G.I.matches||0)+'/'+best.cost+')'});return;}G.I.matches-=best.cost;startBurn(best.k,best.o,false);netMe(G);return;}
  if(best.type==='tank'){netTo(G,{t:'msg',s:t('mp_tank')});return;}
  if(best.type==='bot'){const m0=$('msg').textContent;askJoin(best.b);const m=$('msg').textContent;if(m!==m0)netTo(G,{t:'msg',s:m});return;}
  if(best.type==='door'){best.open=!best.open;best.piv.rotation.y=best.open?-Math.PI/2:0;best.dob.off=best.open;sfxAt('door',px,pz,30);return;}
@@ -182,6 +184,7 @@ function netGuestMsg(d){
   guestClear();NET.myId=d.id;NET.meDead=false;
   player.children[0].material.color.setHex(d.col);player.children[1].material.color.set(new THREE.Color(d.col).lerp(new THREE.Color(0xffffff),.2)); // tava krāsa, kā tevi redz citi
   PT=netTeam(d.pt[0],d.pt[1]);inv=newInv();health=100;hour=d.h;day=d.d;lastH=Math.floor(hour);clkM=-1;score=0;cur='hands';buildMode=false;
+  burnt.clear();if(d.br)for(const id of d.br)burnt.add(id);fires.length=0;
   for(const id of d.tk)taken.add(id);for(const [id,o,hp] of d.dr)doorState.set(id,{o,hp});
   player.position.set(d.sp[0],0,d.sp[1]);pY=0;vy=0;onGround=true;
   updateChunks();for(const [x,z,y0,dr,tid,col,wn] of d.bl)placeBlock(x,z,netTeam(tid,col),!!dr,!!wn);
@@ -220,6 +223,7 @@ function guestSnap(d){
   else if(e.e==='tk')applyTaken(e.id);
   else if(e.e==='bk'){if(e.a)placeBlock(e.x,e.z,netTeam(e.tid,e.col),!!e.d,!!e.w);else{const c=blocks.get(e.x+','+e.z),b=c&&c.find(q=>q.y0===e.y0);if(b)removeBlock(b,!!e.f);}}
   else if(e.e==='msg')say(e.s,e.d);
+  else if(typeof netExtraEv==='function')netExtraEv(e);
  }
  for(const [id,ty,how] of d.gone){
   if(ty===0){const o=netMon.get(id);if(o){netMon.delete(id);if(how)killZombie(o.z,false,how===2);else removeMonster(o.z);}}
