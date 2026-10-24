@@ -3,6 +3,7 @@
 function renderInv(){
  if(!inv)return;let h='<button class="corner" id="invx" style="float:right;margin:0 0 0 12px">✖</button><b>🎒 '+t('inv')+'</b>';
  for(const w of GUNS)h+='<br>'+(/^[A-Z0-9]+$/.test(WP[w].ic)?'':WP[w].ic+' ')+t('w'+w)+': '+(inv.has[w]?inv.ammo[w]+' / '+WP[w].max:'- ('+inv.ammo[w]+')');
+ h+='<br>🐔 '+t('wpoly')+': '+(inv.ammo.poly||0)+' · 🌳 '+(inv.ammo.grow||0)+' · 🌸 '+(inv.ammo.flow||0)+'<br>🪙 '+t('coins')+': '+(PT&&PT.coins||0);
  h+='<br>🛡️ '+t('armor')+': '+Math.ceil(inv.armor)+'<br>🧱 '+t('blocks')+': '+(PT?PT.blocks:0)+' · 🚪 '+(PT&&PT.doorI||0)+' · 🪟 '+(PT&&PT.winI||0)+'<br>🔥 '+t('matches')+': '+(inv.matches||0)+'<br>➕ '+t('med2')+': '+inv.meds+' <button class="corner" id="usemed">'+t('use')+'</button>';
  $('inv').innerHTML=h;$('usemed').onclick=useMed;$('invx').onclick=e=>{e.stopPropagation();$('inv').style.display='none';};renderW();
 }
@@ -11,18 +12,18 @@ function renderW(){
  if(TOUCH){const ic=s=>s.length>2?'<span style="font-size:20px;font-weight:800">'+s+'</span>':s;
   const tIc={blk:'🧱',door:'🚪',win:'🪟'},tCnt={blk:PT.blocks,door:(PT.doorI||0)+'/'+PT.blocks,win:(PT.winI||0)+'/'+PT.blocks};
   $('atk').innerHTML=inTank?'💣<small>'+inTank.shells+'</small>':buildMode?tIc[bTool]+'<small>'+tCnt[bTool]+'</small>':ic(WP[cur].ic)+(cur==='hands'?'':'<small>'+inv.ammo[cur]+'</small>');
-  const nx=(()=>{let i=WL.indexOf(cur);for(let k=0;k<5;k++){i=(i+1)%5;if(WL[i]==='hands'||inv.has[WL[i]])return WL[i];}return cur;})();
+  const nx=(()=>{let i=WL.indexOf(cur);for(let k=0;k<WL.length;k++){i=(i+1)%WL.length;if(WL[i]==='hands'||inv.has[WL[i]])return WL[i];}return cur;})();
   $('wsw').innerHTML=buildMode?tIc[nextTool()]:(nx===cur?'🔄':'🔄<small style="font-size:10px">'+WP[nx].ic+'</small>');
   $('bmb').textContent=buildMode?'✖':'🔨';document.documentElement.classList.toggle('build',buildMode);}
  const wb=$('wbar'),bb=$('bbar');wb.style.display=active&&!buildMode?'flex':'none';bb.style.display=active&&buildMode?'flex':'none';
  if(buildMode){bb.innerHTML=[['blk',t('bblk')+' '+PT.blocks],['door',t('bdoor')+' '+(PT.doorI||0)],['win',t('bwin')+' '+(PT.winI||0)],['rem',t('brem')],['x',t('bexit')]].map(([k,l])=>'<button class="slot'+(k===bTool?' on':'')+'" data-b="'+k+'">'+l+'</button>').join('');
   bb.querySelectorAll('button').forEach(e=>e.onpointerdown=ev=>{ev.stopPropagation();ev.preventDefault();const k=e.dataset.b;if(k==='rem')buildAct(true);else if(k==='x')toggleBuild();else{bTool=k;renderW();}});return;}
- wb.innerHTML=WL.map((w,i)=>{const has=w==='hands'||inv.has[w];return '<button class="slot'+(w===cur?' on':'')+(has?'':' off')+'" data-w="'+w+'">'+(i+1)+' '+WP[w].ic+(w==='hands'?'':' '+inv.ammo[w])+'</button>';}).join('');
+ wb.innerHTML=WL.filter(w=>!WP[w].spell||inv.has[w]).map(w=>{const i=WL.indexOf(w),has=w==='hands'||inv.has[w];return '<button class="slot'+(w===cur?' on':'')+(has?'':' off')+'" data-w="'+w+'">'+(i+1)+' '+WP[w].ic+(w==='hands'?'':' '+inv.ammo[w])+'</button>';}).join('');
  wb.querySelectorAll('button').forEach(e=>e.onpointerdown=ev=>{ev.stopPropagation();ev.preventDefault();selectW(e.dataset.w);});
 }
 const nextTool=()=>({blk:'door',door:'win',win:'blk'})[bTool]||'blk';
 function selectW(w){if(w!=='hands'&&!inv.has[w])return;cur=w;const gs=player.userData.guns;for(const k in gs)gs[k].visible=k===w&&!buildMode;renderW();updateAmmo();}
-function nextW(){if(!active||buildMode)return;let i=WL.indexOf(cur);for(let k=0;k<5;k++){i=(i+1)%5;const w=WL[i];if(w==='hands'||inv.has[w]){selectW(w);return;}}}
+function nextW(){if(!active||buildMode)return;let i=WL.indexOf(cur);for(let k=0;k<WL.length;k++){i=(i+1)%WL.length;const w=WL[i];if(w==='hands'||inv.has[w]){selectW(w);return;}}}
 function useMed(){if(!active||inv.meds<1||health>=100)return;if(NET.role==='guest'){netSend({t:'med'});return;}inv.meds--;health=Math.min(100,health+40);updateHealth();renderInv();sfx('heal');say(t('healed'));}
 function nearInter(){
  let best=null,bd=1e9;const px=player.position.x,pz=player.position.z;

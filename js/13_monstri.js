@@ -107,7 +107,7 @@ function transformForest(){let n=0;for(const z of [...zombies]){const u=z.userDa
 function updateForest(z,u,dt){
  const p=z.position;u.cd=(u.cd||0)-dt;
  const angry=u.angry>gtime;let tg=null,best=angry?60:24;
- for(const h of HL){const d=Math.hypot(h.p.x-p.x,h.p.z-p.z);if(d<best&&yOf(h)<1.3){best=d;tg=h;}}
+ for(const h of HL){if(h.b&&(h.b.trader||(h.b.team&&h.b.team.farm)))continue;const d=Math.hypot(h.p.x-p.x,h.p.z-p.z);if(d<best&&yOf(h)<1.3){best=d;tg=h;}} // ar tirgotājiem meža ļaudis nekaujas
  if(tg&&!angry&&Math.max(Math.abs(p.x),Math.abs(p.z))<CITY-40)tg=null; // dziļi pilsētā pakaļ nedzenas
  let gx,gz,sp;
  if(tg){gx=tg.p.x;gz=tg.p.z;sp=u.speed;}

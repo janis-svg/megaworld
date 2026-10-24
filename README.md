@@ -16,6 +16,19 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - 🚜 Pilsētā ir 4 tanki (viens netālu no sākuma). Tankā tevi gandrīz nevar ievainot, un tam ir 3 šāviņi: viens šāviņš iznīcina zombijus tuvumā un cilvēkēdāju. Kad šāviņi beidzas, tanks salūzt.
 - Rītā zombiji sprāgst, turies pa gabalu.
 
+## Saimniecība
+
+- 🪙 Naudu atrod atvilknēs un zemē, monstri to dažreiz izmet (lielie vienmēr), vistas dēj olas = monētas.
+- 🛒 Meža malā ielu galos ir 4 tirgotāji: 🌱 sēklas, 🐾 zvēri, 🔫 ieroči, 🧙 burvis. Naktī viņi ir savās mājās.
+  Ja viņiem šauj, sēklu un zvēru tirgotājs un burvis bēg un šauj pretī, ieroču tirgotājs uzbrūk.
+- 🌳 🌸 Sēklas iestāda kokus un puķes (tās ir ieroču joslā kā 7. un 8.). Koki dod ābolus (+15 dzīvības).
+- 🐕 Savvaļas suni pieradina ar 🤚. Viņš skrien līdzi un rej uz ienaidniekiem. 🐻 Lācis cīnās ar monstriem.
+- 🐔 Burvja burvestība pārvērš monstru vai pretinieku vistā.
+- 🔥 Sērkociņi: koks 10, māja jo lielāka, jo vairāk.
+- 🪟 Logi: caur tiem var redzēt un šaut. Mežā atrod klučus, logus, durvis un sērkociņus.
+- 🌻 Daži cilvēki ir saimnieki: viņi veido saimniecību meža malā ar žogu, nekaro, bet aizstāvas.
+- 🐺 Vilkači medī dzīvniekus un, tos apēdot, atgūst spēkus.
+
 ## Spēlēt kopā (līdz 4 spēlētājiem)
 
 1. Viens atver spēli, spiež 🌐 un "Sākt kopīgo spēli".
@@ -50,6 +63,8 @@ Pasauli skaita tā cilvēka ierīce, kurš uzaicināja. Ja viņš aizver lapu, s
 | `js/15_vadiba.js` | Telefona pogas un kloķis |
 | `js/16_tanki.js` | Tanki |
 | `js/17_tikls.js` | Spēlēšana kopā (savienojums, ko sūta saimnieks un viesi) |
+| `js/18_uguns.js` | Sērkociņi un dedzināšana |
+| `js/19_zveri_burvestibas.js` | Nauda, tirgotāji, zvēri, vistas, sēklas, saimnieki |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 

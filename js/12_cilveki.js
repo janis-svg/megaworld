@@ -1,6 +1,6 @@
 // 12_cilveki.js - Boti, komandas, bandas, kari, nocietinājumi, pavēles
 // ---------- cilvēki (boti), komandas un bandas ----------
-const NAMES=['Andris','Kristaps','Laura','Ilze','Edgars','Rihards','Marta','Dace','Toms','Elīna','Roberts','Anna','Mārtiņš','Līga','Oskars','Zane','Raitis','Agnese','Kārlis','Inese','Gatis','Sanita','Valters','Krišs','Emīls','Paula'];
+const NAMES=['Ance','Juris','Liene','Ivars','Signe','Artūrs','Viktors','Rūta','Andris','Kristaps','Laura','Ilze','Edgars','Rihards','Marta','Dace','Toms','Elīna','Roberts','Anna','Mārtiņš','Līga','Oskars','Zane','Raitis','Agnese','Kārlis','Inese','Gatis','Sanita','Valters','Krišs','Emīls','Paula'];
 const TCOL=[0xd4ac0d,0xc0392b,0x8e44ad,0xe67e22,0x16a085,0xd35490,0xdfe6e9,0x8d6e63,0x7cb342,0x2d3436,0x00acc1,0xf06292,0x6d4c41,0x9ccc65];
 function buildBot(col,helmet){
  const g=new THREE.Group(),uni=[];
@@ -51,7 +51,7 @@ function makePlan(Tm){
 function spawnBots(){
  const nm=[...NAMES].sort(()=>Math.random()-.5);let ni=0,ci=0;
  const K=newTeam(TCOL[ci++]);K.friendly=true;const KI=newInv();KI.has.pistol=true;KI.ammo.pistol=10;newBot(K,3,-6,'Kaspars',KI,true).role='gather';
- for(const n of [1,1,1,1,1,2,2,2,3,3,4]){
+ for(const n of [1,1,1,1,1,1,1,2,2,2,2,3,3,4]){
   const Tm=newTeam(TCOL[ci++%TCOL.length]);let x=0,z=0;
   for(let k=0;k<40;k++){[x,z]=roadPoint(0,0,1e9);if(Math.hypot(x,z)>(n===1?30:60))break;}
   Tm.blocks=40+15*n;const rich=Math.random()<.28;
@@ -88,7 +88,7 @@ function teamTick(){
  for(const Tm of teams)if(Tm.offer&&Tm.offer<gtime){Tm.offer=0;Tm.members.forEach(relabel);}
  if(active&&hour>=7.5&&hour<19&&gtime>offerAt&&!teams.some(x=>x.offer>gtime)){
   let best=null,bd=60;const my=teamStr(PT);
-  for(const Tm of teams){if(Tm.isPlayer||PT.enemies.has(Tm)||!Tm.members.length||PT.members.length+Tm.members.length>9)continue;if(!Tm.friendly&&teamStr(Tm)>my*.9)continue;
+  for(const Tm of teams){if(Tm.isPlayer||Tm.noOffer||PT.enemies.has(Tm)||!Tm.members.length||PT.members.length+Tm.members.length>9)continue;if(!Tm.friendly&&teamStr(Tm)>my*.9)continue;
    // draudzīgie vientuļnieki nāk arī no tālienes un tiek izvēlēti pirmie
    const pal=Tm.pal&&Tm.members.length===1;
    for(const m of Tm.members){const d=Math.hypot(m.g.position.x-player.position.x,m.g.position.z-player.position.z)-(pal?120:0);if(d<bd){bd=d;best=Tm;}}}
@@ -162,7 +162,7 @@ function botThink(b){
  if(Tm.isPlayer&&(b.cmd==='follow'||(night&&!Tm.base))){b.gx=null;b.follow=true;return;}
  b.follow=false;
  let role=Tm.isPlayer?b.cmd:b.role;
- if(role==='build'&&!Tm.isPlayer&&!GUNS.some(w=>I.has[w]&&I.ammo[w]>0)&&!night)role='gather';
+ if(role==='build'&&!Tm.isPlayer&&!Tm.farm&&!GUNS.some(w=>I.has[w]&&I.ammo[w]>0)&&!night)role='gather';
  if(night&&Tm.base){
   if(role==='build'&&Tm.plan.length&&buildThink(b))return; // labo sienas arī naktī
   const s=Math.max(.5,(Tm.inner||Tm.size)-1);if(Math.abs(p.x-Tm.base.x)>s+.6||Math.abs(p.z-Tm.base.z)>s+.6)goal(b,Tm.base.x+(Math.random()-.5)*s,Tm.base.z+(Math.random()-.5)*s,true);else b.gx=null;return;}

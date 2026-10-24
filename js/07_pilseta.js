@@ -105,7 +105,7 @@ function genWild(ch,R,ox,oz,deep,free,key){
  const gr=new THREE.Mesh(new THREE.PlaneGeometry(CS,CS),new THREE.MeshStandardMaterial({color:0x2f4a2a,roughness:1}));gr.rotation.x=-Math.PI/2;gr.position.set(ox+20,.005,oz+20);gr.receiveShadow=true;ch.group.add(gr);
  if(!deep&&R()<.3)bld(ch,'hut',()=>makeHut(ch,ox+20,oz+20,R,false,key));
  const pts=[],n=deep?60:42;
- for(let i=0;i<n;i++){const x=ox+R()*CS,z=oz+R()*CS;if(!free(x,z))continue;const s=.8+R()*.7,ob={x,z,hx:.3*s,hz:.3*s};pts.push([x,z,s,ob]);ch.obs.push(ob);}
+ for(let i=0;i<n;i++){const x=ox+R()*CS,z=oz+R()*CS;if(!free(x,z))continue;const s=.8+R()*.7;if(typeof nearTrader==='function'&&nearTrader(x,z))continue;const ob={x,z,hx:.3*s,hz:.3*s};pts.push([x,z,s,ob]);ch.obs.push(ob);}
  makeTreesIM(ch,pts,0x5a3f28,0x173f22,6,7);
  for(let i=0;i<8;i++){const x=ox+R()*CS,z=oz+R()*CS;if(!free(x,z))continue;const b=new THREE.Mesh(new THREE.IcosahedronGeometry(.6+R()*.7,0),mat(0x234a22,1));b.position.set(x,.3,z);b.scale.y=.7;ch.group.add(b);}
  for(let i=0;i<4;i++){const x=ox+R()*CS,z=oz+R()*CS;if(!free(x,z))continue;const r=new THREE.Mesh(new THREE.DodecahedronGeometry(.3+R()*.6,0),mat(0x6b7280,.95));r.position.set(x,.25,z);r.rotation.set(R()*3,R()*3,R()*3);r.castShadow=true;ch.group.add(r);}

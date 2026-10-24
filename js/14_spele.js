@@ -265,7 +265,7 @@ document.addEventListener('keydown',e=>{
  if(!e.repeat){
   if(e.code==='KeyE')interact();if(e.code==='KeyV')toggleView();if(e.code==='KeyI')toggleInv();if(e.code==='KeyH')useMed();
   if(e.code==='KeyB')toggleBuild();if(e.code==='KeyR'&&buildMode)buildAct(true);if(e.code==='KeyT')toggleTeam();if(e.code==='KeyQ')nextW();
-  const dg=e.code.match(/^Digit([1-5])$/);if(dg&&active){const n=+dg[1];if(buildMode){if(n<=3){bTool=['blk','door','win'][n-1];renderW();}}else selectW(WL[n-1]);}
+  const dg=e.code.match(/^Digit([1-8])$/);if(dg&&active){const n=+dg[1];if(buildMode){if(n<=3){bTool=['blk','door','win'][n-1];renderW();}}else selectW(WL[n-1]);}
  }
  if(e.code==='Space')e.preventDefault();
 });

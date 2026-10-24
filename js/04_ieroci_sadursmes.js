@@ -4,10 +4,12 @@ const WP={hands:{ic:'✊',dmg:25},
  pistol:{ic:'🔫',dmg:50,rate:.3,max:100,give:12,add:15,pel:1,sp:.015,life:1.3,brate:1.0,rng:24,val:15,av:.8},
  m16:{ic:'M16',dmg:34,rate:.11,max:60,give:20,add:20,pel:1,sp:.035,life:1.4,brate:.4,rng:26,val:30,av:1,auto:true},
  shot:{ic:'💥',dmg:24,rate:.8,max:30,give:6,add:6,pel:6,sp:.13,life:.45,brate:1.3,rng:10,val:22,av:2.5},
- rpg:{ic:'🚀',dmg:260,rate:1.4,max:8,give:2,add:2,pel:1,sp:0,life:2.2,brate:3.2,rng:30,val:45,av:12,rocket:true}};
-const WL=['hands','pistol','m16','shot','rpg'],GUNS=WL.slice(1);
-const newInv=()=>({has:{pistol:false,m16:false,shot:false,rpg:false},ammo:{pistol:0,m16:0,shot:0,rpg:0},meds:0,armor:0,matches:0,coins:0});
-function rollLoot(R,p){if(R()>p)return[];const q=R();return q<.14?['pistol','a_pistol']:q<.23?['m16','a_m16']:q<.29?['shot','a_shot']:q<.34?['rpg','a_rpg']:q<.48?['a_pistol']:q<.56?['a_m16']:q<.61?['a_shot']:q<.66?['a_rpg']:q<.76?['med']:q<.87?['armor']:q<.92?['blk']:q<.96?['match']:['win_i'];}
+ rpg:{ic:'🚀',dmg:260,rate:1.4,max:8,give:2,add:2,pel:1,sp:0,life:2.2,brate:3.2,rng:30,val:45,av:12,rocket:true},
+ // pērk pie tirgotājiem: 🐔 burvja burvestība pārvērš pretinieku vistā, 🌳 un 🌸 sēklas iestāda koku vai puķi
+ poly:{ic:'🐔',spell:true,rate:.8,max:20,rng:22,val:20,av:5},grow:{ic:'🌳',spell:true,rate:.35,max:40,rng:3,val:5,av:1},flow:{ic:'🌸',spell:true,rate:.25,max:40,rng:3,val:2,av:.5}};
+const WL=['hands','pistol','m16','shot','rpg','poly','grow','flow'],GUNS=['pistol','m16','shot','rpg'];
+const newInv=()=>({has:{pistol:false,m16:false,shot:false,rpg:false,poly:false,grow:false,flow:false},ammo:{pistol:0,m16:0,shot:0,rpg:0,poly:0,grow:0,flow:0},meds:0,armor:0,matches:0,coins:0});
+function rollLoot(R,p){if(R()>p)return[];const q=R();return q<.14?['pistol','a_pistol']:q<.23?['m16','a_m16']:q<.29?['shot','a_shot']:q<.34?['rpg','a_rpg']:q<.48?['a_pistol']:q<.56?['a_m16']:q<.61?['a_shot']:q<.66?['a_rpg']:q<.74?['med']:q<.82?['armor']:q<.87?['blk']:q<.9?['match']:q<.98?['coin']:['win_i'];}
 // mežā: būvmateriāli (kluči, logi, durvis) un sērkociņi
 function pickForest(R){const q=R();return q<.35?'blk':q<.55?'win_i':q<.7?'door_i':q<.88?'match':pickWeapon(R);}
 function pickGround(R){const q=R();return q<.35?'a_pistol':q<.5?'a_m16':q<.6?'a_shot':q<.65?'a_rpg':q<.8?'armor':'blk';}
@@ -19,6 +21,7 @@ function giveLoot(k,I,Tm){
  if(k==='med'){I.meds++;return '+1 '+t('med2');}
  if(k==='armor'){I.armor=Math.min(100,I.armor+50);return '🛡️ +50';}
  if(k==='blk'){if(Tm)Tm.blocks+=10;return '+10 🧱';}
+ if(k==='coin'){if(Tm)Tm.coins=(Tm.coins||0)+10;return '+10 🪙';}
  if(k==='door_i'){if(Tm)Tm.doorI=(Tm.doorI||0)+1;return '+1 🚪';}
  if(k==='win_i'){if(Tm)Tm.winI=(Tm.winI||0)+2;return '+2 🪟';}
  if(k==='match'){I.matches=(I.matches||0)+10;return '+10 🔥 '+t('matches');}

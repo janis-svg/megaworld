@@ -95,3 +95,9 @@ html.touch #inv{top:118px}
 #mp input{margin:6px 0;width:100%}
 html.touch #mp{left:8px;right:8px;top:118px;width:auto}
 #mp .corner{margin:4px 6px 0 0}
+#shop{position:fixed;top:160px;left:16px;z-index:15;font-size:13px;line-height:1.7;display:none;max-width:calc(100% - 32px);width:360px;pointer-events:auto}
+#shop .row{display:flex;align-items:center;gap:6px;margin-top:6px}
+#shop .row span{flex:1}
+#shop .corner{margin:0}
+html.touch #shop{left:8px;right:8px;top:118px;width:auto;max-height:calc(100% - 330px);overflow:auto}
+html.touch #shop .corner{padding:8px 12px;font-size:15px}
