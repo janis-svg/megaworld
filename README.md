@@ -16,6 +16,14 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - 🚜 Pilsētā ir 4 tanki (viens netālu no sākuma). Tankā tevi gandrīz nevar ievainot, un tam ir 3 šāviņi: viens šāviņš iznīcina zombijus tuvumā un cilvēkēdāju. Kad šāviņi beidzas, tanks salūzt.
 - Rītā zombiji sprāgst, turies pa gabalu.
 
+## Spēlēt kopā (līdz 4 spēlētājiem)
+
+1. Viens atver spēli, spiež 🌐 un "Sākt kopīgo spēli".
+2. Parādās saite. To nosūta draugiem (📋 Kopēt vai 📤 Sūtīt).
+3. Draugi atver saiti un spiež "PIEVIENOTIES DRAUGA SPĒLEI". Visi ir vienā komandā.
+
+Pasauli skaita tā cilvēka ierīce, kurš uzaicināja. Ja viņš aizver lapu, spēle beidzas visiem. Dažos mobilajos tīklos savienojums var neizdoties, mājas Wi-Fi tīklā tam vajadzētu strādāt. Tanku vada tikai tas, kurš uzaicināja.
+
 **Telefons:** kloķis kustībai, lielā poga šauj, 🔄 maina ieroci, 🔨 būvē, 🤚 atver un aicina, ⬆ lec.
 **Dators:** WASD, pele, F vai klikšķis šauj, 1-5 ieroči, B būvē, E rīcība, T komanda.
 
@@ -41,6 +49,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 | `js/14_spele.js` | Šaušana, kustība, galvenais spēles cikls |
 | `js/15_vadiba.js` | Telefona pogas un kloķis |
 | `js/16_tanki.js` | Tanki |
+| `js/17_tikls.js` | Spēlēšana kopā (savienojums, ko sūta saimnieks un viesi) |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 

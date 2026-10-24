@@ -22,7 +22,7 @@ function dropTeam(Tm){const i=teams.indexOf(Tm);if(i>=0)teams.splice(i,1);for(co
 function setTeam(b,Tm){const o=b.team;if(o===Tm)return;if(o){const i=o.members.indexOf(b);if(i>=0)o.members.splice(i,1);if(!o.members.length&&!o.isPlayer)dropTeam(o);}b.team=Tm;Tm.members.push(b);b.uni.forEach(m=>m.color.setHex(Tm.color));relabel(b);b.bi=null;b.co=null;b.gx=null;}
 function newBot(Tm,x,z,name,I,helmet){
  const{g,uni,gn}=buildBot(Tm.color,helmet);g.position.set(x,0,z);scene.add(g);
- const b={g,uni,gn,name,I,hp:100,team:null,role:'gather',cmd:'follow',cd:Math.random(),th:Math.random()*.4,st:{},slot:0,wps:[],gx:null,gz:null,tg:null,w:'hands',ft:10+Math.random()*10,bt:0,follow:false,dead:false};
+ const b={nid:++NID,helmet:!!helmet,g,uni,gn,name,I,hp:100,team:null,role:'gather',cmd:'follow',cd:Math.random(),th:Math.random()*.4,st:{},slot:0,wps:[],gx:null,gz:null,tg:null,w:'hands',ft:10+Math.random()*10,bt:0,follow:false,dead:false};
  b.bar=mkBar(.9,0xf1c40f);humans.push(b);setTeam(b,Tm);return b;
 }
 function botInv(rich){const I=newInv(),r=n=>Math.floor(Math.random()*n);
@@ -228,7 +228,7 @@ function botMove(b,dt,i){
 }
 function updateBots(dt){for(let i=humans.length-1;i>=0;i--){const b=humans[i];if(!b||b.dead)continue;b.th-=dt;if(b.th<=0){b.th=.4;botThink(b);}if(!b.dead)botMove(b,dt,i);}}
 // pierce: sitiens iet cauri bruņām (cilvēkēdājs)
-function hurt(h,dmg,src,pl,pierce){if(h.pl)damagePlayer(dmg,src,pierce);else hurtBot(h.b,dmg,src,pl,pierce);}
+function hurt(h,dmg,src,pl,pierce){if(h.gst){damageGuest(h.gst,dmg,src,pierce);return;}if(h.pl)damagePlayer(dmg,src,pierce);else hurtBot(h.b,dmg,src,pl,pierce);}
 function hurtBot(b,dmg,src,pl,pierce){
  if(b.dead)return;const a=pierce?0:Math.min(b.I.armor,dmg*.6);b.I.armor-=a;b.hp-=dmg-a;
  const p=b.g.position;if(Math.hypot(p.x-player.position.x,p.z-player.position.z)<25)popup('-'+Math.round(dmg)+' HP',p.clone().add(new THREE.Vector3(0,2.3,0)));
@@ -258,7 +258,7 @@ function damagePlayer(dmg,src,pierce){
 // komandas pavēles (sekot / būvēt / vākt)
 function wIcon(m){const w=[...GUNS].reverse().find(k=>m.I.has[k]&&m.I.ammo[k]>0);return w?WP[w].ic+' '+m.I.ammo[w]:'✊';}
 function renderTeam(){
- const el=$('team');if(!PT||el.style.display!=='block')return;const ms=PT.members;
+ const el=$('team');if(!PT||el.style.display!=='block')return;if(NET.role==='guest'){el.innerHTML=t('mp_noteam');return;}const ms=PT.members;
  const btn=(i,c,on)=>'<button class="corner'+(on?' on':'')+'" data-i="'+i+'" data-c="'+c+'">'+t('c_'+c).split(' ')[0]+'</button>';
  const row=(i,cmd)=>btn(i,'follow',cmd==='follow')+btn(i,'build',cmd==='build')+btn(i,'gather',cmd==='gather');
  let h='<button class="corner" data-x="1" style="float:right;margin:0">✖</button><b>👥 '+t('teamt')+' ('+ms.length+'/9)</b> · 🧱 '+PT.blocks;

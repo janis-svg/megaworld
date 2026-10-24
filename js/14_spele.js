@@ -8,7 +8,7 @@ function popup(text,pos){
  document.body.appendChild(e);setTimeout(()=>e.remove(),900);
 }
 // augšā pa kreisi: cik cilvēku vēl ir spēlē un cik no viņiem tavā komandā
-function updatePpl(){if(!PT)return;$('ppl').textContent='👥 '+(humans.length+1);$('pplsub').textContent=tf('pplsub',{n:PT.members.length});}
+function updatePpl(){if(!PT)return;$('ppl').textContent='👥 '+(humans.length+1+[...NET.guests.values()].filter(G=>G.ready).length);$('pplsub').textContent=tf('pplsub',{n:PT.members.length});}
 function dmgMonster(z,d,pl,rocket){
  const u=z.userData;if(u.dead)return;
  if(u.kind==='c'){ // cilvēkēdāju ņem tikai raķete: katra raķete = viena no divām dzīvībām
@@ -20,6 +20,7 @@ function dmgMonster(z,d,pl,rocket){
 }
 function hit(){
  if(!active||attackWait>0)return;
+ if(NET.role==='guest'){guestHit();return;}
  if(buildMode){buildAct(false);return;}
  if(inTank){fireTank();return;}
  attackWait=.42;
@@ -190,7 +191,8 @@ function resume(){
  player.position.set(best[0],0,best[1]);pY=0;vy=0;onGround=true;invul=6;
  updateHealth();active=true;renderW();say(t('respawn'));
 }
-function buildHL(){HL.length=0;if(active)HL.push({p:player.position,y:pY,team:PT,pl:true});for(const b of humans)if(!b.dead)HL.push({p:b.g.position,y:0,team:b.team,b});}
+function buildHL(){HL.length=0;if(active)HL.push({p:player.position,y:pY,team:PT,pl:true});for(const b of humans)if(!b.dead)HL.push({p:b.g.position,y:0,team:b.team,b});
+ for(const G of NET.guests.values())if(G.ready&&!G.dead)HL.push({p:G.pos,y:G.y,team:PT,gst:G,b:G});}
 function start(){
  if(!scene)init();
  $('menu').style.display='none';$('dead').style.display='none';
@@ -209,6 +211,7 @@ function start(){
  PT=newTeam(0x3a7ab8,true);PT.blocks=40;
  active=true;selectW('hands');updateHealth();updateAmmo();renderInv();ac();updateChunks();spawnBots();respawnForest();spawnTanks();updateClock();updatePpl();
  say(t('surv')+' '+t('dayhint'),5);renderTeam();
+ if(NET.role==='host')netWelcomeAll(); // jauna spēle: viesi saņem jauno pasauli
 }
 // ja kadru skaits krītas zem 30, grafiku automātiski padara vieglāku (izšķirtspēja, ēnas)
 let qN=0,qT0=0,qLvl=0;
@@ -224,19 +227,30 @@ function animate(){
  requestAnimationFrame(animate);
  if(!scene)return;
  const dt=Math.min(clock.getDelta(),.04);
- if(active){
+ // viesis tikai zīmē to, ko sūta saimnieks; saimnieka pasaule darbojas arī tad, ja viņš pats ir kritis, bet citi spēlē
+ const guest=NET.role==='guest',sim=!guest&&(active||(NET.role==='host'&&NET.guests.size>0));
+ if(guest&&active){
+  gtime+=dt;camR.set(1,0,0).applyQuaternion(camera.quaternion);
+  if(!NET.meDead)move(dt);updateChunks();updateHint();netGuestFrame(dt);updateCorpses(dt);updateFx(dt);updateGhost();updateCamera();followWorld();
+  attackWait=Math.max(0,attackWait-dt);
+  if(mouseDown&&!buildMode&&(cur==='m16'||TOUCH))hit();
+  autoQuality();
+  if(msgWait>0){msgWait-=dt;if(msgWait<=0)$('msg').classList.remove('show');}
+ }else if(sim){
   gtime+=dt;camR.set(1,0,0).applyQuaternion(camera.quaternion);buildHL();
-  move(dt);updateChunks();updateItems(dt);updateHint();updateBullets(dt);updateBots(dt);updateZombies(dt);updateTime(dt);updateCorpses(dt);updateFx(dt);updateTanks(dt);updateDoors();updateGhost();updateCamera();skyline.position.set(player.position.x*.96,0,player.position.z*.96);floor.position.x=player.position.x;floor.position.z=player.position.z;grid.position.x=Math.round(player.position.x/2)*2;grid.position.z=Math.round(player.position.z/2)*2;sun.position.set(player.position.x-25,40,player.position.z+15);sun.target.position.set(player.position.x,0,player.position.z);
+  if(active)move(dt);updateChunks();if(active){updateItems(dt);updateHint();}updateBullets(dt);updateBots(dt);updateZombies(dt);updateTime(dt);updateCorpses(dt);updateFx(dt);updateTanks(dt);updateDoors();updateGhost();updateCamera();followWorld();
   attackWait=Math.max(0,attackWait-dt);
   hurtWait=Math.max(0,hurtWait-dt);invul=Math.max(0,invul-dt);
-  if(mouseDown&&!buildMode&&(cur==='m16'||TOUCH))hit();
+  if(active&&mouseDown&&!buildMode&&(cur==='m16'||TOUCH))hit();
   autoQuality();
   teamT-=dt;if(teamT<=0){teamT=2;teamTick();}
   teamUI-=dt;if(teamUI<=0){teamUI=1.5;renderTeam();updatePpl();}
   if(msgWait>0){msgWait-=dt;if(msgWait<=0)$('msg').classList.remove('show');}
+  if(NET.role==='host')netHostFrame(dt);
  }
  renderer.render(scene,camera);
 }
+function followWorld(){skyline.position.set(player.position.x*.96,0,player.position.z*.96);floor.position.x=player.position.x;floor.position.z=player.position.z;grid.position.x=Math.round(player.position.x/2)*2;grid.position.z=Math.round(player.position.z/2)*2;sun.position.set(player.position.x-25,40,player.position.z+15);sun.target.position.set(player.position.x,0,player.position.z);}
 $('start').onclick=start;
 $('again').onclick=start;
 $('cont').onclick=resume;

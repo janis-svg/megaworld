@@ -21,7 +21,7 @@ function renderW(){
 }
 function selectW(w){if(w!=='hands'&&!inv.has[w])return;cur=w;const gs=player.userData.guns;for(const k in gs)gs[k].visible=k===w&&!buildMode;renderW();updateAmmo();}
 function nextW(){if(!active||buildMode)return;let i=WL.indexOf(cur);for(let k=0;k<5;k++){i=(i+1)%5;const w=WL[i];if(w==='hands'||inv.has[w]){selectW(w);return;}}}
-function useMed(){if(!active||inv.meds<1||health>=100)return;inv.meds--;health=Math.min(100,health+40);updateHealth();renderInv();sfx('heal');say(t('healed'));}
+function useMed(){if(!active||inv.meds<1||health>=100)return;if(NET.role==='guest'){netSend({t:'med'});return;}inv.meds--;health=Math.min(100,health+40);updateHealth();renderInv();sfx('heal');say(t('healed'));}
 function nearInter(){
  let best=null,bd=1e9;const px=player.position.x,pz=player.position.z;
  if(inTank)return{type:'exit'};
@@ -40,7 +40,7 @@ function updateHint(){const o=nearInter(),h=$('hint'),key=TOUCH?'':'E / ';if(!o)
  const k=o.type==='door'?(o.open?'hd0':'hd1'):(o.open?'hem':(o.type==='shelf'?'hsh':'hdr'));
  h.textContent=key+(o.type==='door'?'🚪 ':'📦 ')+t(k);h.style.display='block';setAct(o.type==='door'?'🚪':o.open?'':'📦');}
 function interact(){
- if(!active)return;const o=nearInter();if(!o)return;
+ if(!active)return;if(NET.role==='guest'){netSend({t:'act'});return;}const o=nearInter();if(!o)return;
  if(o.type==='exit'){exitTank();return;}
  if(o.type==='tank'){enterTank(o.t);return;}
  if(o.type==='bot'){askJoin(o.b);return;}

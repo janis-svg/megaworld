@@ -13,7 +13,7 @@ function makeHut(ch,x,z,R,start,key){
  const piv=new THREE.Group();piv.position.set(x-.6,0,z+w/2);piv.userData.dyn=true;
  const dm=cube(1.2,2.1,.1,0x5a3d22,.9);dm.position.set(.6,1.05,0);piv.add(dm);g.add(piv);
  const dob={x:x,z:z+w/2,hx:.6,hz:.12};ch.obs.push(dob);
- ch.inter.push({type:'door',x:x,z:z+w/2,r:2.2,open:false,piv,dob,dm,hp:100});
+ ch.inter.push({type:'door',id:ch.key+'d'+(ch.dn=(ch.dn||0)+1),x:x,z:z+w/2,r:2.2,open:false,piv,dob,dm,hp:100});
  const cont=o=>{o.id=key+'k'+(ch.cn++);o.ch=ch;if(o.mesh)o.mesh.userData.dyn=true;if(start)o.res=PRES;if(taken.has(o.id)){o.open=true;o.loot=[];if(o.mesh)o.mesh.position[o.ax||'x']+=o.sgn*.4;}ch.inter.push(o);};
  const dress=(px,sgn,loot)=>{
   const body=cube(.5,.9,1.1,0x6e4a2a,.9);body.position.set(x+px,.45,z-.4);g.add(body);ch.obs.push({x:x+px,z:z-.4,hx:.25,hz:.55});

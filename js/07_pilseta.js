@@ -35,7 +35,7 @@ function makeTower(ch,x,z,R,low){
  const piv=new THREE.Group();piv.position.set(x-g/2,0,fz);piv.userData.dyn=true;
  const dm=cube(g,2.4,.1,0x4a3a2c,.9);dm.position.set(g/2,1.2,0);piv.add(dm);ch.group.add(piv);
  const dob={x:x,z:fz,hx:g/2,hz:.15};ch.obs.push(dob);
- ch.inter.push({type:'door',x:x,z:fz+.2,r:2.4,open:false,piv,dob,dm,hp:100,apt:true});
+ ch.inter.push({type:'door',id:ch.key+'d'+(ch.dn=(ch.dn||0)+1),x:x,z:fz+.2,r:2.4,open:false,piv,dob,dm,hp:100,apt:true});
  const backZ=z-d/2+t;furnish(ch,R,x-w/4,backZ);furnish(ch,R,x+w/4,backZ);
  for(let i=0;i<3;i++){const bw=w*(.25+R()*.3),bd=d*(.25+R()*.3),bh=1.5+R()*(low?1.5:5);const b=cube(bw,bh,bd,0x666a62,1);b.position.set(x+(R()-.5)*(w-bw),h+bh/2,z+(R()-.5)*(d-bd));ch.group.add(b);}
  for(let i=0;i<3;i++){const v=cube(1.5+R()*2,1+R(),1.5+R()*2,0x2f6b2f,1);v.castShadow=false;v.position.set(x+(R()-.5)*w*.8,h+.4,z+(R()-.5)*d*.8);ch.group.add(v);}
@@ -165,5 +165,7 @@ function mergeMeshes(list,withColor){
 function updateChunks(){
  const pcx=Math.floor(player.position.x/CS),pcz=Math.floor(player.position.z/CS);
  for(let dx=-2;dx<=2;dx++)for(let dz=-2;dz<=2;dz++){if(!chunks.has((pcx+dx)+','+(pcz+dz)))genChunk(pcx+dx,pcz+dz);}
- for(const[k,ch]of chunks){const[cx,cz]=k.split(',').map(Number);if(Math.abs(cx-pcx)>3||Math.abs(cz-pcz)>3){ch.obs.forEach(o=>remOb(o));scene.remove(ch.group);ch.group.traverse(o=>{if(o.isMesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{if(m.userData.keep)return;if(m.map)m.map.dispose();m.dispose();});}});chunks.delete(k);}}
+ // kopīgajā spēlē saimnieks tur ielādētu pasauli arī ap pārējiem spēlētājiem (sadursmēm un laupījumam)
+ const cs=[[pcx,pcz,3]];if(typeof netGuestCenters==='function')for(const c of netGuestCenters()){const gx=Math.floor(c.x/CS),gz=Math.floor(c.z/CS);cs.push([gx,gz,2]);for(let dx=-1;dx<=1;dx++)for(let dz=-1;dz<=1;dz++){if(!chunks.has((gx+dx)+','+(gz+dz)))genChunk(gx+dx,gz+dz);}}
+ for(const[k,ch]of chunks){const[cx,cz]=k.split(',').map(Number);if(cs.every(([x,z,r])=>Math.abs(cx-x)>r||Math.abs(cz-z)>r)){ch.obs.forEach(o=>remOb(o));scene.remove(ch.group);ch.group.traverse(o=>{if(o.isMesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{if(m.userData.keep)return;if(m.map)m.map.dispose();m.dispose();});}});chunks.delete(k);}}
 }

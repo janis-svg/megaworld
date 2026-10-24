@@ -91,3 +91,7 @@ html.touch #team{left:8px;right:8px;top:118px;max-width:none;min-width:0;max-hei
 html.touch #inv{top:118px}
 @media (max-height:520px){html.touch #atk{width:72px;height:72px;bottom:12px}html.touch #jump{bottom:94px;width:54px;height:54px}html.touch #act{bottom:12px;right:100px;width:56px;height:56px}html.touch #wsw{bottom:80px;right:104px;width:50px;height:50px}html.touch #bmb{bottom:140px;right:104px;width:50px;height:50px}html.touch.build #rmb{bottom:156px;right:30px}html.touch #joy{bottom:12px;width:110px;height:110px}html.touch #knob{left:30px;top:30px}html.touch #team{max-height:calc(100% - 140px)}html.touch #hint{top:96px}}
 #brand #pplsub{letter-spacing:.5px;font-size:11px;color:#c8d6e2;text-shadow:0 1px 4px #000}
+#mp{position:fixed;top:160px;left:16px;z-index:14;font-size:13px;line-height:1.7;display:none;max-width:calc(100% - 32px);width:340px;pointer-events:auto}
+#mp input{margin:6px 0;width:100%}
+html.touch #mp{left:8px;right:8px;top:118px;width:auto}
+#mp .corner{margin:4px 6px 0 0}

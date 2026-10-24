@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MegaWorld - Realistic Zombie Survival</title>
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
 <div id="hurtFlash"></div>
@@ -23,7 +23,7 @@
   <div><span data-k="cl"></span> <b id="coins">0</b></div>
   <div><span data-k="al"></span> <b id="ammo">-</b></div>
   <div><span data-k="ll"></span> <b id="last">-</b></div></div>
-  <button class="corner" id="lang">EN</button><button class="corner" id="info">ℹ️</button><button class="corner" id="invb">🎒</button><button class="corner" id="tmb">👥</button><button class="corner" id="bld">🧱</button><button class="corner" id="snd">🔊</button><button class="corner" id="view">🧍</button><button class="corner" id="cfg">⚙️</button>
+  <button class="corner" id="lang">EN</button><button class="corner" id="info">ℹ️</button><button class="corner" id="invb">🎒</button><button class="corner" id="tmb">👥</button><button class="corner" id="bld">🧱</button><button class="corner" id="snd">🔊</button><button class="corner" id="view">🧍</button><button class="corner" id="mpb">🌐</button><button class="corner" id="cfg">⚙️</button>
  </div>
  <div id="help" class="panel" data-k="help"></div>
  <div id="msg"></div>
@@ -38,6 +38,7 @@
 <button class="tbtn" id="rmb">♻️</button>
 <div id="inv" class="panel"></div>
 <div id="team" class="panel"></div>
+<div id="mp" class="panel"></div>
 <div id="wbar"></div>
 <div id="bbar"></div>
 <div id="hint" class="panel"></div>
@@ -47,6 +48,7 @@
  <p data-k="intro"></p>
  <input id="nickname" maxlength="16" value="Spēlētājs">
  <button id="start" data-k="start"></button>
+ <p id="mperr" style="font-size:13px;margin-top:12px;color:#ffcf61"></p>
  <p style="font-size:11px;margin-top:16px;color:#5f7689" data-k="net"></p>
 </div></div>
 <div id="dead"><div class="card panel">
@@ -55,21 +57,23 @@
  <div class="btns"><button id="cont" data-k="cont"></button><button id="again" data-k="again"></button></div>
 </div></div>
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="js/01_sakums.js?v=6"></script>
-<script src="js/02_teksti.js?v=6"></script>
-<script src="js/03_pamati.js?v=6"></script>
-<script src="js/04_ieroci_sadursmes.js?v=6"></script>
-<script src="js/05_pasaule.js?v=6"></script>
-<script src="js/06_laiks.js?v=6"></script>
-<script src="js/07_pilseta.js?v=6"></script>
-<script src="js/08_prieksmeti_lodes.js?v=6"></script>
-<script src="js/09_skanas_efekti.js?v=6"></script>
-<script src="js/10_buvesana.js?v=6"></script>
-<script src="js/11_ui.js?v=6"></script>
-<script src="js/12_cilveki.js?v=6"></script>
-<script src="js/13_monstri.js?v=6"></script>
-<script src="js/14_spele.js?v=6"></script>
-<script src="js/15_vadiba.js?v=6"></script>
-<script src="js/16_tanki.js?v=6"></script>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="js/01_sakums.js?v=8"></script>
+<script src="js/02_teksti.js?v=8"></script>
+<script src="js/03_pamati.js?v=8"></script>
+<script src="js/04_ieroci_sadursmes.js?v=8"></script>
+<script src="js/05_pasaule.js?v=8"></script>
+<script src="js/06_laiks.js?v=8"></script>
+<script src="js/07_pilseta.js?v=8"></script>
+<script src="js/08_prieksmeti_lodes.js?v=8"></script>
+<script src="js/09_skanas_efekti.js?v=8"></script>
+<script src="js/10_buvesana.js?v=8"></script>
+<script src="js/11_ui.js?v=8"></script>
+<script src="js/12_cilveki.js?v=8"></script>
+<script src="js/13_monstri.js?v=8"></script>
+<script src="js/14_spele.js?v=8"></script>
+<script src="js/15_vadiba.js?v=8"></script>
+<script src="js/16_tanki.js?v=8"></script>
+<script src="js/17_tikls.js?v=8"></script>
 </body>
 </html>

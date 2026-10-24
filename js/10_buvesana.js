@@ -33,6 +33,7 @@ function canPlace(x,z,hh){
 function buildCell(){return[Math.round(player.position.x-Math.sin(yaw)*1.7),Math.round(player.position.z-Math.cos(yaw)*1.7)];}
 function buildAct(rem){
  if(!active)return;const[x,z]=buildCell();
+ if(NET.role==='guest'){netSend({t:'bld',x,z,d:bTool==='door'?1:0,r:rem?1:0});attackWait=.18;return;}
  if(rem){const c=blocks.get(x+','+z);let top=null;if(c)for(const b of c)if(!top||b.y1>top.y1)top=b;if(!top||top.team!==PT){say(t('noplace'));return;}removeBlock(top,false);PT.blocks+=top.door?4:1;sfx('build');renderInv();return;}
  const door=bTool==='door',cost=door?4:1;
  if(PT.blocks<cost){say(t('nob'));return;}

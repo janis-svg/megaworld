@@ -2,11 +2,12 @@
 // ---------- monstri: zombiji, vilkači, zombvilki ----------
 function monsterData(z,kind){
  const S={z:{hp:100,speed:1.0+Math.random()*.6,dmg:8,rate:.9,reach:1.5,sc:1,bh:2.35},w:{hp:200,speed:3.8+Math.random()*.8,dmg:13,rate:.8,reach:1.6,sc:1.05,bh:2.5},zw:{hp:600,speed:2.1,dmg:30,rate:1.3,reach:2.4,sc:1.9,bh:4.5},s:{hp:50,speed:2.1+Math.random()*.5,dmg:6,rate:.8,reach:1.4,sc:1,bh:2.25},f:{hp:160,speed:5.4+Math.random()*.6,dmg:10,rate:1.2,reach:1.6,sc:1.15,bh:2.65},c:{hp:2,speed:.75,dmg:34,rate:1.7,reach:2.7,sc:2.3,bh:5.4}}[kind];
- z.userData=Object.assign(z.userData||{},{kind,hp:S.hp,max:S.hp,speed:S.speed,dmg:S.dmg,rate:S.rate,reach:S.reach,sc:S.sc,bh:S.bh,attack:0,parts:z.children,dead:false,phase:Math.random()*10,ba:0});
+ z.userData=Object.assign(z.userData||{},{nid:++NID,kind,hp:S.hp,max:S.hp,speed:S.speed,dmg:S.dmg,rate:S.rate,reach:S.reach,sc:S.sc,bh:S.bh,attack:0,parts:z.children,dead:false,phase:Math.random()*10,ba:0});
  z.scale.setScalar(S.sc);z.userData.bar=mkBar(kind==='zw'||kind==='c'?1.8:1,{z:0xe74c3c,w:0xe67e22,zw:0x9b59b6,s:0xdfe6e9,c:0x8e0000,f:0x27ae60}[kind]);scene.add(z);zombies.push(z);
 }
 function spawnAround(r0,r1){
- const c=Math.random()<.65||!humans.length?player.position:humans[Math.floor(Math.random()*humans.length)].g.position;
+ let c=Math.random()<.65||!humans.length?player.position:humans[Math.floor(Math.random()*humans.length)].g.position;
+ const gs=[...NET.guests.values()].filter(G=>G.ready&&!G.dead);if(gs.length&&Math.random()<gs.length/(gs.length+1))c=gs[Math.floor(Math.random()*gs.length)].pos;
  for(let k=0;k<12;k++){const a=Math.random()*6.283,r=r0+Math.random()*(r1-r0),x=c.x+Math.cos(a)*r,z=c.z+Math.sin(a)*r;
   if(Math.abs(x)>EDGE-4||Math.abs(z)>EDGE-4||wallAt(x,z,.5))continue;
   if(teams.some(Tm=>Tm.base&&Math.abs(x-Tm.base.x)<Tm.size+1.5&&Math.abs(z-Tm.base.z)<Tm.size+1.5))continue;
@@ -14,6 +15,14 @@ function spawnAround(r0,r1){
  return[Math.max(-EDGE+4,Math.min(EDGE-4,c.x+r0)),c.z];
 }
 function spawnZombie(fromB){
+ const z=zombieMesh();
+ let spot=null;
+ if(fromB){const c=[];for(const ch of chunks.values())for(const o of ch.inter){if(o.apt&&!o.open&&o.hp>0){const d=Math.hypot(o.x-player.position.x,o.z-player.position.z);if(d>18&&d<62)c.push(o);}}if(c.length)spot=c[Math.floor(Math.random()*c.length)];}
+ monsterData(z,'z');z.userData.dr=spot;
+ if(spot)z.position.set(spot.x+(Math.random()-.5)*1.2,0,spot.z-1.3);
+ else{const c=spawnAround(14,40);z.position.set(c[0],-1.9,c[1]);z.userData.rise=1.6;debris(c[0],.1,c[1],0x4a3a28,8);sfxAt('rise',c[0],c[1],40);}
+}
+function zombieMesh(){
  const z=new THREE.Group();
  const body=cube(.68,.82,.38,0x4a5a3a,.95);body.position.y=1.08;z.add(body);
  const chest=cube(.7,.3,.4,0x3a4a2e,.95);chest.position.y=1.32;z.add(chest);
@@ -23,11 +32,7 @@ function spawnZombie(fromB){
  for(let x of [-.48,.48]){const arm=cube(.18,.6,.22,0x6b8a45,.9);arm.position.set(x,1.08,0);arm.rotation.x=-.15;z.add(arm);}
  for(let x of [-.18,.18]){const leg=cube(.24,.58,.26,0x2e3a24,.95);leg.position.set(x,.35,0);z.add(leg);}
  for(let x of [-.18,.18]){const foot=cube(.26,.12,.32,0x1a1f14,.95);foot.position.set(x,.06,.02);z.add(foot);}
- let spot=null;
- if(fromB){const c=[];for(const ch of chunks.values())for(const o of ch.inter){if(o.apt&&!o.open&&o.hp>0){const d=Math.hypot(o.x-player.position.x,o.z-player.position.z);if(d>18&&d<62)c.push(o);}}if(c.length)spot=c[Math.floor(Math.random()*c.length)];}
- monsterData(z,'z');z.userData.dr=spot;
- if(spot)z.position.set(spot.x+(Math.random()-.5)*1.2,0,spot.z-1.3);
- else{const c=spawnAround(14,40);z.position.set(c[0],-1.9,c[1]);z.userData.rise=1.6;debris(c[0],.1,c[1],0x4a3a28,8);sfxAt('rise',c[0],c[1],40);}
+ return z;
 }
 // skelets: ātrāks par zombiju, bet vājāks (50 dzīvības)
 function skelMesh(){
@@ -121,7 +126,7 @@ function spawnWolf(){
  monsterData(z,'w');z.position.set(best[0],0,best[1]);z.userData.hw=.5+Math.random()*2;
 }
 // ---------- vilkaču prāts: bars, apiešana, uzbrukums un atkāpšanās, lēciens pār zemu sienu, kaukšana ----------
-const yOf=h=>h.pl?pY:0,okH=h=>!!h&&(h.pl?active:!h.b.dead),hid=h=>h.pl?'P':h.b;
+const yOf=h=>h.pl?pY:(h.y||0),okH=h=>!!h&&(h.pl?active:!h.b.dead),hid=h=>h.pl?'P':h.b;
 function howlAt(x,z){const d=Math.hypot(x-player.position.x,z-player.position.z);if(d>150)return;const v=Math.max(.012,.075*(1-d/150)),f=330+Math.random()*80;tone(f,1.1,'sine',v,f*1.75);tone(f*1.75,1.2,'sine',v*.8,f*.9,1.05);}
 function wolfTarget(z,u){let best=null,bs=1e9;
  for(const h of HL){const d=Math.hypot(h.p.x-z.position.x,h.p.z-z.position.z);if(d>110||yOf(h)>1.2)continue;if(u.bad===hid(h)&&u.badT>gtime)continue;
