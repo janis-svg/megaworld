@@ -26,7 +26,10 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - 🐔 Burvja burvestība pārvērš monstru vai pretinieku vistā.
 - 🔥 Sērkociņi: koks 10, māja jo lielāka, jo vairāk.
 - 🪟 Logi: caur tiem var redzēt un šaut. Mežā atrod klučus, logus, durvis un sērkociņus.
-- 🌻 Daži cilvēki ir saimnieki: viņi veido saimniecību meža malā ar žogu, nekaro, bet aizstāvas.
+- 🌻 🐄 Apmēram trešdaļa cilvēku ir saimnieki: dārzkopji (vairāk koku un puķu) un lopkopji (vairāk govju un cūku). Viņi dzīvo privātmājās pilsētas malā pie meža, pagalmā ir sēta ar žogu. Nekaro, bet aizstāvas.
+- 🏠 Privātmājas: karogs uz jumta rāda, kura komanda tur dzīvo (pelēks = brīva). Ieej brīvā mājā un spied 🤚, tad tā ir tava: tur atdzimsti, pagalmā ir tava bāze.
+- 🤝 Blakus esošas saimniecības var apvienoties lielākā (līdz 6 cilvēkiem, ne biežāk kā reizi dienā), un tad tām ir lielāks žogs.
+- ⚔️ Dienā kāda banda dažreiz mēģina ieņemt saimniecību vai tavu māju. Ja pagalmā neviens to neaizstāv, banda māju ieņem. Ja tās iedzīvotāju vairs nav, māju var atkal apdzīvot.
 - 🐺 Vilkači medī dzīvniekus un, tos apēdot, atgūst spēkus (govis un cūkas iekāro visvairāk).
 - 🌾 Raža: 🍎 āboli (no izauguša koka), 🥚 olas (vistas), 🥛 piens (govs), 🍄 sēnes (cūka), 🌸 puķes (noplūc ziedošu puķi). Ražu pārdod jebkuram tirgotājam, ābolu var arī apēst.
 - 🌱 Koks izaug vienas spēles dienas laikā, puķe dažās stundās.
@@ -70,6 +73,7 @@ Pasauli skaita tā cilvēka ierīce, kurš uzaicināja. Ja viņš aizver lapu, s
 | `js/18_uguns.js` | Sērkociņi un dedzināšana |
 | `js/19_zveri_burvestibas.js` | Nauda, tirgotāji, zvēri, vistas, sēklas, saimnieki |
 | `js/20_saimnieciba.js` | Raža, tirgus cenas, govis un cūkas, augšana, suņa būda |
+| `js/21_privatmajas.js` | Privātmājas, saimniecību apvienošanās, bandu uzbrukumi saimniecībām |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 

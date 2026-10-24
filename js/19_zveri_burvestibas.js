@@ -238,13 +238,10 @@ const _spawnBots=spawnBots;spawnBots=function(){
  for(const d of [...drops]){scene.remove(d.m);freeObj(d.m);}drops.length=0;
  spawnTraders(true);PT.coins=0;
  for(let i=0;i<9;i++){const [x,z]=roadPoint(0,0,1e9);spawnPet('dog',x+(Math.random()-.5)*6,z+(Math.random()-.5)*6,null);}
- // ~10% saimnieki: veido saimniecību, nekaro, neseko; ja uzbrūk - aizstāvas
- let fN=0;const need=Math.max(1,Math.round(humans.length*.1));
+ // ~35% saimnieki (dārzkopji un lopkopji): dzīvo privātmājās pie meža, nekaro, neseko; ja uzbrūk - aizstāvas (21_privatmajas.js)
+ let fN=0;const need=Math.max(1,Math.round(humans.length*.35));
  for(const T of teams.filter(x=>!x.isPlayer&&!x.friendly&&!x.calm&&!x.pal&&!x.traderT).sort((a,b)=>a.members.length-b.members.length)){if(fN>=need)break;if(fN+T.members.length>need)continue;
-  T.farm=true;T.calm=true;T.noOffer=true;fN+=T.members.length;T.base=farmSpot();T.inner=0;T.blocks=60;makePlan(T);
-  for(const m of T.members){m.I.has.grow=true;m.I.ammo.grow=20;m.I.has.flow=true;m.I.ammo.flow=20;m.role='build';relabel(m);}
-  for(const k of ['chicken','chicken','chicken','pig','cow']){const c=spawnChicken(T.base.x+(Math.random()-.5)*4,T.base.z+(Math.random()-.5)*4,null,k);c.home=[T.base.x,T.base.z];}
-  const fm=T.members[0];placeDoghouse(Math.round(T.base.x)+1,Math.round(T.base.z)-1,fm);spawnPet('dog',T.base.x,T.base.z,fm);}
+  fN+=T.members.length;makeFarm(T,true);}
  for(const b of humans){if(b.trader||b.team.farm)continue;const q=Math.random();if(q<.15){b.I.has.poly=true;b.I.ammo.poly=2;}else if(q<.3){b.I.has.grow=true;b.I.ammo.grow=5;}}
  // pilsētā izmētātas dažas monētas sākumam
  for(let i=0;i<14;i++){const [x,z]=roadPoint(0,0,1e9);dropCoins(x+(Math.random()-.5)*3,z+(Math.random()-.5)*3,5+Math.floor(Math.random()*6));}

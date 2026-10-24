@@ -126,9 +126,11 @@ function genChunk(cx,cz){
  for(let q=0;q<4;q++){
   const qx=ox+(q&1?24:0)+8,qz=oz+(q&2?24:0)+8,r=R();
   if(ns(qx,qz))continue;
-  if(r<.1)bld(ch,'hut',()=>makeHut(ch,qx,qz,R,false,key));
-  else if(r<.5)bld(ch,'tall',()=>makeTower(ch,qx,qz,R,false));
-  else if(r<.68)bld(ch,'low',()=>makeTower(ch,qx,qz,R,true));
+  const H=typeof houseAtQ==='function'&&houseAtQ(qx,qz);
+  if(H)bld(ch,'house',()=>makeHouse(ch,H,R,key)); // privātmāja pilsētas malā pie meža (21_privatmajas.js)
+  else if(r<.1)bld(ch,'hut',()=>makeHut(ch,qx,qz,R,false,key));
+  else if(r<.4)bld(ch,'tall',()=>makeTower(ch,qx,qz,R,false));
+  else if(r<.6)bld(ch,'low',()=>makeTower(ch,qx,qz,R,true));
  }
  const start=cx===0&&cz===0;
  if(start)bld(ch,'hut',()=>makeHut(ch,10,-14,R,true,key));
