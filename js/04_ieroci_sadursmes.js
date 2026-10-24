@@ -7,7 +7,7 @@ const WP={hands:{ic:'✊',dmg:25},
  rpg:{ic:'🚀',dmg:260,rate:1.4,max:8,give:2,add:2,pel:1,sp:0,life:2.2,brate:3.2,rng:30,val:45,av:12,rocket:true}};
 const WL=['hands','pistol','m16','shot','rpg'],GUNS=WL.slice(1);
 const newInv=()=>({has:{pistol:false,m16:false,shot:false,rpg:false},ammo:{pistol:0,m16:0,shot:0,rpg:0},meds:0,armor:0});
-function rollLoot(R,p){if(R()>p)return[];const q=R();return q<.1?['pistol','a_pistol']:q<.16?['m16','a_m16']:q<.2?['shot','a_shot']:q<.23?['rpg','a_rpg']:q<.43?['a_pistol']:q<.53?['a_m16']:q<.59?['a_shot']:q<.63?['a_rpg']:q<.75?['med']:q<.86?['armor']:['blk'];}
+function rollLoot(R,p){if(R()>p)return[];const q=R();return q<.14?['pistol','a_pistol']:q<.23?['m16','a_m16']:q<.29?['shot','a_shot']:q<.34?['rpg','a_rpg']:q<.48?['a_pistol']:q<.56?['a_m16']:q<.61?['a_shot']:q<.66?['a_rpg']:q<.76?['med']:q<.87?['armor']:['blk'];}
 function pickGround(R){const q=R();return q<.35?'a_pistol':q<.5?'a_m16':q<.6?'a_shot':q<.65?'a_rpg':q<.8?'armor':'blk';}
 function pickWeapon(R){const q=R();return q<.45?'pistol':q<.75?'m16':q<.92?'shot':'rpg';}
 function giveLoot(k,I,Tm){

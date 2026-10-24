@@ -12,7 +12,7 @@ function dmgMonster(z,d,pl,rocket){
  if(u.kind==='c'){ // cilvēkēdāju ņem tikai raķete: katra raķete = viena no divām dzīvībām
   if(!rocket){if(gtime>(u.msgT||0)&&Math.hypot(z.position.x-player.position.x,z.position.z-player.position.z)<30){u.msgT=gtime+1.5;popup(t('onlyrpg'),z.position.clone().add(new THREE.Vector3(0,u.bh-.1,0)));}return;}
   if(d<=0)return;d=1;}
- u.hp-=d;if(pl)$('last').textContent='-'+Math.round(d)+' HP';
+ u.hp-=d;if(u.kind==='f')u.angry=gtime+15;if(pl)$('last').textContent='-'+Math.round(d)+' HP';
  if(Math.hypot(z.position.x-player.position.x,z.position.z-player.position.z)<30){if(pl)sfx('hit');popup('-'+Math.round(d)+' HP',z.position.clone().add(new THREE.Vector3(0,u.bh-.1,0)));}
  if(u.hp<=0)killZombie(z,pl);
 }
@@ -51,9 +51,9 @@ function killZombie(z,pl,boom){
  if(boom)return;
  sfxAt('kill',z.position.x,z.position.z,40);
  if(!pl)return;
- score+={zw:80,w:25,z:10,s:8,c:150}[u.kind];coins+={zw:30,w:10,z:5,s:3,c:60}[u.kind];
+ score+={zw:80,w:25,z:10,s:8,c:150,f:20}[u.kind];coins+={zw:30,w:10,z:5,s:3,c:60,f:8}[u.kind];
  $('score').textContent=score;$('coins').textContent=coins;
- say(t({zw:'kzw',w:'kw',z:'kill',s:'ks',c:'kc'}[u.kind]));
+ say(t({zw:'kzw',w:'kw',z:'kill',s:'ks',c:'kc',f:'kf'}[u.kind]));
 }
 function move(dt){
  const f=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
@@ -118,7 +118,7 @@ function updateZombies(dt){
  nc[0]=nc[1]=nc[2]=nc[3]=nc[4]=0;
  for(let i=zombies.length-1;i>=0;i--){
   const z=zombies[i],u=z.userData;if(!z||u.dead)continue;
-  nc[{z:0,w:1,zw:2,s:3,c:4}[u.kind]]++;
+  const ix={z:0,w:1,zw:2,s:3,c:4}[u.kind];if(ix!==undefined)nc[ix]++;
   const pd=Math.hypot(z.position.x-player.position.x,z.position.z-player.position.z),vis=pd<60;u.bar.bg.visible=u.bar.f.visible=vis;z.visible=pd<82;
   if(vis)setBar(u.bar,z.position.x,Math.max(0,z.position.y)+u.bh,z.position.z,u.hp/u.max);
   if(u.rise>0){u.rise-=dt;z.position.y=-1.9*Math.max(0,u.rise)/1.6;if(u.rise<=0)z.position.y=0;continue;}
@@ -127,6 +127,7 @@ function updateZombies(dt){
   if(u.boom!==undefined){u.boom-=dt;z.scale.setScalar(u.sc*(1+Math.abs(Math.sin(clock.elapsedTime*25))*.12));if(u.boom<=0)zombieBoom(z);continue;}
   if(u.flee>0){u.flee-=dt;const l=Math.hypot(z.position.x,z.position.z)||1;z.position.x+=z.position.x/l*8*dt;z.position.z+=z.position.z/l*8*dt;z.rotation.y=Math.atan2(-z.position.x,-z.position.z);if(u.flee<=0||l>CITY+25)removeMonster(z);continue;}
   if(u.kind==='w'){updateWolf(z,u,dt);continue;}
+  if(u.kind==='f'){updateForest(z,u,dt);continue;}
   if(u.dr){const dr=u.dr;if(dr.open||dr.hp<=0||Math.hypot(dr.x-player.position.x,dr.z-player.position.z)>100){u.dr=null;}else{const dxd=dr.x-z.position.x,dzd=dr.z-1.0-z.position.z,dd=Math.hypot(dxd,dzd);if(dd>.4){z.position.x+=dxd/dd*u.speed*dt;z.position.z+=dzd/dd*u.speed*dt;}z.rotation.y=Math.PI;pushOut(z.position,.4);bashDoor(z,dr,dt);continue;}}
   let tg=null,dist=1e9;for(const h of HL){const d=Math.hypot(h.p.x-z.position.x,h.p.z-z.position.z);if(d<dist){dist=d;tg=h;}}
   if(!tg)continue;
@@ -203,7 +204,7 @@ function start(){
  inv=newInv();cur='hands';buildMode=false;bTool='blk';mouseDown=false;invul=0;
  hour=8;lastH=8;day=1;gtime=0;skyT=0;spawnedZ=0;spawnedW=0;spawnedS=0;madeZW=0;clkM=-1;nc[0]=nc[1]=nc[2]=nc[3]=nc[4]=0;spawnedC=0;offerAt=15;drawSky(0);
  PT=newTeam(0x3a7ab8,true);PT.blocks=40;
- active=true;selectW('hands');updateHealth();updateAmmo();renderInv();ac();updateChunks();spawnBots();updateClock();
+ active=true;selectW('hands');updateHealth();updateAmmo();renderInv();ac();updateChunks();spawnBots();respawnForest();updateClock();
  say(t('surv')+' '+t('dayhint'),5);renderTeam();
 }
 // ja kadru skaits krītas zem 30, grafiku automātiski padara vieglāku (izšķirtspēja, ēnas)

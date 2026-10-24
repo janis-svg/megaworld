@@ -10,7 +10,7 @@ function bashDoor(z,o,dt){
 }
 function cont(ch,o){o.id=ch.key+'k'+(ch.cn++);o.ch=ch;if(o.mesh)o.mesh.userData.dyn=true;if(taken.has(o.id)){o.open=true;o.loot=[];if(o.mesh)o.mesh.position[o.ax||'x']+=o.sgn*.4;}ch.inter.push(o);}
 function furnish(ch,R,ax,backZ){
- const lo=()=>rollLoot(R,.3);
+ const lo=()=>rollLoot(R,.4);
  const body=cube(1.1,.9,.5,0x6e4a2a,.9);body.position.set(ax,.45,backZ+.25);ch.group.add(body);ch.obs.push({x:ax,z:backZ+.25,hx:.55,hz:.25});
  const d1=cube(.9,.26,.06,0x9a7040,.7);d1.position.set(ax,.62,backZ+.53);ch.group.add(d1);
  const d2=cube(.9,.26,.06,0x8a6238,.7);d2.position.set(ax,.3,backZ+.53);ch.group.add(d2);
@@ -93,7 +93,7 @@ function genWild(ch,R,ox,oz,deep,free,key){
  tr.castShadow=co.castShadow=true;tr.receiveShadow=co.receiveShadow=true;ch.group.add(tr,co);
  for(let i=0;i<8;i++){const x=ox+R()*CS,z=oz+R()*CS;if(!free(x,z))continue;const b=new THREE.Mesh(new THREE.IcosahedronGeometry(.6+R()*.7,0),mat(0x234a22,1));b.position.set(x,.3,z);b.scale.y=.7;ch.group.add(b);}
  for(let i=0;i<4;i++){const x=ox+R()*CS,z=oz+R()*CS;if(!free(x,z))continue;const r=new THREE.Mesh(new THREE.DodecahedronGeometry(.3+R()*.6,0),mat(0x6b7280,.95));r.position.set(x,.25,z);r.rotation.set(R()*3,R()*3,R()*3);r.castShadow=true;ch.group.add(r);}
- if(!deep&&R()<.35){const x=ox+R()*CS,z=oz+R()*CS;if(free(x,z))makeItem(ch,R()<.3?pickWeapon(R):pickGround(R),x,z,key+'f');}
+ if(!deep&&R()<.45){const x=ox+R()*CS,z=oz+R()*CS;if(free(x,z))makeItem(ch,R()<.45?pickWeapon(R):pickGround(R),x,z,key+'f');}
 }
 function genChunk(cx,cz){
  const key=cx+','+cz,R=rng(Math.imul(cx,73856093)^Math.imul(cz,19349663)),ch={group:new THREE.Group(),obs:[],items:[],inter:[],cn:0,key};
@@ -124,7 +124,8 @@ function genChunk(cx,cz){
  for(let i=0;i<3;i++){const[x,z]=P();if(!free(x,z))continue;const r=new THREE.Mesh(new THREE.DodecahedronGeometry(.3+R()*.5,0),mat(0x6b7280,.95));r.position.set(x,.25,z);r.rotation.set(R()*3,R()*3,R()*3);r.castShadow=true;ch.group.add(r);}
  if(R()<.5){const[x,z]=P();if(free(x,z))makeItem(ch,pickGround(R),x,z,key+'g');}
  if(R()<.25){const[x,z]=P();if(free(x,z))makeItem(ch,'med',x,z,key+'e');}
- if(R()<.12){const[x,z]=P();if(free(x,z))makeItem(ch,pickWeapon(R),x,z,key+'w');}
+ if(R()<.25){const[x,z]=P();if(free(x,z))makeItem(ch,pickWeapon(R),x,z,key+'w');}
+ if(R()<.12){const[x,z]=P();if(free(x,z))makeItem(ch,pickWeapon(R),x,z,key+'v');}
  }
  for(const o of ch.obs)addOb(o);
  mergeChunk(ch);

@@ -1,9 +1,9 @@
 // 13_monstri.js - Zombiji, skeleti, vilkači (prāts, kaukšana), zombvilki
 // ---------- monstri: zombiji, vilkači, zombvilki ----------
 function monsterData(z,kind){
- const S={z:{hp:100,speed:1.0+Math.random()*.6,dmg:8,rate:.9,reach:1.5,sc:1,bh:2.35},w:{hp:200,speed:3.8+Math.random()*.8,dmg:13,rate:.8,reach:1.6,sc:1.05,bh:2.5},zw:{hp:600,speed:2.1,dmg:30,rate:1.3,reach:2.4,sc:1.9,bh:4.5},s:{hp:50,speed:2.1+Math.random()*.5,dmg:6,rate:.8,reach:1.4,sc:1,bh:2.25},c:{hp:2,speed:.75,dmg:34,rate:1.7,reach:2.7,sc:2.3,bh:5.4}}[kind];
+ const S={z:{hp:100,speed:1.0+Math.random()*.6,dmg:8,rate:.9,reach:1.5,sc:1,bh:2.35},w:{hp:200,speed:3.8+Math.random()*.8,dmg:13,rate:.8,reach:1.6,sc:1.05,bh:2.5},zw:{hp:600,speed:2.1,dmg:30,rate:1.3,reach:2.4,sc:1.9,bh:4.5},s:{hp:50,speed:2.1+Math.random()*.5,dmg:6,rate:.8,reach:1.4,sc:1,bh:2.25},f:{hp:160,speed:5.4+Math.random()*.6,dmg:10,rate:1.2,reach:1.6,sc:1.15,bh:2.65},c:{hp:2,speed:.75,dmg:34,rate:1.7,reach:2.7,sc:2.3,bh:5.4}}[kind];
  z.userData=Object.assign(z.userData||{},{kind,hp:S.hp,max:S.hp,speed:S.speed,dmg:S.dmg,rate:S.rate,reach:S.reach,sc:S.sc,bh:S.bh,attack:0,parts:z.children,dead:false,phase:Math.random()*10,ba:0});
- z.scale.setScalar(S.sc);z.userData.bar=mkBar(kind==='zw'||kind==='c'?1.8:1,{z:0xe74c3c,w:0xe67e22,zw:0x9b59b6,s:0xdfe6e9,c:0x8e0000}[kind]);scene.add(z);zombies.push(z);
+ z.scale.setScalar(S.sc);z.userData.bar=mkBar(kind==='zw'||kind==='c'?1.8:1,{z:0xe74c3c,w:0xe67e22,zw:0x9b59b6,s:0xdfe6e9,c:0x8e0000,f:0x27ae60}[kind]);scene.add(z);zombies.push(z);
 }
 function spawnAround(r0,r1){
  const c=Math.random()<.65||!humans.length?player.position:humans[Math.floor(Math.random()*humans.length)].g.position;
@@ -82,6 +82,39 @@ function cannMesh(){
  z.userData.legs=legs;return z;
 }
 function spawnCannibal(){const z=cannMesh();monsterData(z,'c');const c=spawnAround(30,50);z.position.set(c[0],-4.5,c[1]);z.userData.rise=2.5;debris(c[0],.1,c[1],0x4a3a28,12);say(t('cnew'),5);sfx('roar');}
+// meža cilvēki: dienā dzīvo mežā, uzbrūk ar nažiem, nedraudzējas; 22:00 pārvēršas vilkačos; katru rītu atkal 20
+function forestMesh(){
+ const z=new THREE.Group(),skin=0xb8a48c,cl=[0x3d4a2a,0x4a3b2a,0x2f3d2a][Math.floor(Math.random()*3)],legs=[];
+ const body=cube(.72,.85,.4,cl,1);body.position.y=1.12;z.add(body);
+ const head=cube(.46,.46,.44,skin,.85);head.position.y=1.78;z.add(head);
+ const hood=cube(.54,.32,.52,0x2a2418,1);hood.position.set(0,1.98,.03);z.add(hood);
+ for(const x of [-.11,.11]){const e=cube(.07,.05,.03,0xddcc33,.4);e.material.emissive.set(0x665500);e.position.set(x,1.8,-.23);z.add(e);}
+ const armL=cube(.2,.65,.24,cl,1);armL.position.set(-.48,1.1,0);z.add(armL);
+ const armR=cube(.2,.65,.24,cl,1);armR.position.set(.48,1.1,0);z.add(armR);
+ const knife=cube(.05,.07,.42,0xbfc5cc,.25);knife.material.metalness=.8;knife.position.set(0,-.34,-.18);armR.add(knife);
+ for(const x of [-.18,.18]){const l=cube(.26,.7,.28,0x2a2418,1);l.position.set(x,.38,0);z.add(l);legs.push(l);}
+ z.userData.legs=legs;z.userData.arm=armR;return z;
+}
+function forestPoint(nx,nz){let best=null,bd=1e9;for(let k=0;k<8;k++){const side=Math.floor(Math.random()*4),v=(Math.random()*2-1)*(EDGE-12),d=CITY+8+Math.random()*(EDGE-CITY-16),x=side===0?d:side===1?-d:v,z=side===2?d:side===3?-d:v,dd=Math.hypot(x-nx,z-nz);if(dd<bd){bd=dd;best=[x,z];}}return best;}
+function spawnForestMan(){const z=forestMesh();monsterData(z,'f');const[x,zz]=forestPoint((Math.random()*2-1)*EDGE,(Math.random()*2-1)*EDGE);z.position.set(x,0,zz);}
+function respawnForest(){let n=zombies.filter(z=>z.userData.kind==='f'&&!z.userData.dead).length;for(;n<20;n++)spawnForestMan();}
+function transformForest(){let n=0;for(const z of [...zombies]){const u=z.userData;if(u.kind!=='f'||u.dead)continue;const x=z.position.x,zz=z.position.z;removeMonster(z);const w=wolfMesh();monsterData(w,'w');w.position.set(x,0,zz);w.userData.hw=.5+Math.random()*4;explosionFx(x,1,zz,1.5,0x6b4a2f);n++;}return n;}
+function updateForest(z,u,dt){
+ const p=z.position;u.cd=(u.cd||0)-dt;
+ const angry=u.angry>gtime;let tg=null,best=angry?60:24;
+ for(const h of HL){const d=Math.hypot(h.p.x-p.x,h.p.z-p.z);if(d<best&&yOf(h)<1.3){best=d;tg=h;}}
+ if(tg&&!angry&&Math.max(Math.abs(p.x),Math.abs(p.z))<CITY-40)tg=null; // dziļi pilsētā pakaļ nedzenas
+ let gx,gz,sp;
+ if(tg){gx=tg.p.x;gz=tg.p.z;sp=u.speed;}
+ else{if(!u.wp||Math.hypot(u.wp[0]-p.x,u.wp[1]-p.z)<2)u.wp=forestPoint(p.x+(Math.random()-.5)*60,p.z+(Math.random()-.5)*60);gx=u.wp[0];gz=u.wp[1];sp=2;}
+ const ox=p.x,oz=p.z;stepTo(p,gx,gz,sp,dt,.4,null,u);const mv=Math.hypot(p.x-ox,p.z-oz)>.001;
+ if(mv)z.rotation.y=Math.atan2(-(p.x-ox),-(p.z-oz));
+ const sw=mv?Math.sin(clock.elapsedTime*(tg?13:7)+u.phase)*.6:0;u.legs[0].rotation.x=sw;u.legs[1].rotation.x=-sw;
+ if(u.armT>0){u.armT-=dt;u.arm.rotation.x=1.3;}else u.arm.rotation.x=-sw*.5;
+ if(!tg)return;
+ const d=Math.hypot(tg.p.x-p.x,tg.p.z-p.z);if(d<3)z.rotation.y=Math.atan2(-(tg.p.x-p.x),-(tg.p.z-p.z));
+ if(d<u.reach&&u.cd<=0&&!blockedLine(p,tg.p,.8)){if(tg.pl){if(hurtWait>0)return;hurtWait=.28;}hurt(tg,u.dmg,null,false);u.cd=u.rate;u.armT=.2;}
+}
 function spawnWolf(){
  const z=wolfMesh();let best=null,bd=1e9;
  for(let k=0;k<14;k++){const side=Math.floor(Math.random()*4),v=(Math.random()*2-1)*(EDGE-10),d=CITY+6+Math.random()*30,x=side===0?d:side===1?-d:v,zz=side===2?d:side===3?-d:v,dd=Math.hypot(x-player.position.x,zz-player.position.z);if(dd<bd){bd=dd;best=[x,zz];}}

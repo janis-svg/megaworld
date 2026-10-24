@@ -9,7 +9,7 @@ function makeHut(ch,x,z,R,start,key){
  const add=(sx,sz,px,pz)=>{const m=cube(sx,h,sz,0x8a6a45,.95);m.position.set(x+px,h/2,z+pz);g.add(m);ch.obs.push({x:x+px,z:z+pz,hx:sx/2,hz:sz/2});};
  add(w,th,0,-w/2);add(th,w,-w/2,0);add(th,w,w/2,0);add(1.4,th,-1.3,w/2);add(1.4,th,1.3,w/2);
  const roof=new THREE.Mesh(new THREE.ConeGeometry(3.7,1.6,4),mat(0x6b2f25,.9));roof.position.set(x,h+.8,z);roof.rotation.y=Math.PI/4;roof.castShadow=true;g.add(roof);
- const lo=()=>rollLoot(R,.45);
+ const lo=()=>rollLoot(R,.55);
  const piv=new THREE.Group();piv.position.set(x-.6,0,z+w/2);piv.userData.dyn=true;
  const dm=cube(1.2,2.1,.1,0x5a3d22,.9);dm.position.set(.6,1.05,0);piv.add(dm);g.add(piv);
  const dob={x:x,z:z+w/2,hx:.6,hz:.12};ch.obs.push(dob);

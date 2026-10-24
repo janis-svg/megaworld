@@ -10,6 +10,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - Dienā zombiju nav. Meklē ieročus, lodes, bruņas un klucīšus mājās, atvilknēs un plauktos.
 - Cilvēkus vari aicināt komandā (līdz 9). Vājāki paši atnāk un piedāvā pievienoties.
 - 🤝 Daži cilvēki ir draudzīgi un paši nāk piedāvāt draudzību. 🕊️ Mierīgie nekad neuzbrūk pirmie, bet aizsargājas, ja viņiem šauj.
+- 🌲 Mežā dzīvo 20 meža cilvēki: ātri, ar nažiem, nedraudzējas. 22:00 viņi pārvēršas vilkačos. Ja dienā kādu nogalini, naktī būs mazāk vilkaču, bet katru rītu mežā atkal ir 20.
 - No 22:00 nāk zombiji, skeleti un vilkači. 3 zombiji + 2 vilkači var saplūst zombvilkā.
 - 👺 Vienu reizi naktī parādās cilvēkēdājs: lēns, bet 3 sitieni nogalina. Viņu var nogalināt tikai ar 2 raķetēm.
 - Rītā zombiji sprāgst, turies pa gabalu.
@@ -41,7 +42,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 
-**Svarīgi pēc katras izmaiņas:** `index.html` failā pie visiem failiem ir `?v=3`. Kad kaut ko maini, nomaini skaitli visur uz nākamo (`?v=4`, tad `?v=5`...). Citādi telefons var paturēt vecos failus un spēle salūzīs.
+**Svarīgi pēc katras izmaiņas:** `index.html` failā pie visiem failiem ir `?v=` ar skaitli (piemēram `?v=4`). Kad kaut ko maini, nomaini skaitli visur uz nākamo (`?v=5`, tad `?v=6`...). Citādi telefons var paturēt vecos failus un spēle salūzīs.
 
 ## Kā mainīt spēli ar AI
 

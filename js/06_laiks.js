@@ -7,7 +7,6 @@ function updateTime(dt){
  skyT-=dt;if(skyT<=0){skyT=.5;drawSky(darkAt(hour));}
  if(hour>=22||hour<5){
   zT-=dt;if(zT<=0&&spawnedZ<30){zT=3.2;spawnZombie(Math.random()<.3);spawnedZ++;}
-  wT-=dt;if(wT<=0&&spawnedW<10){wT=9;spawnWolf();spawnedW++;}
   sT-=dt;if(sT<=0&&spawnedS<10){sT=8;spawnSkeleton();spawnedS++;}
   if(!spawnedC&&hour>=23){spawnedC=1;spawnCannibal();}
  }
@@ -17,14 +16,15 @@ function updateTime(dt){
 function onHour(h){
  if(h===19){say(t('m19'));sfx('bell');}
  else if(h===21)say(t('m21'));
- else if(h===22){spawnedZ=0;spawnedW=0;spawnedS=0;spawnedC=0;madeZW=0;zT=.5;wT=3;sT=5;say(t('m22'));sfx('howl');}
+ else if(h===22){spawnedZ=0;spawnedW=0;spawnedS=0;spawnedC=0;madeZW=0;zT=.5;wT=3;sT=5;const nw=transformForest();spawnedW=nw;say(t('m22')+' '+tf('fwolf',{n:nw}),5);sfx('howl');}
  else if(h===6)say(t('m6'));
  else if(h===7)dawn();
 }
 function dawn(){
  day++;say(t('m7'));
- for(const z of [...zombies]){const u=z.userData;if(u.dead)continue;if(u.kind==='w')u.flee=7;else if(u.kind==='c')u.sink=2.5;else if(u.rise>0)removeMonster(z);else if(u.kind==='s')u.crumble=Math.random()*2;else u.boom=Math.random()*2.5;}
+ for(const z of [...zombies]){const u=z.userData;if(u.dead||u.kind==='f')continue;if(u.kind==='w')u.flee=7;else if(u.kind==='c')u.sink=2.5;else if(u.rise>0)removeMonster(z);else if(u.kind==='s')u.crumble=Math.random()*2;else u.boom=Math.random()*2.5;}
  for(const b of humans)b.hp=Math.min(100,b.hp+30);
+ respawnForest(); // mežā atkal 20 meža cilvēki
  for(const Tm of teams){if(!Tm.isPlayer){assignRoles(Tm);Tm.blocks+=25+10*Tm.members.length;}if(Tm.base)makePlan(Tm);}
 }
 function updateClock(){
