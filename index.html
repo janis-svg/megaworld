@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MegaWorld - Realistic Zombie Survival</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="hurtFlash"></div>
+<div id="hud">
+ <div id="brand">MEGAWORLD<small data-k="tag"></small></div>
+ <div id="clock" class="panel"><b id="ctime">08:00</b><small id="cphase"></small></div>
+ <div id="health" class="panel">
+  <div class="label"><span data-k="vit"></span><b id="hptext">100 / 100</b></div>
+  <div id="bar"><div id="fill"></div></div>
+  <div id="armor"><div id="afill"></div></div>
+  <small id="hpstate"></small>
+ </div>
+ <div id="stats">
+  <div style="display:none"><div><span data-k="zl"></span> <b id="zc">0</b></div>
+  <div><span data-k="sl"></span> <b id="score">0</b></div>
+  <div><span data-k="cl"></span> <b id="coins">0</b></div>
+  <div><span data-k="al"></span> <b id="ammo">-</b></div>
+  <div><span data-k="ll"></span> <b id="last">-</b></div></div>
+  <button class="corner" id="lang">EN</button><button class="corner" id="info">ℹ️</button><button class="corner" id="invb">🎒</button><button class="corner" id="tmb">👥</button><button class="corner" id="bld">🧱</button><button class="corner" id="snd">🔊</button><button class="corner" id="view">🧍</button><button class="corner" id="cfg">⚙️</button>
+ </div>
+ <div id="help" class="panel" data-k="help"></div>
+ <div id="msg"></div>
+</div>
+<div id="cross"></div>
+<div id="joy"><div id="knob"></div></div>
+<button class="tbtn" id="jump">⬆</button>
+<button class="tbtn" id="atk">⚔️</button>
+<button class="tbtn" id="act">🤚</button>
+<button class="tbtn" id="wsw">🔄</button>
+<button class="tbtn" id="bmb">🔨</button>
+<button class="tbtn" id="rmb">♻️</button>
+<div id="inv" class="panel"></div>
+<div id="team" class="panel"></div>
+<div id="wbar"></div>
+<div id="bbar"></div>
+<div id="hint" class="panel"></div>
+<div id="infobox" class="panel" data-k="infotxt"></div>
+<div id="menu"><div class="card panel">
+ <h1>MEGAWORLD</h1>
+ <p data-k="intro"></p>
+ <input id="nickname" maxlength="16" value="Spēlētājs">
+ <button id="start" data-k="start"></button>
+ <p style="font-size:11px;margin-top:16px;color:#5f7689" data-k="net"></p>
+</div></div>
+<div id="dead"><div class="card panel">
+ <h1 data-k="died"></h1>
+ <p id="result"></p>
+ <div class="btns"><button id="cont" data-k="cont"></button><button id="again" data-k="again"></button></div>
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="js/01_sakums.js"></script>
+<script src="js/02_teksti.js"></script>
+<script src="js/03_pamati.js"></script>
+<script src="js/04_ieroci_sadursmes.js"></script>
+<script src="js/05_pasaule.js"></script>
+<script src="js/06_laiks.js"></script>
+<script src="js/07_pilseta.js"></script>
+<script src="js/08_prieksmeti_lodes.js"></script>
+<script src="js/09_skanas_efekti.js"></script>
+<script src="js/10_buvesana.js"></script>
+<script src="js/11_ui.js"></script>
+<script src="js/12_cilveki.js"></script>
+<script src="js/13_monstri.js"></script>
+<script src="js/14_spele.js"></script>
+<script src="js/15_vadiba.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+*{box-sizing:border-box;margin:0;padding:0}
+body{overflow:hidden;background:#0a0f14;color:#e8eef4;font-family:'Segoe UI',Arial,sans-serif;user-select:none}
+canvas{display:block}
+#hud{position:fixed;inset:0;pointer-events:none;z-index:10}
+.panel{background:rgba(10,18,26,.82);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 16px;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+#brand{position:absolute;top:16px;left:18px;font-size:22px;font-weight:700;letter-spacing:.5px;text-shadow:0 2px 8px #000}
+#brand small{display:block;font-size:9px;letter-spacing:4px;color:#7a99b0;font-weight:400;margin-top:2px}
+#health{position:absolute;top:16px;right:16px;width:240px}
+#health .label{display:flex;justify-content:space-between;font-size:11px;letter-spacing:1px;color:#9bb3c7;margin-bottom:6px}
+#health .label b{color:#fff;font-size:13px}
+#bar{height:10px;background:rgba(255,255,255,.1);border-radius:20px;overflow:hidden}
+#fill{height:100%;width:100%;background:linear-gradient(90deg,#2ecc71,#27ae60);border-radius:20px;transition:width .25s,background .25s}
+#hpstate{display:block;font-size:10px;letter-spacing:1.5px;color:#9bb3c7;margin-top:6px;text-transform:uppercase}
+#stats{position:absolute;top:112px;right:16px;font-size:12px;line-height:2;text-align:right}
+#stats b{color:#ffd36b}
+#help{position:absolute;bottom:16px;left:16px;font-size:11px;line-height:1.9;color:#b0c4d6}
+#help b{color:#fff;letter-spacing:1px}
+#msg{position:absolute;top:24%;width:100%;text-align:center;font-size:20px;font-weight:600;text-shadow:0 3px 12px #000;opacity:0;transition:opacity .3s;padding:0 16px}
+#msg.show{opacity:1}
+#menu,#dead{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#0f1a24 0%,#060a0e 100%);padding:20px;z-index:20}
+#dead{display:none}
+.card{text-align:center;width:min(440px,100%);padding:36px 32px}
+h1{margin:0 0 12px;font-size:32px;letter-spacing:1px;background:linear-gradient(135deg,#fff,#8fb8d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+p{line-height:1.7;color:#a8bccd;font-size:14px}
+input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#fff;margin:16px 0;font-size:14px;outline:none;transition:border .2s}
+input:focus{border-color:#2ecc71}
+button{cursor:pointer;background:linear-gradient(135deg,#2ecc71,#27ae60);color:#041a0e;border:0;border-radius:8px;padding:14px 28px;font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 16px rgba(46,204,113,.3)}
+button:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(46,204,113,.45)}
+button:active{transform:translateY(0)}
+#cross{position:fixed;left:50%;top:50%;width:16px;height:16px;border:2px solid rgba(255,255,255,.85);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:11;box-shadow:0 0 8px rgba(0,0,0,.6)}
+.damage{position:fixed;color:#ffcf61;font-size:20px;font-weight:700;text-shadow:0 2px 8px #000;pointer-events:none;z-index:15;animation:pop .9s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes pop{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-50px) scale(1.15)}}
+#hurtFlash{position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(200,20,20,.55) 100%);opacity:0;pointer-events:none;z-index:5;transition:opacity .15s}
+#dead .card h1{background:linear-gradient(135deg,#ff6b6b,#c0392b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+/* touch controls + corner buttons */
+#joy{position:fixed;left:24px;bottom:24px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.4);touch-action:none;z-index:12}
+#knob{position:absolute;left:41px;top:41px;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.65);pointer-events:none}
+.tbtn{position:fixed;right:24px;width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.45);color:#fff;font-size:30px;padding:0;touch-action:none;z-index:12;box-shadow:none;text-transform:none;letter-spacing:0}
+.tbtn:hover{transform:none;box-shadow:none}
+#jump{bottom:118px}#atk{bottom:30px}#act{bottom:30px;right:108px}
+#inv{position:fixed;top:120px;left:16px;z-index:13;font-size:13px;line-height:2.1;display:none}
+#hint{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:12;font-size:13px;padding:8px 14px;pointer-events:none;display:none;white-space:nowrap}
+.corner{pointer-events:auto;margin:8px 6px 0 0;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:5px 12px;font-size:13px;box-shadow:none;text-transform:none;letter-spacing:0}
+#infobox{position:fixed;top:165px;right:16px;width:min(310px,calc(100% - 32px));z-index:13;font-size:12px;line-height:1.7;display:none;max-height:calc(100% - 200px);overflow:auto;pointer-events:auto}
+/* pulkstenis, bruņas, ieroču josla, būvēšana, komanda */
+#clock{position:absolute;top:16px;left:50%;transform:translateX(-50%);padding:7px 16px;text-align:center;min-width:150px;transition:border-color .5s}
+#clock b{display:block;font-size:20px;letter-spacing:1px;font-variant-numeric:tabular-nums}
+#clock small{display:block;font-size:10px;letter-spacing:1.2px;color:#9bb3c7;text-transform:uppercase;margin-top:2px;white-space:nowrap}
+#clock.night{border-color:rgba(231,76,60,.6)}
+#armor{height:6px;background:rgba(255,255,255,.1);border-radius:20px;overflow:hidden;margin-top:6px}
+#afill{height:100%;width:0;background:linear-gradient(90deg,#5dade2,#2e86c1);border-radius:20px;transition:width .25s}
+#wbar,#bbar{position:fixed;bottom:74px;left:50%;transform:translateX(-50%);z-index:12;display:none;gap:6px;pointer-events:auto}
+.slot{background:rgba(10,18,26,.82);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:5px 9px;font-size:12px;color:#cfdbe6;box-shadow:none;text-transform:none;letter-spacing:0;font-weight:600;white-space:nowrap}
+.slot.on{border-color:#2ecc71;color:#fff;background:rgba(46,204,113,.28)}
+.slot.off{opacity:.35}
+.slot:hover{transform:none;box-shadow:none}
+#team{position:fixed;top:160px;left:16px;z-index:14;font-size:12px;line-height:1.6;display:none;max-height:calc(100% - 300px);max-width:calc(100% - 32px);overflow:auto;pointer-events:auto;min-width:270px}
+#team .row{display:flex;align-items:center;gap:4px;margin-top:5px}
+#team .row span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#team .corner{margin:0;padding:3px 7px;font-size:12px}
+#team .corner.on{background:rgba(46,204,113,.35);border-color:#2ecc71}
+#dead .btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+#again{background:rgba(255,255,255,.12);color:#fff;box-shadow:none}
+@media (hover:hover) and (pointer:fine){#joy,.tbtn{display:none}}
+@media (pointer:coarse){#help{display:none}#wbar,#bbar{bottom:200px}.slot{padding:6px 8px;font-size:12px}}
+@media (max-width:760px){#clock{top:58px;left:16px;transform:none;min-width:0;padding:5px 12px;max-width:calc(100% - 222px)}#clock b{font-size:16px}#clock small{white-space:normal;line-height:1.4}#brand{font-size:18px}#health{width:180px;padding:10px 12px}#help{display:none}}
+@media (max-height:520px){#stats{top:104px;line-height:1.6}#infobox{top:150px}#jump{bottom:100px;width:58px;height:58px}#atk{bottom:24px;width:58px;height:58px}#act{bottom:24px;right:92px;width:58px;height:58px}#wbar,#bbar{bottom:70px}#team{top:120px;max-height:calc(100% - 140px)}}
+/* telefons: vienkārša vadība (kloķis pa kreisi, pogas pa labi) */
+#cfg,#wsw,#bmb,#rmb{display:none}
+html.touch #help,html.touch #wbar,html.touch #bbar,html.touch #bld{display:none!important}
+html.touch:not(.cfg) #lang,html.touch:not(.cfg) #info,html.touch:not(.cfg) #snd,html.touch:not(.cfg) #view{display:none}
+html.touch #cfg{display:inline-block}
+html.touch #wsw,html.touch #bmb{display:flex}
+html.touch #joy{display:block;left:16px;bottom:20px;width:124px;height:124px}
+html.touch #knob{left:36px;top:36px}
+html.touch .tbtn{display:flex;align-items:center;justify-content:center;flex-direction:column;line-height:1;user-select:none;-webkit-user-select:none}
+.tbtn small{font-size:12px;font-weight:700;margin-top:3px;color:#ffe07a}
+html.touch #atk{right:18px;bottom:22px;width:88px;height:88px;font-size:34px;background:rgba(231,76,60,.35);border-color:rgba(255,140,120,.7)}
+html.touch #jump{right:32px;bottom:124px;width:62px;height:62px;font-size:26px}
+html.touch #act{right:120px;bottom:22px;width:64px;height:64px;font-size:28px;opacity:.45}
+html.touch #act.on{opacity:1;background:rgba(46,204,113,.45);border-color:#2ecc71;animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+html.touch #wsw{right:124px;bottom:100px;width:56px;height:56px;font-size:24px}
+html.touch #bmb{right:124px;bottom:170px;width:56px;height:56px;font-size:24px}
+html.touch.build #bmb{background:rgba(46,204,113,.45);border-color:#2ecc71}
+html.touch.build #rmb{display:flex;right:36px;bottom:198px;width:54px;height:54px;font-size:22px}
+html.touch.build #atk{background:rgba(46,204,113,.35);border-color:rgba(120,230,160,.8)}
+html.touch #hint{top:166px;bottom:auto;font-size:14px}
+html.touch #team .corner{padding:8px 11px;font-size:15px}
+html.touch #team{left:8px;right:8px;top:118px;max-width:none;min-width:0;max-height:calc(100% - 330px)}
+html.touch #inv{top:118px}
+@media (max-height:520px){html.touch #atk{width:72px;height:72px;bottom:12px}html.touch #jump{bottom:94px;width:54px;height:54px}html.touch #act{bottom:12px;right:100px;width:56px;height:56px}html.touch #wsw{bottom:80px;right:104px;width:50px;height:50px}html.touch #bmb{bottom:140px;right:104px;width:50px;height:50px}html.touch.build #rmb{bottom:156px;right:30px}html.touch #joy{bottom:12px;width:110px;height:110px}html.touch #knob{left:30px;top:30px}html.touch #team{max-height:calc(100% - 140px)}html.touch #hint{top:96px}}
