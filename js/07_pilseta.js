@@ -94,6 +94,7 @@ function genWild(ch,R,ox,oz,deep,free,key){
  for(let i=0;i<8;i++){const x=ox+R()*CS,z=oz+R()*CS;if(!free(x,z))continue;const b=new THREE.Mesh(new THREE.IcosahedronGeometry(.6+R()*.7,0),mat(0x234a22,1));b.position.set(x,.3,z);b.scale.y=.7;ch.group.add(b);}
  for(let i=0;i<4;i++){const x=ox+R()*CS,z=oz+R()*CS;if(!free(x,z))continue;const r=new THREE.Mesh(new THREE.DodecahedronGeometry(.3+R()*.6,0),mat(0x6b7280,.95));r.position.set(x,.25,z);r.rotation.set(R()*3,R()*3,R()*3);r.castShadow=true;ch.group.add(r);}
  if(!deep&&R()<.45){const x=ox+R()*CS,z=oz+R()*CS;if(free(x,z))makeItem(ch,R()<.45?pickWeapon(R):pickGround(R),x,z,key+'f');}
+ if(!deep)for(let i=0;i<4;i++){const x=ox+R()*CS,z=oz+R()*CS;if(R()<.6&&free(x,z))makeItem(ch,pickForest(R),x,z,key+'r'+i);} // meža resursi
 }
 function genChunk(cx,cz){
  const key=cx+','+cz,R=rng(Math.imul(cx,73856093)^Math.imul(cz,19349663)),ch={group:new THREE.Group(),obs:[],items:[],inter:[],cn:0,key};

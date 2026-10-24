@@ -59,13 +59,13 @@ function netHostMsg(G,d){
  if(d.t==='med'){if(G.I.meds>0&&G.hp<100&&!G.dead){G.I.meds--;G.hp=Math.min(100,G.hp+40);netTo(G,{t:'msg',s:t('healed')});netMe(G);}return;}
 }
 function netWelcome(G){
- const bl=[];blocks.forEach(c=>c.forEach(b=>bl.push([b.x,b.z,b.y0,b.door?1:0,b.team.id,b.team.color])));bl.sort((a,b)=>a[2]-b[2]);
+ const bl=[];blocks.forEach(c=>c.forEach(b=>bl.push([b.x,b.z,b.y0,b.door?1:0,b.team.id,b.team.color,b.win?1:0])));bl.sort((a,b)=>a[2]-b[2]);
  const dr=[];for(const ch of chunks.values())for(const o of ch.inter)if(o.type==='door'&&(o.open||o.hp<100))dr.push([o.id,o.open?1:0,o.hp]);
  netTo(G,{t:'wel',id:G.id,col:G.col,pt:[PT.id,PT.color],h:r2(hour),d:day,bl,tk:[...taken],dr,sp:[r2(G.pos.x),r2(G.pos.z)]});
  netMe(G);
 }
 function netWelcomeAll(){for(const G of NET.guests.values()){if(!G.ready)continue;G.hp=100;G.dead=false;G.I=newInv();G.pos.set(player.position.x+2,0,player.position.z+2);netWelcome(G);}}
-function netMe(G){netTo(G,{t:'me',hp:r2(G.hp),inv:G.I,bl:PT.blocks,dead:G.dead?1:0,sc:score});}
+function netMe(G){netTo(G,{t:'me',hp:r2(G.hp),inv:G.I,bl:PT.blocks,di:PT.doorI||0,wi:PT.winI||0,dead:G.dead?1:0,sc:score});}
 function damageGuest(G,dmg,src,pierce){
  if(G.dead||gtime<(G.invul||0))return;
  const a=pierce?0:Math.min(G.I.armor,dmg*.6);G.I.armor-=a;G.hp-=dmg-a;
@@ -103,8 +103,8 @@ function guestAct(G){
 function guestBuild(G,d){
  if(G.dead)return;const x=Math.round(+d.x),z=Math.round(+d.z);
  if(Math.hypot(x-G.pos.x,z-G.pos.z)>4)return;
- if(d.r){const c=blocks.get(x+','+z);let top=null;if(c)for(const b of c)if(!top||b.y1>top.y1)top=b;if(!top||top.team!==PT){netTo(G,{t:'msg',s:t('noplace'),d:1});return;}removeBlock(top,false);PT.blocks+=top.door?4:1;}
- else{const door=!!d.d,cost=door?4:1;if(PT.blocks<cost){netTo(G,{t:'msg',s:t('nob')});return;}if(!canPlace(x,z,door?2:1)){netTo(G,{t:'msg',s:t('noplace'),d:1});return;}placeBlock(x,z,PT,door);PT.blocks-=cost;}
+ const tool=['blk','door','win'].includes(d.tool)?d.tool:(d.d?'door':'blk');
+ const err=tryBuild(x,z,tool,!!d.r);if(err)netTo(G,{t:'msg',s:err,d:1.2});
  netMe(G);renderInv();
 }
 function netHostFrame(dt){
@@ -138,7 +138,7 @@ function netHostFrame(dt){
 const _spawnBullet=spawnBullet;spawnBullet=function(x,y,z,vx,vz,W,team,pl){_spawnBullet(x,y,z,vx,vz,W,team,pl);if(NET.role==='host'&&NET.guests.size)netQ.push({e:'bu',x:r2(x),y:r2(y),z:r2(z),vx:r2(vx),vz:r2(vz),r:W.rocket?1:0,c:pl?0:team===PT?1:2,o:netCurOwner});};
 const _explosionFx=explosionFx;explosionFx=function(x,y,z,r,col){_explosionFx(x,y,z,r,col);if(NET.role==='host'&&NET.guests.size)netQ.push({e:'fx',x:r2(x),y:r2(y),z:r2(z),r,c:col});};
 const _tadd=taken.add.bind(taken);taken.add=v=>{_tadd(v);if(NET.role==='host'&&NET.guests.size)netQ.push({e:'tk',id:v});return taken;};
-const _placeBlock=placeBlock;placeBlock=function(x,z,Tm,door){const b=_placeBlock(x,z,Tm,door);if(NET.role==='host'&&NET.guests.size&&b)netQ.push({e:'bk',a:1,x,z,d:door?1:0,tid:Tm.id,col:Tm.color});return b;};
+const _placeBlock=placeBlock;placeBlock=function(x,z,Tm,door,win){const b=_placeBlock(x,z,Tm,door,win);if(NET.role==='host'&&NET.guests.size&&b)netQ.push({e:'bk',a:1,x,z,d:door?1:0,w:win?1:0,tid:Tm.id,col:Tm.color});return b;};
 const _removeBlock=removeBlock;removeBlock=function(b,fall){const was=!b.dead;_removeBlock(b,fall);if(was&&NET.role==='host'&&NET.guests.size)netQ.push({e:'bk',a:0,x:b.x,z:b.z,y0:b.y0,f:fall?1:0});};
 const _killZombie=killZombie;killZombie=function(z,pl,boom){const was=!z.userData.dead;_killZombie(z,pl,boom);if(was&&NET.role==='host')netGone.push([z.userData.nid,0,boom?2:1]);};
 const _removeMonster=removeMonster;removeMonster=function(z){const was=!z.userData.dead;_removeMonster(z);if(was&&NET.role==='host')netGone.push([z.userData.nid,0,0]);};
@@ -184,12 +184,12 @@ function netGuestMsg(d){
   PT=netTeam(d.pt[0],d.pt[1]);inv=newInv();health=100;hour=d.h;day=d.d;lastH=Math.floor(hour);clkM=-1;score=0;cur='hands';buildMode=false;
   for(const id of d.tk)taken.add(id);for(const [id,o,hp] of d.dr)doorState.set(id,{o,hp});
   player.position.set(d.sp[0],0,d.sp[1]);pY=0;vy=0;onGround=true;
-  updateChunks();for(const [x,z,y0,dr,tid,col] of d.bl)placeBlock(x,z,netTeam(tid,col),!!dr);
+  updateChunks();for(const [x,z,y0,dr,tid,col,wn] of d.bl)placeBlock(x,z,netTeam(tid,col),!!dr,!!wn);
   drawSky(darkAt(hour));$('menu').style.display='none';$('dead').style.display='none';
   active=true;ac();selectW('hands');updateHealth();renderInv();updateClock();say(t('mp_welcome'),4);return;}
  if(!active)return;
  if(d.t==='s')return guestSnap(d);
- if(d.t==='me'){const old=health;health=d.hp;inv=d.inv;PT.blocks=d.bl;score=d.sc;$('score').textContent=score;NET.meDead=!!d.dead;if(health<old-.5){flashHurt();sfx('hurt');}autoGun();renderInv();updateHealth();updateAmmo();return;}
+ if(d.t==='me'){const old=health;health=d.hp;inv=d.inv;PT.blocks=d.bl;PT.doorI=d.di;PT.winI=d.wi;score=d.sc;$('score').textContent=score;NET.meDead=!!d.dead;if(health<old-.5){flashHurt();sfx('hurt');}autoGun();renderInv();updateHealth();updateAmmo();return;}
  if(d.t==='msg'){say(d.s,d.d);return;}
  if(d.t==='tp'){player.position.set(d.x,0,d.z);pY=0;vy=0;return;}
  if(d.t==='bi'){NET.bi=new Map(d.bi.map(([id,n,h])=>[id,{n,h}]));for(const [id,o] of netBot){const i=NET.bi.get(id);if(i&&o.name!==i.n){o.name=i.n;o.rel=-1;}}return;}
@@ -218,7 +218,7 @@ function guestSnap(d){
   if(e.e==='bu')visBullet(e);
   else if(e.e==='fx'){explosionFx(e.x,e.y,e.z,e.r,e.c);if(e.r>=2)sfxAt('boom',e.x,e.z,70);}
   else if(e.e==='tk')applyTaken(e.id);
-  else if(e.e==='bk'){if(e.a)placeBlock(e.x,e.z,netTeam(e.tid,e.col),!!e.d);else{const c=blocks.get(e.x+','+e.z),b=c&&c.find(q=>q.y0===e.y0);if(b)removeBlock(b,!!e.f);}}
+  else if(e.e==='bk'){if(e.a)placeBlock(e.x,e.z,netTeam(e.tid,e.col),!!e.d,!!e.w);else{const c=blocks.get(e.x+','+e.z),b=c&&c.find(q=>q.y0===e.y0);if(b)removeBlock(b,!!e.f);}}
   else if(e.e==='msg')say(e.s,e.d);
  }
  for(const [id,ty,how] of d.gone){

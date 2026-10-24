@@ -22,7 +22,7 @@ $('bld').onclick=e=>{toggleBuild();e.currentTarget.blur();};
 $('snd').onclick=e=>{muted=!muted;e.currentTarget.textContent=muted?'🔇':'🔊';e.currentTarget.blur();};
 $('view').onclick=e=>{toggleView();e.currentTarget.blur();};
 $('act').addEventListener('pointerdown',e=>{e.preventDefault();interact();});
-$('wsw').addEventListener('pointerdown',e=>{e.preventDefault();if(!active)return;if(buildMode){bTool=bTool==='blk'?'door':'blk';renderW();}else nextW();});
+$('wsw').addEventListener('pointerdown',e=>{e.preventDefault();if(!active)return;if(buildMode){bTool=nextTool();renderW();}else nextW();});
 $('bmb').addEventListener('pointerdown',e=>{e.preventDefault();toggleBuild();});
 $('rmb').addEventListener('pointerdown',e=>{e.preventDefault();buildAct(true);});
 $('cfg').onclick=e=>{document.documentElement.classList.toggle('cfg');e.currentTarget.blur();};

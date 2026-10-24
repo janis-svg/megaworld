@@ -35,6 +35,9 @@ function itemMesh(type){
  else if(type==='med'){const b=cube(.42,.3,.3,0xf2f2f2,.5),c1=cube(.3,.06,.08,0xd62828,.5),c2=cube(.08,.06,.3,0xd62828,.5);c1.position.y=.16;c2.position.y=.16;m.add(b,c1,c2);}
  else if(type==='armor'){const b=cube(.5,.55,.2,0x34495e,.6);b.material.emissive.set(0x0d2a40);const s=cube(.52,.1,.22,0x5dade2,.5);s.position.y=.12;m.add(b,s);}
  else if(type==='blk'){const b=cube(.45,.45,.45,0x8a8276,.95);b.material.emissive.set(0x1a1712);m.add(b);}
+ else if(type==='door_i'){const b=cube(.4,.75,.08,0x6b4423,.9),h=cube(.06,.06,.1,0xd4ac0d,.4);h.position.set(.12,0,.05);m.add(b,h);}
+ else if(type==='win_i'){const b=cube(.55,.55,.06,0xa8dcff,.1);b.material.emissive.set(0x204860);const f=cube(.6,.06,.08,0x6b4423,.9),f2=f.clone();f.position.y=.29;f2.position.y=-.29;m.add(b,f,f2);}
+ else if(type==='match'){const b=cube(.3,.08,.2,0xc0392b,.7);for(let i=0;i<3;i++){const s=cube(.03,.03,.28,0xf5deb3,.8);s.position.set(-.08+i*.08,.06,0);const h=cube(.05,.05,.05,0xd35400,.6);h.position.set(-.08+i*.08,.06,.15);m.add(s,h);}m.add(b);}
  else if(type==='bag'){const b=cube(.55,.38,.38,0x6b5a3a,.9),s=cube(.57,.08,.4,0x3a2a1c,.9);s.position.y=.08;m.add(b,s);}
  else{const col={a_pistol:0xd4a537,a_m16:0x8a9a3a,a_shot:0xc0392b,a_rpg:0xd35400}[type]||0xd4a537;const b=cube(.34,.22,.22,col,.35);b.material.emissive.set(0x553300);m.add(b);}
  return m;
