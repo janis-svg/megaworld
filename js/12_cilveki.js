@@ -58,6 +58,9 @@ function spawnBots(){
   for(let i=0;i<n;i++)newBot(Tm,x+(Math.random()-.5)*3,z+(Math.random()-.5)*3,nm[ni++%nm.length],botInv(rich),Math.random()<.4);
   Tm.base={x:Math.round(x),z:Math.round(z)};makePlan(Tm);assignRoles(Tm);
  }
+ // ~10% cilvēku ir draudzīgi vientuļnieki: kamēr vieni, paši nāk piedāvāt draudzību
+ const solos=teams.filter(x=>!x.isPlayer&&!x.friendly&&x.members.length===1).sort(()=>Math.random()-.5);
+ solos.slice(0,Math.max(1,Math.round((humans.length-1)*.1))).forEach(x=>{x.friendly=true;x.pal=true;});
 }
 function war(A,B){
  if(A===B||A.enemies.has(B))return;A.enemies.add(B);B.enemies.add(A);
@@ -83,8 +86,10 @@ function teamTick(){
  if(active&&hour>=7.5&&hour<19&&gtime>offerAt&&!teams.some(x=>x.offer>gtime)){
   let best=null,bd=60;const my=teamStr(PT);
   for(const Tm of teams){if(Tm.isPlayer||PT.enemies.has(Tm)||!Tm.members.length||PT.members.length+Tm.members.length>9)continue;if(!Tm.friendly&&teamStr(Tm)>my*.9)continue;
-   for(const m of Tm.members){const d=Math.hypot(m.g.position.x-player.position.x,m.g.position.z-player.position.z);if(d<bd){bd=d;best=Tm;}}}
-  if(best){best.offer=gtime+25;best.offSaid=false;best.members.forEach(relabel);offerAt=gtime+45;}else offerAt=gtime+10;
+   // draudzīgie vientuļnieki nāk arī no tālienes un tiek izvēlēti pirmie
+   const pal=Tm.pal&&Tm.members.length===1;
+   for(const m of Tm.members){const d=Math.hypot(m.g.position.x-player.position.x,m.g.position.z-player.position.z)-(pal?120:0);if(d<bd){bd=d;best=Tm;}}}
+  if(best){const pal=best.pal&&best.members.length===1;best.offer=gtime+(pal?70:25);best.offSaid=false;best.members.forEach(relabel);offerAt=gtime+45;}else offerAt=gtime+10;
  }
  for(const Tm of teams){Tm.rp=(Tm.rp||30)-2;if(Tm.rp<=0){Tm.rp=30;if(Tm.base&&!Tm.plan.length&&(!Tm.isPlayer||PT.members.some(m=>m.cmd==='build')))makePlan(Tm);}}
  const pos=Tm=>{const a=Tm.members.map(m=>m.g.position);if(Tm.isPlayer&&active)a.push(player.position);return a;};

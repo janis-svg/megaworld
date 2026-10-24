@@ -196,7 +196,7 @@ function start(){
  corpses.forEach(c=>{scene.remove(c.group);freeObj(c.group);});corpses.length=0;
  drops.forEach(d=>{scene.remove(d.m);freeObj(d.m);});drops.length=0;fxs.forEach(f=>scene.remove(f.m));fxs.length=0;
  inv=newInv();cur='hands';buildMode=false;bTool='blk';mouseDown=false;invul=0;
- hour=8;lastH=8;day=1;gtime=0;skyT=0;spawnedZ=0;spawnedW=0;spawnedS=0;madeZW=0;clkM=-1;nc[0]=nc[1]=nc[2]=nc[3]=0;offerAt=40;drawSky(0);
+ hour=8;lastH=8;day=1;gtime=0;skyT=0;spawnedZ=0;spawnedW=0;spawnedS=0;madeZW=0;clkM=-1;nc[0]=nc[1]=nc[2]=nc[3]=0;offerAt=15;drawSky(0);
  PT=newTeam(0x3a7ab8,true);PT.blocks=40;
  active=true;selectW('hands');updateHealth();updateAmmo();renderInv();ac();updateChunks();spawnBots();updateClock();
  say(t('surv')+' '+t('dayhint'),5);renderTeam();

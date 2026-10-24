@@ -1,10 +1,10 @@
 // 11_ui.js - Inventārs, ieroču josla, mijiedarbība (E / rokas poga)
 // ---------- inventārs, ieroču josla ----------
 function renderInv(){
- if(!inv)return;let h='<b>🎒 '+t('inv')+'</b>';
- for(const w of GUNS)h+='<br>'+WP[w].ic+' '+t('w'+w)+': '+(inv.has[w]?inv.ammo[w]+' / '+WP[w].max:'- ('+inv.ammo[w]+')');
+ if(!inv)return;let h='<button class="corner" id="invx" style="float:right;margin:0 0 0 12px">✖</button><b>🎒 '+t('inv')+'</b>';
+ for(const w of GUNS)h+='<br>'+(/^[A-Z0-9]+$/.test(WP[w].ic)?'':WP[w].ic+' ')+t('w'+w)+': '+(inv.has[w]?inv.ammo[w]+' / '+WP[w].max:'- ('+inv.ammo[w]+')');
  h+='<br>🛡️ '+t('armor')+': '+Math.ceil(inv.armor)+'<br>🧱 '+t('blocks')+': '+(PT?PT.blocks:0)+'<br>➕ '+t('med2')+': '+inv.meds+' <button class="corner" id="usemed">'+t('use')+'</button>';
- $('inv').innerHTML=h;$('usemed').onclick=useMed;renderW();
+ $('inv').innerHTML=h;$('usemed').onclick=useMed;$('invx').onclick=e=>{e.stopPropagation();$('inv').style.display='none';};renderW();
 }
 function renderW(){
  if(!inv)return;
