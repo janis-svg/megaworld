@@ -37,6 +37,7 @@ if(/debug/.test(location.search))window.MW={setHour:h=>{hour=h;lastH=Math.floor(
  mons:()=>zombies.map(z=>({k:z.userData.kind,hp:Math.round(z.userData.hp),d:Math.round(Math.hypot(z.position.x-player.position.x,z.position.z-player.position.z)),rise:z.userData.rise>0,y:+z.position.y.toFixed(2),cd:+(z.userData.cd||0).toFixed(1),howl:z.userData.howlT>0,heal:z.userData.heal>0})),
  aim:()=>{let b=null,bd=1e9;for(const z of zombies){const d=Math.hypot(z.position.x-player.position.x,z.position.z-player.position.z);if(d<bd&&!(z.userData.rise>0)){bd=d;b=z;}}if(b)yaw=Math.atan2(-(b.position.x-player.position.x),-(b.position.z-player.position.z));return bd;},
  fire:()=>{attackWait=0;hit();},
+ tank:()=>{const tk=tanks.find(x=>!x.dead);player.position.set(tk.g.position.x+2.5,0,tk.g.position.z);enterTank(tk);return tanks.map(x=>x.shells+(x.dead?'x':''));},
  info:()=>({calls:renderer.info.render.calls,tris:renderer.info.render.triangles,geos:renderer.info.memory.geometries,tex:renderer.info.memory.textures,q:qLvl,pr:renderer.getPixelRatio(),touch:TOUCH}),
  bring:n=>{const b=humans.find(x=>x.name===n)||humans.find(x=>x.team!==PT);b.g.position.set(player.position.x+1.2,0,player.position.z);return b.name;},
  tap:id=>{$(id).dispatchEvent(new PointerEvent('pointerdown',{bubbles:true}));$(id).dispatchEvent(new PointerEvent('pointerup',{bubbles:true}));},

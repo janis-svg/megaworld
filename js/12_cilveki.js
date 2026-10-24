@@ -248,7 +248,8 @@ function killBot(b,src){
  if(!Tm.members.length&&!Tm.isPlayer)dropTeam(Tm);
 }
 function damagePlayer(dmg,src,pierce){
- if(invul>0||!active)return;const a=pierce?0:Math.min(inv.armor,dmg*.6);inv.armor-=a;dmg-=a;
+ if(invul>0||!active)return;if(inTank)dmg*=.25; // tanks pasargā
+ const a=pierce?0:Math.min(inv.armor,dmg*.6);inv.armor-=a;dmg-=a;
  health=Math.max(0,health-dmg);updateHealth();flashHurt();sfx('hurt');
  popup('-'+Math.round(dmg)+' HP',player.position.clone().add(new THREE.Vector3(0,2,0)));
  if(src&&src!==PT){war(PT,src);PT.alarm={T:src,until:gtime+15};}

@@ -7,11 +7,13 @@ function popup(text,pos){
  e.style.top=((-v.y+1)*innerHeight/2)+'px';
  document.body.appendChild(e);setTimeout(()=>e.remove(),900);
 }
+// augšā pa kreisi: cik cilvēku vēl ir spēlē un cik no viņiem tavā komandā
+function updatePpl(){if(!PT)return;$('ppl').textContent='👥 '+(humans.length+1);$('pplsub').textContent=tf('pplsub',{n:PT.members.length});}
 function dmgMonster(z,d,pl,rocket){
  const u=z.userData;if(u.dead)return;
  if(u.kind==='c'){ // cilvēkēdāju ņem tikai raķete: katra raķete = viena no divām dzīvībām
   if(!rocket){if(gtime>(u.msgT||0)&&Math.hypot(z.position.x-player.position.x,z.position.z-player.position.z)<30){u.msgT=gtime+1.5;popup(t('onlyrpg'),z.position.clone().add(new THREE.Vector3(0,u.bh-.1,0)));}return;}
-  if(d<=0)return;d=1;}
+  if(d<=0)return;d=Math.min(2,Math.ceil(d));} // raķete = 1, tanka šāviņš = 2 (uzreiz)
  u.hp-=d;if(u.kind==='f')u.angry=gtime+15;if(pl)$('last').textContent='-'+Math.round(d)+' HP';
  if(Math.hypot(z.position.x-player.position.x,z.position.z-player.position.z)<30){if(pl)sfx('hit');popup('-'+Math.round(d)+' HP',z.position.clone().add(new THREE.Vector3(0,u.bh-.1,0)));}
  if(u.hp<=0)killZombie(z,pl);
@@ -19,6 +21,7 @@ function dmgMonster(z,d,pl,rocket){
 function hit(){
  if(!active||attackWait>0)return;
  if(buildMode){buildAct(false);return;}
+ if(inTank){fireTank();return;}
  attackWait=.42;
  if(cur!=='hands'){if(inv.ammo[cur]>0){shoot(cur);return;}sfx('click');const nx=GUNS.find(w=>inv.has[w]&&inv.ammo[w]>0);selectW(nx||'hands');say(t('noammo'),1);if(nx)return;}
  const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
@@ -64,12 +67,12 @@ function move(dt){
  if(jx||jy){d.addScaledVector(f,-jy);d.addScaledVector(r,jx);}
  const moving=d.lengthSq()>0;
  if(moving)d.normalize();
- const speed=(keys.ShiftLeft||keys.ShiftRight)?8.5:5.2;
+ const speed=inTank?6.5:(keys.ShiftLeft||keys.ShiftRight)?8.5:5.2;
  player.position.addScaledVector(d,speed*dt);
- pushOut(player.position,.35,pY,PT);clampW(player.position);
+ pushOut(player.position,inTank?1.7:.35,pY,PT);clampW(player.position);
  // lēciens + stāvēšana uz klucīšiem
  const gnd=groundAt(player.position.x,player.position.z,pY,.35);
- if(keys.Space&&onGround){vy=7.8;onGround=false;}
+ if(keys.Space&&onGround&&!inTank){vy=7.8;onGround=false;}
  if(!onGround){vy-=20*dt;pY+=vy*dt;if(pY<=gnd){pY=gnd;vy=0;onGround=true;}}
  else if(gnd<pY-.02){onGround=false;vy=0;}else pY=gnd;
  player.rotation.y=yaw;
@@ -166,9 +169,9 @@ function updateCorpses(dt){
 }
 function updateCamera(){
  if(fp){player.visible=false;camera.rotation.order='YXZ';camera.position.set(player.position.x,player.position.y+1.65,player.position.z);camera.rotation.set(pitch,yaw,0);return;}
- player.visible=true;
+ player.visible=!inTank;
  const target=player.position.clone().add(new THREE.Vector3(0,1.45,0));
- const dist=5.5;
+ const dist=inTank?9.5:5.5;
  camera.position.set(target.x+Math.sin(yaw)*dist,target.y+1.6+pitch*2.5,target.z+Math.cos(yaw)*dist);
  camera.lookAt(target.clone().add(new THREE.Vector3(-Math.sin(yaw)*2,pitch*1.8,-Math.cos(yaw)*2)));
 }
@@ -204,7 +207,7 @@ function start(){
  inv=newInv();cur='hands';buildMode=false;bTool='blk';mouseDown=false;invul=0;
  hour=8;lastH=8;day=1;gtime=0;skyT=0;spawnedZ=0;spawnedW=0;spawnedS=0;madeZW=0;clkM=-1;nc[0]=nc[1]=nc[2]=nc[3]=nc[4]=0;spawnedC=0;offerAt=15;drawSky(0);
  PT=newTeam(0x3a7ab8,true);PT.blocks=40;
- active=true;selectW('hands');updateHealth();updateAmmo();renderInv();ac();updateChunks();spawnBots();respawnForest();updateClock();
+ active=true;selectW('hands');updateHealth();updateAmmo();renderInv();ac();updateChunks();spawnBots();respawnForest();spawnTanks();updateClock();updatePpl();
  say(t('surv')+' '+t('dayhint'),5);renderTeam();
 }
 // ja kadru skaits krītas zem 30, grafiku automātiski padara vieglāku (izšķirtspēja, ēnas)
@@ -223,13 +226,13 @@ function animate(){
  const dt=Math.min(clock.getDelta(),.04);
  if(active){
   gtime+=dt;camR.set(1,0,0).applyQuaternion(camera.quaternion);buildHL();
-  move(dt);updateChunks();updateItems(dt);updateHint();updateBullets(dt);updateBots(dt);updateZombies(dt);updateTime(dt);updateCorpses(dt);updateFx(dt);updateDoors();updateGhost();updateCamera();skyline.position.set(player.position.x*.96,0,player.position.z*.96);floor.position.x=player.position.x;floor.position.z=player.position.z;grid.position.x=Math.round(player.position.x/2)*2;grid.position.z=Math.round(player.position.z/2)*2;sun.position.set(player.position.x-25,40,player.position.z+15);sun.target.position.set(player.position.x,0,player.position.z);
+  move(dt);updateChunks();updateItems(dt);updateHint();updateBullets(dt);updateBots(dt);updateZombies(dt);updateTime(dt);updateCorpses(dt);updateFx(dt);updateTanks(dt);updateDoors();updateGhost();updateCamera();skyline.position.set(player.position.x*.96,0,player.position.z*.96);floor.position.x=player.position.x;floor.position.z=player.position.z;grid.position.x=Math.round(player.position.x/2)*2;grid.position.z=Math.round(player.position.z/2)*2;sun.position.set(player.position.x-25,40,player.position.z+15);sun.target.position.set(player.position.x,0,player.position.z);
   attackWait=Math.max(0,attackWait-dt);
   hurtWait=Math.max(0,hurtWait-dt);invul=Math.max(0,invul-dt);
   if(mouseDown&&!buildMode&&(cur==='m16'||TOUCH))hit();
   autoQuality();
   teamT-=dt;if(teamT<=0){teamT=2;teamTick();}
-  teamUI-=dt;if(teamUI<=0){teamUI=1.5;renderTeam();}
+  teamUI-=dt;if(teamUI<=0){teamUI=1.5;renderTeam();updatePpl();}
   if(msgWait>0){msgWait-=dt;if(msgWait<=0)$('msg').classList.remove('show');}
  }
  renderer.render(scene,camera);

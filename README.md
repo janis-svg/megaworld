@@ -13,6 +13,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - 🌲 Mežā dzīvo 20 meža cilvēki: ātri, ar nažiem, nedraudzējas. 22:00 viņi pārvēršas vilkačos. Ja dienā kādu nogalini, naktī būs mazāk vilkaču, bet katru rītu mežā atkal ir 20.
 - No 22:00 nāk zombiji, skeleti un vilkači. 3 zombiji + 2 vilkači var saplūst zombvilkā.
 - 👺 Vienu reizi naktī parādās cilvēkēdājs: lēns, bet 3 sitieni nogalina. Viņu var nogalināt tikai ar 2 raķetēm.
+- 🚜 Pilsētā ir 4 tanki (viens netālu no sākuma). Tankā tevi gandrīz nevar ievainot, un tam ir 3 šāviņi: viens šāviņš iznīcina zombijus tuvumā un cilvēkēdāju. Kad šāviņi beidzas, tanks salūzt.
 - Rītā zombiji sprāgst, turies pa gabalu.
 
 **Telefons:** kloķis kustībai, lielā poga šauj, 🔄 maina ieroci, 🔨 būvē, 🤚 atver un aicina, ⬆ lec.
@@ -39,6 +40,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 | `js/13_monstri.js` | Zombiji, skeleti, vilkači, zombvilki |
 | `js/14_spele.js` | Šaušana, kustība, galvenais spēles cikls |
 | `js/15_vadiba.js` | Telefona pogas un kloķis |
+| `js/16_tanki.js` | Tanki |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 

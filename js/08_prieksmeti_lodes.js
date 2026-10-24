@@ -46,7 +46,7 @@ function updateBullets(dt){
    if(done)break;
    for(const h of HL){if(h.team===b.team||(!b.pl&&!b.team.enemies.has(h.team)))continue;if(h.b&&h.b.dead)continue;if(Math.hypot(h.p.x-p.x,h.p.z-p.z)<.6&&Math.abs(p.y-(h.y+1.1))<1.2){done=true;if(b.rocket)boom=true;else hurt(h,b.pl?b.dmg:b.dmg*.65,b.team,b.pl);break;}}
   }
-  if(boom)rocketBoom(p,b.team,b.pl);
+  if(boom){if(b.shell)tankBoom(p);else rocketBoom(p,b.team,b.pl);}
   if(done){scene.remove(b.m);bullets.splice(i,1);}
  }
 }
