@@ -70,7 +70,7 @@ function move(dt){
  if(moving)d.normalize();
  const speed=inTank?6.5:(keys.ShiftLeft||keys.ShiftRight)?8.5:5.2;
  player.position.addScaledVector(d,speed*dt);
- pushOut(player.position,inTank?1.7:.35,pY,PT);clampW(player.position);
+ pushOut(player.position,inTank?1.7:.35,pY,PT);unstick(player.position,inTank?1.7:.35,pY,PT);clampW(player.position);
  // lēciens + stāvēšana uz klucīšiem
  const gnd=groundAt(player.position.x,player.position.z,pY,.35);
  if(keys.Space&&onGround&&!inTank){vy=7.8;onGround=false;}
@@ -137,7 +137,8 @@ function updateZombies(dt){
   if(!tg)continue;
   const dx=tg.p.x-z.position.x,dz=tg.p.z-z.position.z,canReach=tg.y<(u.kind==='zw'||u.kind==='c'?2.6:1.4);
   let mv=false;
-  if(dist>u.reach*.7){stepTo(z.position,tg.p.x,tg.p.z,u.speed,dt,.4*Math.min(u.sc,1.4),null,u);mv=true;z.rotation.y=Math.atan2(-dx,-dz);z.position.y=Math.sin(clock.elapsedTime*6+u.phase)*.04;smashDoor(z,tg.p,dt);}
+  if(dist>u.reach*.7){stepTo(z.position,tg.p.x,tg.p.z,u.speed,dt,.4*Math.min(u.sc,1.4),null,u);mv=true;
+   if(u.stuck>6){u.stuck=0;if(!unstick(z.position,.45)&&dist>12){const a=Math.random()*6.283;z.position.x=tg.p.x+Math.cos(a)*10;z.position.z=tg.p.z+Math.sin(a)*10;unstick(z.position,.45);}}z.rotation.y=Math.atan2(-dx,-dz);z.position.y=Math.sin(clock.elapsedTime*6+u.phase)*.04;smashDoor(z,tg.p,dt);}
   if(u.legs){const sw=mv?Math.sin(clock.elapsedTime*(u.kind==='w'?12:7)+u.phase)*.6:0;u.legs[0].rotation.x=sw;u.legs[1].rotation.x=-sw;}
   if(dist<9){
    const bl=blockedLine(z.position,tg.p,.8);
@@ -172,8 +173,11 @@ function updateCamera(){
  if(fp){player.visible=false;camera.rotation.order='YXZ';camera.position.set(player.position.x,player.position.y+1.65,player.position.z);camera.rotation.set(pitch,yaw,0);return;}
  player.visible=!inTank;
  const target=player.position.clone().add(new THREE.Vector3(0,1.45,0));
- const dist=inTank?9.5:5.5;
- camera.position.set(target.x+Math.sin(yaw)*dist,target.y+1.6+pitch*2.5,target.z+Math.cos(yaw)*dist);
+ const want=inTank?9.5:5.5,cy=target.y+1.6+pitch*2.5;
+ // kamera neiet cauri sienām: ja starp tēlu un kameru ir siena, kamera pienāk tuvāk
+ let free=want;for(let k=1;k<=14;k++){const d=want*k/14,x=target.x+Math.sin(yaw)*d,z=target.z+Math.cos(yaw)*d,y=target.y+(cy-target.y)*k/14;if(wallAt(x,z,y)){free=Math.max(.6,d-.45);break;}}
+ camD=free<camD?free:camD+(free-camD)*.08;const dist=camD;
+ camera.position.set(target.x+Math.sin(yaw)*dist,target.y+(cy-target.y)*Math.min(1,dist/want),target.z+Math.cos(yaw)*dist);
  camera.lookAt(target.clone().add(new THREE.Vector3(-Math.sin(yaw)*2,pitch*1.8,-Math.cos(yaw)*2)));
 }
 function gameOver(){

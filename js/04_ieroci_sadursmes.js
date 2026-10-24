@@ -30,7 +30,11 @@ function solid(o,y,team){if(o.off||o.dead)return false;if(o.y1!==undefined){if(o
 function wallAt(x,z,y,team){let r=0;eachOb(x,z,0,o=>{if(o.off||o.dead||Math.abs(x-o.x)>=o.hx||Math.abs(z-o.z)>=o.hz)return false;if(o.y1===undefined){r=1;return true;}if(team&&o.team===team)return false;if(y>=o.y0&&y<o.y1){r=2;return true;}return false;});return r;}
 function inWall(x,z){return wallAt(x,z,1)>0;}
 function blockedLine(a,b,y=1,team){const n=Math.max(8,Math.ceil(Math.hypot(b.x-a.x,b.z-a.z)/1.2));for(let k=1;k<n;k++){const r=wallAt(a.x+(b.x-a.x)*k/n,a.z+(b.z-a.z)*k/n,y,team);if(r)return r;}return 0;}
-function pushOut(p,rad,y=0,team){eachOb(p.x,p.z,rad+.2,o=>{if(!solid(o,y,team))return false;const px=p.x-o.x,pz=p.z-o.z,rx=o.hx+rad,rz=o.hz+rad;if(Math.abs(px)<rx&&Math.abs(pz)<rz){if(rx-Math.abs(px)<rz-Math.abs(pz))p.x=o.x+(px<0?-rx:rx);else p.z=o.z+(pz<0?-rz:rz);}return false;});}
+// divas reizes pēc kārtas: stūrī starp divām sienām pirmā izstumšana var iegrūst otrā sienā
+function pushOut(p,rad,y=0,team){for(let it=0;it<2;it++)eachOb(p.x,p.z,rad+.2,o=>{if(!solid(o,y,team))return false;const px=p.x-o.x,pz=p.z-o.z,rx=o.hx+rad,rz=o.hz+rad;if(Math.abs(px)<rx&&Math.abs(pz)<rz){if(rx-Math.abs(px)<rz-Math.abs(pz))p.x=o.x+(px<0?-rx:rx);else p.z=o.z+(pz<0?-rz:rz);}return false;});}
+function overlapAt(x,z,rad,y=0,team){return eachOb(x,z,rad+.2,o=>solid(o,y,team)&&Math.abs(x-o.x)<o.hx+rad*.7&&Math.abs(z-o.z)<o.hz+rad*.7);}
+// ja tomēr iesprūdis sienā: atrod tuvāko brīvo vietu apkārt
+function unstick(p,rad,y=0,team){if(!overlapAt(p.x,p.z,rad,y,team))return false;for(let r=.4;r<=4;r+=.3)for(let k=0;k<16;k++){const a=k/16*6.283,x=p.x+Math.cos(a)*r,z=p.z+Math.sin(a)*r;if(!overlapAt(x,z,rad,y,team)){p.x=x;p.z=z;return true;}}return false;}
 function groundAt(x,z,y,rad){let g=0;eachOb(x,z,rad+.2,o=>{if(o.y1!==undefined&&!o.dead&&o.y1<=y+.35&&o.y1>g&&Math.abs(x-o.x)<o.hx+rad*.6&&Math.abs(z-o.z)<o.hz+rad*.6)g=o.y1;return false;});return g;}
 function clampW(p){p.x=Math.max(-EDGE+2,Math.min(EDGE-2,p.x));p.z=Math.max(-EDGE+2,Math.min(EDGE-2,p.z));}
 function stepTo(p,tx,tz,sp,dt,rad,team,st,y=0){let dx=tx-p.x,dz=tz-p.z;const d=Math.hypot(dx,dz);if(d<.05)return 0;dx/=d;dz/=d;

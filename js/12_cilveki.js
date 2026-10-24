@@ -213,7 +213,9 @@ function botMove(b,dt,i){
  if(b.follow&&!b.tg&&active){tx=player.position.x+Math.cos(b.slot)*3;tz=player.position.z+Math.sin(b.slot)*3;const d=Math.hypot(tx-p.x,tz-p.z);if(d>45){p.x=tx;p.z=tz;}sp=d>6?7:4.5;if(d<.8)tx=null;}
  else if(b.gx!=null){if(b.wps.length){const w=b.wps[0];tx=w[0];tz=w[1];if(Math.hypot(tx-p.x,tz-p.z)<1.5)b.wps.shift();}else{tx=b.gx;tz=b.gz;if(Math.hypot(tx-p.x,tz-p.z)<.6)tx=null;}sp=b.tg?4.6:3.6;}
  let mv=false;
- if(tx!==null){const d=stepTo(p,tx,tz,sp,dt,.35,b.team,b.st);mv=d>.3;if(!b.tg)g.rotation.y=Math.atan2(-(tx-p.x),-(tz-p.z));}
+ if(tx!==null){const d=stepTo(p,tx,tz,sp,dt,.35,b.team,b.st);mv=d>.3;if(!b.tg)g.rotation.y=Math.atan2(-(tx-p.x),-(tz-p.z));
+  // ilgi iesprūdis (stūrī, ēkā): izkāpj uz tuvākās ielas un izvēlas jaunu mērķi
+  if(b.st.stuck>5){b.st.stuck=0;if(!unstick(p,.35,0,b.team)){const rc=v=>Math.round((v-20)/40)*40+20;if(Math.abs(p.x-rc(p.x))<Math.abs(p.z-rc(p.z)))p.x=rc(p.x);else p.z=rc(p.z);}b.gx=null;b.wps=[];b.co=null;b.bi=null;}}
  else pushOut(p,.35,0,b.team);
  b.cd-=dt;
  if(b.tg){const e=b.tg,dx=e.p.x-p.x,dz=e.p.z-p.z,d=Math.hypot(dx,dz);g.rotation.y=Math.atan2(-dx,-dz);
