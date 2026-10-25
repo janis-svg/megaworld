@@ -65,6 +65,18 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - 🗺️ Minikarti var aizvērt ar ✖, tad paliek 🗺️ poga, ar kuru to atver.
 - Ja iesprūsti, spied lēcienu un reizē kustini uz sāniem: tēls izlec ārā.
 
+## Helikopteri un Javelin
+
+- 🚁 Mežā ir 2 helikopteru laukumi, katrā 2 helikopteri (minikartē 🚁):
+  - **Plēsoņa**: veikla, ložmetējā līdz 400 lodēm, radars minikartē rāda briesmoņus un ienaidniekus (sarkani punkti).
+  - **Haizivs**: ātrāka un izturīgāka, ložmetējs sit stiprāk, bet lodes tikai 250.
+- Vadība: kloķis = kustība, vilkšana ar pirkstu = pagrieziens, ⬆ uz augšu, ⬇ uz leju (datorā Space un C), ⚔️ ložmetējs (labs pret briesmoņiem un cilvēkiem), 🤚 nosēsties.
+- Helikopters paliek tur, kur tu nosēdies (arī uz jumta). Helikopteri, kas nosēdināts citur, var nozagt, bet saimnieki to var pamanīt.
+- ⛽ Degviela beidzas lidojot. 🔗 Ložmetēja lentes un ⛽ degvielas kannas atrod atvilknēs un zemē vai nopērk pie ieroču tirgotāja. Iekāpjot tās pašas iepildās helikopterī.
+- Lidmašīnas raķete, tanka šāviņš, Javelin un prettanku raķete iznīcina helikopteri ar vienu trāpījumu. Tad laukumā pēc brīža parādās jauns, bet kopā nekad nav vairāk par 4.
+- Boti arī lido ar helikopteriem un nosēdina tos savās bāzēs.
+- 🎯 Javelin ir spēcīgākais ierocis no zemes: raķete pati tēmē uz helikopteriem, lidmašīnām un tankiem (citādi uz briesmoņiem). To atrod reti vai nopērk pie ieroču tirgotāja. Prettanku ierocis (🚀) arī iznīcina tankus un helikopterus, kas ir zemu.
+
 ## Spēlēt kopā (līdz 4 spēlētājiem)
 
 1. Viens atver spēli, spiež 🌐 un "Sākt kopīgo spēli".
@@ -109,6 +121,7 @@ Pasauli skaita tā cilvēka ierīce, kurš uzaicināja. Ja viņš aizver lapu, s
 | `js/25_liela_nakts_maja.js` | Pilnmēness nakts, Mēness milzis, mājas uzlabojumi |
 | `js/26_iestregsana.js` | Lai tēli neiesprūst (briesmoņi ēkās, spēlētājs stūros) |
 | `js/27_lidlauki.js` | Lidlauki, lidmašīnas, gaisa kaujas, izpletnis, avārijas ugunsgrēks |
+| `js/28_helikopteri.js` | Helikopteri, ložmetējs, degviela, Javelin |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 

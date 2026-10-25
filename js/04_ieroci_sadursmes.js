@@ -8,7 +8,7 @@ const WP={hands:{ic:'✊',dmg:25},
  // pērk pie tirgotājiem: 🐔 burvja burvestība pārvērš pretinieku vistā, 🌳 un 🌸 sēklas iestāda koku vai puķi
  poly:{ic:'🐔',spell:true,rate:.8,max:20,rng:22,val:20,av:5},grow:{ic:'🌳',spell:true,rate:.35,max:40,rng:3,val:5,av:1},flow:{ic:'🌸',spell:true,rate:.25,max:40,rng:3,val:2,av:.5}};
 const WL=['hands','pistol','m16','shot','rpg','poly','grow','flow'],GUNS=['pistol','m16','shot','rpg'];
-const newInv=()=>({has:{pistol:false,m16:false,shot:false,rpg:false,poly:false,grow:false,flow:false},ammo:{pistol:0,m16:0,shot:0,rpg:0,poly:0,grow:0,flow:0},meds:0,armor:0,matches:0,coins:0});
+const newInv=()=>({has:{pistol:false,m16:false,shot:false,rpg:false,poly:false,grow:false,flow:false,jav:false},ammo:{pistol:0,m16:0,shot:0,rpg:0,poly:0,grow:0,flow:0,jav:0},meds:0,armor:0,matches:0,coins:0,hbelt:0,fuel:0});
 function rollLoot(R,p){if(R()>p)return[];const q=R();return q<.14?['pistol','a_pistol']:q<.23?['m16','a_m16']:q<.29?['shot','a_shot']:q<.34?['rpg','a_rpg']:q<.48?['a_pistol']:q<.56?['a_m16']:q<.61?['a_shot']:q<.66?['a_rpg']:q<.74?['med']:q<.82?['armor']:q<.87?['blk']:q<.9?['match']:q<.98?['coin']:['win_i'];}
 // mežā: būvmateriāli (kluči, logi, durvis) un sērkociņi
 function pickForest(R){const q=R();return q<.35?'blk':q<.55?'win_i':q<.7?'door_i':q<.88?'match':pickWeapon(R);}

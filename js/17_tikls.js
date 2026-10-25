@@ -124,10 +124,10 @@ function netHostFrame(dt){
  netT-=dt;if(netT>0)return;netT=.1;
  const M=[],B=[],K=[];
  for(const z of zombies){const u=z.userData;if(u.dead)continue;M.push([u.nid,KIND.indexOf(u.kind),r2(z.position.x),r2(z.position.z),r2(z.position.y),r2(z.rotation.y),Math.ceil(u.hp),u.max,u.boom!==undefined?1:0]);}
- for(const b of humans)if(!b.dead&&!b.jet&&!b.para)B.push([b.nid,r2(b.g.position.x),r2(b.g.position.z),r2(b.g.rotation.y),Math.ceil(b.hp),b.team.color,b.team===PT?1:PT.enemies.has(b.team)?2:0]);
+ for(const b of humans)if(!b.dead&&!b.jet&&!b.para&&!b.heli)B.push([b.nid,r2(b.g.position.x),r2(b.g.position.z),r2(b.g.rotation.y),Math.ceil(b.hp),b.team.color,b.team===PT?1:PT.enemies.has(b.team)?2:0]);
  tanks.forEach((tk,i)=>K.push([i,r2(tk.g.position.x),r2(tk.g.position.z),r2(tk.g.rotation.y),r2(tk.g.userData.tur.rotation.y),tk.shells,tk.dead?1:0]));
- const P=[[0,r2(player.position.x),r2(pY),r2(player.position.z),r2(yaw),Math.ceil(health),active?0:1,inTank||(typeof jetMode!=='undefined'&&jetMode)?1:0,PCOL[0],$('nickname').value.slice(0,16)]];
- for(const G of NET.guests.values())if(G.ready)P.push([G.id,r2(G.pos.x),r2(G.y),r2(G.pos.z),r2(G.yaw),Math.ceil(G.hp),G.dead?1:0,G.inJet?1:0,G.col,G.name]);
+ const P=[[0,r2(player.position.x),r2(pY),r2(player.position.z),r2(yaw),Math.ceil(health),active?0:1,inTank||(typeof jetMode!=='undefined'&&jetMode)||(typeof heliMode!=='undefined'&&heliMode)?1:0,PCOL[0],$('nickname').value.slice(0,16)]];
+ for(const G of NET.guests.values())if(G.ready)P.push([G.id,r2(G.pos.x),r2(G.y),r2(G.pos.z),r2(G.yaw),Math.ceil(G.hp),G.dead?1:0,G.inJet||G.inHeli?1:0,G.col,G.name]);
  const near=(x,z,G)=>Math.hypot(x-G.pos.x,z-G.pos.z)<130;
  for(const G of NET.guests.values()){if(!G.ready)continue;
   netTo(G,{t:'s',h:r2(hour),d:day,sc:score,nb:humans.length,tm:PT.members.length,gone:netGone,
