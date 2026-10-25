@@ -97,7 +97,10 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - Ieroču darbības attālums: pistole 50 m, M16 80 m, bise 22 m, prettanku 70 m, snaipera šautene 150 m, bruņmašīnas ložmetējs 90 m, helikoptera 80 m. Ložmetēji nešauj cauri sienām, bet caur dzeloņstieplēm var šaut.
 - 🔭 Novērošanas torņos ir snaipera šautene (SNP): ieslēdzot to, skats pāriet uz tēmēkli ar pietuvinājumu. Viens trāpījums notriec cilvēku, bet tehnikai tā neko nedara. Šautene tornī parādās atkal katru rītu.
 - Raķete sagrauj novērošanas torni, un tas vairs neatjaunojas.
-- Iznīcinātā tehnika pēc ~15 sekundēm atkal ir bāzē.
+- Iznīcinātā tehnika pēc 1 minūtes atkal ir bāzē.
+- Katram botam ir 2 dzīvības: pirmo reizi krītot, viņš pēc ~8 sekundēm atkal parādās savā bāzē un sargā to. Otro reizi viņš krīt pavisam. Armija ir uzvarēta tikai tad, kad neviens vairs negaida atgriešanos.
+- 🎖️ Pakāpe redzama formā: kaprālim un seržantam uzšuves uz piedurknēm un lauka cepure, virsniekiem zvaigznes uz pleciem un virsnieka cepure, kapteinim saulesbrilles, majoram zelta uzpleči un medaļas, pulkvedim sarkana cepure, ģenerālim zelta cepure un zelta apmetnis. To redz arī draugi.
+- Karā nav Kaspara apmācības tekstu, ir tikai 📻 radio sarunas.
 - 🪂 Ik pa laikam kartē nolaižas gaisa piegāde ar retiem ieročiem.
 - Ko redz kāds no tavas armijas, tas parādās minikartē 3 minūtes: 🔴 karavīri, 🟣 pretinieks uz jumta, 🟠 helikopteri un lidmašīnas, 🟡 tanki.
 - Augstajām mājām ir trepes (🤚): var uzkāpt uz plakanā jumta un šaut. Karā uz jumta ir Javelin komplekts ar 3 raķetēm (atkal katru rītu).

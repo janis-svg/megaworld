@@ -69,7 +69,7 @@ function renderLook(){const el=$('look');if(!el||el.style.display!=='block')retu
 const _start6=start;start=function(){_start6();dressMesh(player,lookArr(),true);apOf.clear();apOf.set(0,lookArr());};
 // ---------- kopīgā spēle: izskats redzams visiem ----------
 const _netHostMsg6=netHostMsg;netHostMsg=function(G,d){
- if(d&&G.ready&&d.t==='ap'&&Array.isArray(d.a)){G.ap=d.a.slice(0,3).map(String);apOf.set(G.id,G.ap);dressMesh(G.mesh,G.ap,false);netQ.push({e:'ap',id:G.id,a:G.ap,o:G.id});return;}
+ if(d&&G.ready&&d.t==='ap'&&Array.isArray(d.a)){G.ap=d.a.slice(0,5).map(String);apOf.set(G.id,G.ap);dressMesh(G.mesh,G.ap,false);netQ.push({e:'ap',id:G.id,a:G.ap,o:G.id});return;}
  if(d&&G.ready&&d.t==='lbuy'){const p=LPRICE[d.k];if(p===undefined)return;if((PT.coins||0)<p){netTo(G,{t:'msg',s:t('nocoins'),d:1.5});return;}PT.coins-=p;netTo(G,{t:'lok',k:d.k});netMe(G);return;}
  _netHostMsg6(G,d);};
 const _netWelcome6=netWelcome;netWelcome=function(G){_netWelcome6(G);netTo(G,{t:'aps',L:[...apOf]});};

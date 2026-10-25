@@ -48,7 +48,7 @@ const _killBot15=killBot;killBot=function(b,src){const was=!b.dead,lh=b.lastHit,
 function vehStars(kind,owner){if(!isWar()||!HITPL||SHOOTER<0||NET.role==='guest')return;const ST=shooterTeam(SHOOTER);if(!ST||!owner||owner===ST||!ST.enemies.has(owner))return;
  const why=[kind];giveStars(SHOOTER,{apc:3,tank:4,heli:4,jet:5}[kind]+multiBonus(SHOOTER,why),why);}
 const _destroyTank15=destroyTank;destroyTank=function(t,team,n){const was=!t.dead,own=t.driver?t.driver.team:t===inTank?PT:t.army;_destroyTank15(t,team,n);if(was&&t.dead)vehStars(t.kind==='apc'?'apc':'tank',own);};
-const _destroyHeli15=destroyHeli;destroyHeli=function(H,team){const was=H.st!=='gone',own=heliTeam(H)||H.owner;_destroyHeli15(H,team);if(was)vehStars('heli',own);if(isWar())H.rs=15;};
+const _destroyHeli15=destroyHeli;destroyHeli=function(H,team){const was=H.st!=='gone',own=heliTeam(H)||H.owner;_destroyHeli15(H,team);if(was)vehStars('heli',own);if(isWar())H.rs=60;};
 const _shootDown15=shootDown;shootDown=function(J,team){const own=pilotTeam(J);_shootDown15(J,team);vehStars('jet',own);};
 const hl=(fn,setter)=>function(...a){const o=HITPL;HITPL=setter(a);try{return fn.apply(this,a);}finally{HITPL=o;}};
 jetBoom=hl(jetBoom,a=>!!a[3]);rocketBoom=hl(rocketBoom,a=>!!a[2]);tankBoom=hl(tankBoom,()=>true);jetDamage=hl(jetDamage,a=>!!a[3]);
@@ -117,9 +117,9 @@ function towerAnim(dt){for(const T of TOWERS)if(T.fall>0){T.fall-=dt;T.g.scale.y
 // ---------- tehnika drīz atjaunojas bāzē; gaisa piegādes ----------
 const slotT={};let dropAirT=60;
 function respawnTick(dt){
- for(const t of tanks){if(!t.home||!t.dead)continue;if(t.rT===undefined)t.rT=gtime+15;if(gtime<t.rT)continue;t.rT=undefined;t.dead=false;t.hp=t.kind==='apc'?1:2;t.shells=10;t.ammo=300;t.driver=null;t.res=null;
+ for(const t of tanks){if(!t.home||!t.dead)continue;if(t.rT===undefined)t.rT=gtime+60;if(gtime<t.rT)continue;t.rT=undefined;t.dead=false;t.hp=t.kind==='apc'?1:2;t.shells=10;t.ammo=300;t.driver=null;t.res=null;
   t.g.userData.hull.material.color.setHex(t.kind==='apc'?0x5b6b3a:0x4b5320);t.g.position.set(t.home.x,0,t.home.z);t.g.rotation.y=t.home.a;t.ob.x=t.home.x;t.ob.z=t.home.z;remOb(t.ob);addOb(t.ob);}
- for(let i=0;i<SLOTS.length;i++){if(JETS.some(J=>J.slot===i&&J.st!=='gone')){slotT[i]=undefined;continue;}if(slotT[i]===undefined)slotT[i]=gtime+15;if(gtime<slotT[i])continue;slotT[i]=undefined;
+ for(let i=0;i<SLOTS.length;i++){if(JETS.some(J=>J.slot===i&&J.st!=='gone')){slotT[i]=undefined;continue;}if(slotT[i]===undefined)slotT[i]=gtime+60;if(gtime<slotT[i])continue;slotT[i]=undefined;
   for(let k=JETS.length-1;k>=0;k--)if(JETS[k].slot===i)JETS.splice(k,1);const J=spawnJet(i);J.army=ARMY[i<4?0:1];J.a=WB[i<4?0:1].d>0?Math.PI:0;J.g.rotation.y=J.a;}
  dropAirT-=dt;if(dropAirT<=0){dropAirT=75;const x=(Math.random()-.5)*160,z=(Math.random()-.5)*160,d=dropItem(x,z,'w:'+['snip','jav','harmor','a_jav','a_rpg'][Math.floor(Math.random()*5)]);d.air=34;d.m.position.y=34;
   const ch=new THREE.Mesh(new THREE.SphereGeometry(1.4,10,6,0,6.283,0,Math.PI/2),mat(0xff7043,.8));ch.position.y=2.2;ch.scale.y=.6;d.m.add(ch);d.chute=ch;radio(ARMY[0],'air_drop');radio(ARMY[1],'air_drop');}
