@@ -39,13 +39,35 @@ function makeLandmark(ch,L,R,key){const g=ch.group,x=L.x,z=L.z,ob=(px,pz,hx,hz)=
 const WB=[{x:-205,z:-205,d:1},{x:205,z:205,d:-1}];
 const _nearAirfield13=nearAirfield;nearAirfield=function(x,z,m){return _nearAirfield13(x,z,m)||WB.some(b=>Math.abs(x-b.x)<36+(m||0)&&Math.abs(z-b.z)<36+(m||0));};
 let WG=[],WOB=[],FL=[],ARMY=[],winner=null,dropT=0,warT=0,warNetT=0,armCd=0;
-function sandbag(g,x,z,w,d){const s=cube(w,1.1,d,0x9e8a5a,1);s.position.set(x,.55,z);g.add(s);WOB.push({x,z,hx:w/2,hz:d/2});}
-function buildBases(){for(const g of WG){scene.remove(g);freeObj(g);}WG=[];for(const o of WOB)remOb(o);WOB=[];
+function sandbag(g,x,z,w,d){const s=cube(w,1.1,d,0x9e8a5a,1);s.position.set(x,.55,z);g.add(s);WOB.push({x,z,hx:w/2,hz:d/2,y0:0,y1:1.1});}
+// dzeloņstiepļu žogs: stabi ik 4 m, 3 stieples un spirāle augšā; vārti uz kartes centra pusi, pie vārtiem smilšu maisi
+function wireFence(g,B){const R=32,gate=6,post=0x5d4037,wire=0x9e9e9e;
+ const seg=(x1,z1,x2,z2)=>{const len=Math.hypot(x2-x1,z2-z1),n=Math.max(1,Math.round(len/4)),ax=Math.abs(x2-x1)>Math.abs(z2-z1);
+  for(let k=0;k<=n;k++){const x=x1+(x2-x1)*k/n,z=z1+(z2-z1)*k/n,p=cube(.14,1.8,.14,post,1);p.position.set(x,.9,z);g.add(p);}
+  for(const y of [.45,.95,1.45]){const w=cube(ax?len:.03,.03,ax?.03:len,wire,.5);w.position.set((x1+x2)/2,y,(z1+z2)/2);w.castShadow=false;g.add(w);}
+  for(let k=0;k<n*3;k++){const x=x1+(x2-x1)*(k+.5)/(n*3),z=z1+(z2-z1)*(k+.5)/(n*3),c=new THREE.Mesh(new THREE.TorusGeometry(.28,.025,4,10),mat(wire,.5));c.position.set(x,1.95,z);c.rotation.y=ax?0:Math.PI/2;c.castShadow=false;g.add(c);}
+  WOB.push({x:(x1+x2)/2,z:(z1+z2)/2,hx:ax?len/2:.15,hz:ax?.15:len/2,y0:0,y1:2.1});};
+ const inX=B.d>0?1:-1; // vārti ir pusēs, kas skatās uz kartes centru
+ for(const sgn of [-1,1]){
+  if(sgn===inX){seg(B.x-R,B.z+sgn*R,B.x-gate,B.z+sgn*R);seg(B.x+gate,B.z+sgn*R,B.x+R,B.z+sgn*R);sandbag(g,B.x-gate-1.2,B.z+sgn*(R-2),2.4,1);sandbag(g,B.x+gate+1.2,B.z+sgn*(R-2),2.4,1);}else seg(B.x-R,B.z+sgn*R,B.x+R,B.z+sgn*R);
+  if(sgn===inX){seg(B.x+sgn*R,B.z-R,B.x+sgn*R,B.z-gate);seg(B.x+sgn*R,B.z+gate,B.x+sgn*R,B.z+R);sandbag(g,B.x+sgn*(R-2),B.z-gate-1.2,1,2.4);sandbag(g,B.x+sgn*(R-2),B.z+gate+1.2,1,2.4);}else seg(B.x+sgn*R,B.z-R,B.x+sgn*R,B.z+R);}}
+// novērošanas tornis: 4 kājas, kāpnes, platforma 6 m augstumā ar margām un jumtu; uz platformas var stāvēt (tā ir kā klucis)
+const TOWERS=[];
+function watchTower(g,x,z){const w=0x6d4c41,H=6;
+ for(const [a,b] of [[-1.5,-1.5],[1.5,-1.5],[-1.5,1.5],[1.5,1.5]]){const l=cube(.25,H+2.6,.25,w,1);l.position.set(x+a,(H+2.6)/2,z+b);g.add(l);WOB.push({x:x+a,z:z+b,hx:.15,hz:.15,y0:0,y1:H});}
+ for(const y of [2,4]){for(const s of [-1.5,1.5]){const c=cube(3.2,.12,.12,w,1);c.position.set(x,y,z+s);g.add(c);const c2=cube(.12,.12,3.2,w,1);c2.position.set(x+s,y,z);g.add(c2);}}
+ const pl=cube(3.8,.25,3.8,0x795548,1);pl.position.set(x,H-.12,z);g.add(pl);WOB.push({x,z,hx:1.9,hz:1.9,y0:H-.25,y1:H});
+ for(const s of [-1.85,1.85]){const r=cube(3.8,.1,.1,w,1);r.position.set(x,H+1,z+s);g.add(r);const r2=cube(.1,.1,3.8,w,1);r2.position.set(x+s,H+1,z);g.add(r2);
+  const sb=cube(3.8,.5,.15,0x9e8a5a,1);sb.position.set(x,H+.25,z+s);g.add(sb);}
+ const roof=new THREE.Mesh(new THREE.ConeGeometry(3,1.2,4),mat(0x3e463c,.9));roof.position.set(x,H+3.1,z);roof.rotation.y=Math.PI/4;g.add(roof);
+ const lx=x+2.1;for(let k=0;k<2;k++){const s=cube(.08,H+.6,.08,w,1);s.position.set(lx,(H+.6)/2,z-.4+k*.8);g.add(s);}for(let y=.5;y<H;y+=.5){const r=cube(.08,.06,.8,w,1);r.position.set(lx,y,z);g.add(r);}
+ TOWERS.push({x,z,lx,lz:z,h:H});}
+function buildBases(){TOWERS.length=0;for(const g of WG){scene.remove(g);freeObj(g);}WG=[];for(const o of WOB)remOb(o);WOB=[];
  WB.forEach((B,i)=>{const g=new THREE.Group(),col=i?0x2e7d32:0xc62828;const pad=new THREE.Mesh(new THREE.PlaneGeometry(64,64),mat(0x5d5a4e,1));pad.rotation.x=-Math.PI/2;pad.position.set(B.x,.025,B.z);pad.receiveShadow=true;g.add(pad);
-  for(const s of [-1,1]){sandbag(g,B.x+s*18,B.z-30,20,1);sandbag(g,B.x+s*18,B.z+30,20,1);sandbag(g,B.x-30,B.z+s*18,1,20);sandbag(g,B.x+30,B.z+s*18,1,20);}
+  wireFence(g,B);
   const hq=cube(8,4,6,0x556b2f,.9);hq.position.set(B.x+10,2,B.z-10*B.d);g.add(hq);WOB.push({x:B.x+10,z:B.z-10*B.d,hx:4,hz:3});const hr=cube(8.6,.4,6.6,col,.8);hr.position.set(B.x+10,4.2,B.z-10*B.d);g.add(hr);
   const cr=cube(2.4,1.4,1.6,0x6d4c41,.9);cr.position.set(B.x-8,.7,B.z);g.add(cr);const cl=cube(2.5,.15,1.7,col,.7);cl.position.set(B.x-8,1.45,B.z);g.add(cl);WOB.push({x:B.x-8,z:B.z,hx:1.2,hz:.8});
-  for(const [tx,tz] of [[-27,-27],[27,27],[-27,27],[27,-27]]){for(let l=0;l<3;l++)for(const [a,b] of [[0,0],[1,0],[0,1],[1,1]]){const c=cube(1,1,1,0x6d6d6d,.9);c.position.set(B.x+tx+a,l+.5,B.z+tz+b);g.add(c);}WOB.push({x:B.x+tx+.5,z:B.z+tz+.5,hx:1,hz:1});}
+  for(const [tx,tz] of [[-27,-27],[27,27],[-27,27],[27,-27]])watchTower(g,B.x+tx,B.z+tz);
   g.updateMatrixWorld(true);mergeInto(g);scene.add(g);WG.push(g);});
  for(const o of WOB)addOb(o);}
 function armoryNear(x,z){if(!isWar())return false;const B=WB[0];return Math.hypot(x-(B.x-8),z-B.z)<2.6;}
@@ -246,3 +268,20 @@ const _drawMap13=drawMap;drawMap=function(){_drawMap13();const g=mm.getContext('
  g.textAlign='center';g.textBaseline='middle';g.font=Math.round(W*.08)+'px serif';for(const L of LMS)g.fillText(L.ic,X(L.x),Y(L.z));
  if(!isWar())return;WB.forEach((B,i)=>{g.fillStyle=i?'rgba(46,125,50,.55)':'rgba(211,47,47,.55)';g.fillRect(X(B.x-32),Y(B.z-32),64*sc,64*sc);});
  const blink=Math.floor(clock.elapsedTime*3)%2===0;FL.forEach((F,i)=>{const home=Math.hypot(F.x-F.home[0],F.z-F.home[1])<2;if(!home&&!blink)return;g.font=Math.round(W*(home?.08:.11))+'px serif';g.fillText(i?'🏳️':'🚩',X(F.x),Y(F.z));});};
+
+// ---------- kāpšana novērošanas tornī: no augšas redz tālāk, un minikartē parādās ienaidnieki ----------
+Object.assign(T.lv,{tw_up:'🪜 Uzkāpt tornī',tw_down:'🪜 Nokāpt no torņa'});Object.assign(T.en,{tw_up:'🪜 Climb the tower',tw_down:'🪜 Climb down'});
+let towerFog=null;
+function towerAt(){const p=player.position;for(const T of TOWERS){if(pY>T.h-.6&&Math.abs(p.x-T.x)<2&&Math.abs(p.z-T.z)<2)return{T,up:true};if(pY<1.5&&Math.hypot(p.x-(T.lx+.6),p.z-T.lz)<1.6)return{T,up:false};}return null;}
+const onTower=()=>{const a=towerAt();return!!(a&&a.up);};
+const _nearInter14=nearInter;nearInter=function(){const o=_nearInter14();if(o&&o.type!=='burn')return o;const a=TOWERS.length&&towerAt();if(a)return{type:'tower',a};return o;};
+const _updateHint14=updateHint;updateHint=function(){const o=nearInter();if(o&&o.type==='tower'){const h=$('hint');h.textContent=(TOUCH?'':'E / ')+t(o.a.up?'tw_down':'tw_up');h.style.display='block';setAct('🪜');return;}_updateHint14();};
+const _interact14=interact;interact=function(){if(active){const o=nearInter();if(o&&o.type==='tower'){const T=o.a.T;if(o.a.up){player.position.set(T.lx+.8,0,T.lz);pY=0;}else{player.position.set(T.x,T.h,T.z);pY=T.h;}vy=0;onGround=true;sfx('drawer');return;}}_interact14();};
+const _updateFx14=updateFx;updateFx=function(dt){_updateFx14(dt);const up=TOWERS.length&&onTower();if(up&&towerFog===null){towerFog=scene.fog.far;scene.fog.far=150;}else if(!up&&towerFog!==null){scene.fog.far=towerFog;towerFog=null;}};
+const _drawMap14=drawMap;drawMap=function(){_drawMap14();if(!TOWERS.length||!onTower())return;const g=mm.getContext('2d'),W=mm.width,R=mmZoom?70:EDGE,cx=mmZoom?player.position.x:0,cz=mmZoom?player.position.z:0,sc=W/2/R;g.fillStyle='#ff1744';
+ const P=NET.role==='guest'?[...netBot.values()].filter(o=>o.rel===2).map(o=>o.g.position).concat([...netMon.values()].map(o=>o.z.position)):humans.filter(b=>!b.dead&&PT.enemies.has(b.team)).map(b=>b.g.position).concat(zombies.filter(z=>!z.userData.dead).map(z=>z.position));
+ for(const p of P)if(Math.hypot(p.x-player.position.x,p.z-player.position.z)<130){g.beginPath();g.arc(W/2+(p.x-cx)*sc,W/2+(p.z-cz)*sc,3,0,6.283);g.fill();}};
+// no torņa šauj lejup (un boti var trāpīt tornī stāvošajam): šādām lodēm augstumu nepārbauda
+const _shoot14=shoot;shoot=function(w){const n0=bullets.length;_shoot14(w);if(pY>3)for(let i=n0;i<bullets.length;i++)bullets[i].hy=true;};
+const _botFire14=botFire;botFire=function(b,tp,w,human){const n0=bullets.length;_botFire14(b,tp,w,human);if(human&&tp&&tp.y>3)for(let i=n0;i<bullets.length;i++)bullets[i].hy=true;};
+const _guestFire14=guestFire;guestFire=function(G,d){const n0=bullets.length;_guestFire14(G,d);if(G.y>3)for(let i=n0;i<bullets.length;i++)bullets[i].hy=true;};

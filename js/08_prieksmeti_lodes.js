@@ -44,7 +44,7 @@ function updateBullets(dt){
    if(Math.abs(p.x)>EDGE||Math.abs(p.z)>EDGE||wallAt(p.x,p.z,p.y,b.team)){done=true;boom=b.rocket;break;}
    for(const z of zombies){const u=z.userData;if(u.dead||u.rise>0)continue;if(Math.hypot(z.position.x-p.x,z.position.z-p.z)<(u.kind==='zw'?1.6:1)){done=true;if(b.rocket)boom=true;else dmgMonster(z,b.dmg,b.pl);break;}}
    if(done)break;
-   for(const h of HL){if(h.team===b.team||(!b.pl&&!b.team.enemies.has(h.team)))continue;if(h.b&&h.b.dead)continue;if(Math.hypot(h.p.x-p.x,h.p.z-p.z)<.6&&Math.abs(p.y-(h.y+1.1))<1.2){done=true;if(b.rocket)boom=true;else hurt(h,b.pl?b.dmg:b.dmg*.65,b.team,b.pl);break;}}
+   for(const h of HL){if(h.team===b.team||(!b.pl&&!b.team.enemies.has(h.team)))continue;if(h.b&&h.b.dead)continue;if(Math.hypot(h.p.x-p.x,h.p.z-p.z)<.6&&(b.hy||Math.abs(p.y-(h.y+1.1))<1.2)){done=true;if(b.rocket)boom=true;else hurt(h,b.pl?b.dmg:b.dmg*.65,b.team,b.pl);break;}}
   }
   if(boom){if(b.shell)tankBoom(p);else rocketBoom(p,b.team,b.pl);}
   if(done){scene.remove(b.m);bullets.splice(i,1);}
