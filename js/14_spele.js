@@ -237,7 +237,7 @@ function animate(){
   gtime+=dt;camR.set(1,0,0).applyQuaternion(camera.quaternion);
   if(!NET.meDead)move(dt);updateChunks();updateHint();netGuestFrame(dt);updateCorpses(dt);updateFx(dt);updateGhost();updateCamera();followWorld();
   attackWait=Math.max(0,attackWait-dt);
-  if(mouseDown&&!buildMode&&(cur==='m16'||TOUCH))hit();
+  if(mouseDown&&!buildMode&&(WP[cur]&&WP[cur].auto||TOUCH))hit();
   autoQuality();
   if(msgWait>0){msgWait-=dt;if(msgWait<=0)$('msg').classList.remove('show');}
  }else if(sim){
@@ -245,7 +245,7 @@ function animate(){
   if(active)move(dt);updateChunks();if(active){updateItems(dt);updateHint();}updateBullets(dt);updateBots(dt);updateZombies(dt);updateTime(dt);updateCorpses(dt);updateFx(dt);updateTanks(dt);updateDoors();updateGhost();updateCamera();followWorld();
   attackWait=Math.max(0,attackWait-dt);
   hurtWait=Math.max(0,hurtWait-dt);invul=Math.max(0,invul-dt);
-  if(active&&mouseDown&&!buildMode&&(cur==='m16'||TOUCH))hit();
+  if(active&&mouseDown&&!buildMode&&(WP[cur]&&WP[cur].auto||TOUCH))hit();
   autoQuality();
   teamT-=dt;if(teamT<=0){teamT=2;teamTick();}
   teamUI-=dt;if(teamUI<=0){teamUI=1.5;renderTeam();updatePpl();}

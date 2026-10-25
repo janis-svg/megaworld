@@ -6,7 +6,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 
 ## Kā spēlēt
 
-- Diena ilgst 5 minūtes, nakts 5 minūtes. Pulkstenis ir augšā.
+- Diena ilgst apmēram 6 minūtes, nakts (20:00-6:00) apmēram 3,5 minūtes: nakts paiet par 20% ātrāk. Pulkstenis ir augšā.
 - Dienā zombiju nav. Meklē ieročus, lodes, bruņas un klucīšus mājās, atvilknēs un plauktos.
 - Cilvēkus vari aicināt komandā (līdz 9). Vājāki paši atnāk un piedāvā pievienoties.
 - 🤝 Daži cilvēki ir draudzīgi un paši nāk piedāvāt draudzību. 🕊️ Mierīgie nekad neuzbrūk pirmie, bet aizsargājas, ja viņiem šauj.
@@ -101,6 +101,12 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - Katram botam ir 2 dzīvības: pirmo reizi krītot, viņš pēc ~8 sekundēm atkal parādās savā bāzē un sargā to. Otro reizi viņš krīt pavisam. Armija ir uzvarēta tikai tad, kad neviens vairs negaida atgriešanos.
 - 🎖️ Pakāpe redzama formā: kaprālim un seržantam uzšuves uz piedurknēm un lauka cepure, virsniekiem zvaigznes uz pleciem un virsnieka cepure, kapteinim saulesbrilles, majoram zelta uzpleči un medaļas, pulkvedim sarkana cepure, ģenerālim zelta cepure un zelta apmetnis. To redz arī draugi.
 - Karā nav Kaspara apmācības tekstu, ir tikai 📻 radio sarunas.
+- 🍾 **Molotova kokteilis**: līdzi var nest vienu. Met to ar uzbrukuma pogu (jo augstāk skaties, jo tālāk lido). Kur tas trāpa, 30 sekundes deg uguns 3 m diametrā; kas ieiet ugunī, tas deg. Tehnika (tanks, bruņumašīna, helikopteris) 30 sekundēs zaudē pusi dzīvības, otrs kokteilis to iznīcina. Mazās mājas nodeg pilnībā un vairs neatjaunojas, novērošanas tornis nodeg un sabrūk. Kokteiļi ir kastēs, pie kritušajiem pretiniekiem un veikalā.
+- **AK Kalašņikovs**: nedaudz spēcīgāks par M16, bet mazāk precīzs. Katrā bāzē ik minūti ir 2 kastes ar Kalašņikoviem, daļai botu tas jau ir.
+- 🚩 Ja pretinieks nozog karogu, visa armija pārtrauc savus uzdevumus un atgūst to: tuvākie dzenas pakaļ, tālākie skrien pārtvert ceļā uz pretinieku bāzi, tehnika un helikopteri arī palīdz. Ja karogu nes kāds no mūsējiem, visi pārējie viņu sargā līdz bāzei. Ja karogs guļ zemē, to cenšas paņemt abas puses.
+- 🌳 Mežā ir lieli lapu koki ar augstu vainagu. Zem tiem var iet un braukt ar tanku, bet no helikoptera zem vainaga cilvēkus grūti saskatīt, un boti no gaisa tos neredz.
+- 🤝 Kopīgajā spēlē, ja draugs ir tuvumā un pie viņa nav ienaidnieku, krītot tu atdzimsti blakus draugam, nevis bāzē.
+- Tehnikai ir vairāk detaļu: kāpurķēžu riteņi, maskēšanās plankumi, degvielas mucas, antenas, ložmetējs uz torņa, helikopteriem dzinēji un navigācijas ugunis.
 - 🪂 Ik pa laikam kartē nolaižas gaisa piegāde ar retiem ieročiem.
 - Ko redz kāds no tavas armijas, tas parādās minikartē 3 minūtes: 🔴 karavīri, 🟣 pretinieks uz jumta, 🟠 helikopteri un lidmašīnas, 🟡 tanki.
 - Augstajām mājām ir trepes (🤚): var uzkāpt uz plakanā jumta un šaut. Karā uz jumta ir Javelin komplekts ar 3 raķetēm (atkal katru rītu).
@@ -191,3 +197,9 @@ Ja kaut kas salūzt, GitHub atceras katru iepriekšējo versiju, tāpēc vienmē
 ## Testēšanai
 
 Pievieno saitei `?debug`, un pārlūka konsolē būs komandas, piemēram `MW.setHour(22)` (uzreiz nakts) vai `MW.give('rpg')` (iedod prettanku ieroci).
+
+## 🥽 Nakts redzamības brilles
+
+- Tās var atrast mežā, kara kastēs vai nopirkt veikalā.
+- Naktī tās ieslēdzas pašas: viss kļūst zaļš un gaišāks, bet cilvēki, briesmoņi un tehnika spīd kā infrasarkanajā kamerā.
+- Ja nepatīk, izslēdz ar 🥽 pogu vai taustiņu N.

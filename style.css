@@ -166,3 +166,10 @@ html.touch #tut{bottom:330px}
 #jlock{position:fixed;z-index:12;display:none;pointer-events:none;border:2px dashed #ff5252;border-radius:6px;color:#ff5252;font-weight:800;font-size:18px;display:none;align-items:center;justify-content:center;text-shadow:0 1px 4px #000;box-sizing:border-box}
 #jlock.lock{border:3px solid #ff1744;box-shadow:0 0 12px #ff1744}
 html.touch:not(.cfg) #gfxb{display:none}
+/* nakts redzamības brilles */
+#nvov{position:fixed;inset:0;z-index:8;pointer-events:none;display:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,20,0,.7) 100%),repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 3px)}
+html.nv #nvov{display:block}
+#nvb{position:fixed;right:16px;bottom:210px;z-index:11;display:none;font-size:20px;padding:6px 10px;margin:0}
+#nvb.on{background:rgba(76,175,80,.55);border-color:#76ff03}
+html.touch #nvb{right:auto;left:16px;bottom:350px}
+@media (max-height:520px){html.touch #nvb{left:auto;right:16px;bottom:auto;top:120px}}

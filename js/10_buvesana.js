@@ -24,7 +24,8 @@ function removeBlock(b,fall){
 let BIM=null;const blkArr=[],_BM=new THREE.Matrix4();
 function bim(){if(!BIM){BIM=new THREE.InstancedMesh(BG,blockMat(),5000);BIM.count=0;BIM.castShadow=BIM.receiveShadow=true;BIM.frustumCulled=false;scene.add(BIM);}return BIM;}
 function setBM(b){_BM.makeTranslation(b.x,b.y0+.5,b.z);BIM.setMatrixAt(b.ii,_BM);BIM.instanceMatrix.needsUpdate=true;}
-function damageBlock(b,d){if(b.dead)return;b.hp-=d;debris(b.x,b.y0+.5,b.z,b.win?0xa8dcff:0x7a7368,3);if(b.door||b.win){b.mesh.position.x=b.x+(Math.random()-.5)*.1;setTimeout(()=>{b.mesh.position.x=b.x;},90);}if(b.hp<=0){debris(b.x,b.y0+.5,b.z,0x7a7368,8);removeBlock(b,true);sfxAt('bang',b.x,b.z,40);}}
+function damageBlock(b,d){if(b.dead||!b.mesh)return; // žogi, smilšu maisi un ēku sienas nav būvēti bloki
+b.hp-=d;debris(b.x,b.y0+.5,b.z,b.win?0xa8dcff:0x7a7368,3);if(b.door||b.win){b.mesh.position.x=b.x+(Math.random()-.5)*.1;setTimeout(()=>{b.mesh.position.x=b.x;},90);}if(b.hp<=0){debris(b.x,b.y0+.5,b.z,0x7a7368,8);removeBlock(b,true);sfxAt('bang',b.x,b.z,40);}}
 function canPlace(x,z,hh){
  const y0=colTop(x,z);if(y0+hh>7||Math.abs(x)>EDGE-3||Math.abs(z)>EDGE-3||(BIM&&BIM.count>4990))return false;
  if(eachOb(x,z,.6,o=>o.y1===undefined&&!o.off&&Math.abs(x-o.x)<o.hx+.45&&Math.abs(z-o.z)<o.hz+.45))return false;
