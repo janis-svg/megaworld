@@ -83,7 +83,7 @@ function carrierName(c){return c==='P'?$('nickname').value:c&&c.name?c.name:'?';
 function onFoot(c){return c==='P'?!inTank&&!jetMode&&!heliMode&&!paraMode:c&&c.pos?!c.inJet&&!c.inHeli:c&&!c.inside;}
 function flagTick(dt){for(const F of FL){const other=F.team===ARMY[0]?ARMY[1]:ARMY[0];
   if(F.carrier){const p=carrierPos(F.carrier);if(!p){F.carrier=null;fsay2('w_drop',{f:armyName(F.team)});}else{F.x=p.x;F.z=p.z;const home=FL.find(q=>q.team===other).home;
-    if(Math.hypot(F.x-home[0],F.z-home[1])<14){F.carrier=null;F.x=home[0]+3;F.z=home[1]+3;F.held=other;F.holdH=0;fsay2('w_cap',{f:armyName(F.team),a:armyName(other)},5);}}continue;}
+    if(Math.hypot(F.x-home[0],F.z-home[1])<14&&(typeof carrierAlt!=='function'||carrierAlt(F.carrier)<3)){F.carrier=null;F.x=home[0]+3;F.z=home[1]+3;F.held=other;F.holdH=0;fsay2('w_cap',{f:armyName(F.team),a:armyName(other)},5);}}continue;}
   const atHome=Math.hypot(F.x-F.home[0],F.z-F.home[1])<2;
   const touch=[];if(active&&pY<1.5)touch.push('P');for(const G of NET.guests.values())if(G.ready&&!G.dead&&G.y<1.5)touch.push(G);for(const b of humans)if(!b.dead&&!b.inside&&(b.team===ARMY[0]||b.team===ARMY[1]))touch.push(b);
   for(const c of touch){const p=carrierPos(c);if(!p||!onFoot(c)||Math.hypot(p.x-F.x,p.z-F.z)>2.2)continue;const A=carrierArmy(c);
