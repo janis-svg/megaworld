@@ -1,4 +1,4 @@
-// 33_kopa_sakums.js - "Spēlēt kopā ar draugiem": 30 sekunžu gaidīšana, kamēr draugi pievienojas, tad spēle sākas visiem vienlaikus no viena punkta
+// 33_kopa_sakums.js - "Spēlēt kopā ar draugiem": 60 sekunžu gaidīšana, kamēr draugi pievienojas, tad spēle sākas visiem vienlaikus no viena punkta
 Object.assign(T.lv,{lob_btn:'🌐 Spēlēt kopā ar draugiem',lob_title:'🌐 Gaidām draugus',lob_send:'Nosūti šo saiti draugiem:',lob_in:'Pievienojušies',lob_go:'▶ Sākt tagad',lob_more:'+30 s',lob_left:'Spēle sāksies pēc {n} s',lob_start:'▶ Spēle sākas! Visi sāk no viena punkta.',lob_wait:'⏳ Gaidām draugus: spēle sāksies pēc {n} s'});
 Object.assign(T.en,{lob_btn:'🌐 Play with friends',lob_title:'🌐 Waiting for friends',lob_send:'Send this link to your friends:',lob_in:'Joined',lob_go:'▶ Start now',lob_more:'+30 s',lob_left:'The game starts in {n} s',lob_start:'▶ The game starts! Everyone starts from the same place.',lob_wait:'⏳ Waiting for friends: the game starts in {n} s'});
 const lobEl=document.createElement('div');lobEl.id='lobby';lobEl.className='panel';document.body.appendChild(lobEl);
@@ -6,7 +6,7 @@ const lobG=document.createElement('div');lobG.id='lobbyg';lobG.className='panel'
 let lobEnd=0,lobTimer=null;
 {const b=document.createElement('button');b.id='lobbyb';$('start').after(b);b.dataset.k='lob_btn';b.textContent=t('lob_btn');b.onclick=e=>{e.preventDefault();lobbyBegin();};
  if(/[?&]join=/.test(location.search))b.style.display='none';}
-function lobbyBegin(){start();if(!NET.role)netHost();lobEnd=Date.now()+30000;lobEl.style.display='block';clearInterval(lobTimer);lobTimer=setInterval(lobbyTick,250);lobbyRender();}
+function lobbyBegin(){start();if(!NET.role)netHost();lobEnd=Date.now()+60000;lobEl.style.display='block';clearInterval(lobTimer);lobTimer=setInterval(lobbyTick,250);lobbyRender();}
 function lobbyRender(){const left=Math.max(0,Math.ceil((lobEnd-Date.now())/1000)),ready=[...NET.guests.values()].filter(G=>G.ready);
  lobEl.innerHTML='<b>'+t('lob_title')+'</b><div class="lbig">⏳ '+left+'</div>'+(NET.status?'<p>'+NET.status+'</p>':'<small>'+t('lob_send')+'</small><input id="loblink" readonly value="'+joinLink()+'"><div><button class="corner" data-a="copy">'+t('mp_copy')+'</button>'+(navigator.share?'<button class="corner" data-a="share">'+t('mp_share')+'</button>':'')+'</div>')+
   '<div class="lppl"><b>'+t('lob_in')+' ('+(1+ready.length)+'/4)</b><br>★ '+$('nickname').value+ready.map(G=>'<br>★ '+G.name).join('')+'</div><div><button class="corner" data-a="go">'+t('lob_go')+'</button><button class="corner" data-a="more">'+t('lob_more')+'</button></div>';
@@ -26,11 +26,11 @@ function lobbyStart(){start();
 const _netGuestMsg19=netGuestMsg;netGuestMsg=function(d){if(d&&d.t==='lob'){if(d.s>0){lobG.textContent=tf('lob_wait',{n:d.s});lobG.style.display='block';}else lobG.style.display='none';return;}_netGuestMsg19(d);};
 // karā armijā jau ir 30, tāpēc nozīmīte "Komanda no 5" nepienākas
 const _badge19=badge;badge=function(id){if(isWar()&&id==='team')return;_badge19(id);};
-// 30 s gaidīšana sākas arī tad, ja kopīgo spēli sāk ar 🌐 pogu spēles laikā
+// 60 s gaidīšana sākas arī tad, ja kopīgo spēli sāk ar 🌐 pogu spēles laikā
 Object.assign(T.lv,{mp_recon:'⏳ Atjauno savienojumu ar serveri...',mp_retry:'Draugs vēl nav sasniedzams, mēģina vēlreiz...'});Object.assign(T.en,{mp_recon:'⏳ Reconnecting to the server...',mp_retry:'Your friend is not reachable yet, trying again...'});
 let lobActive=false;
 const _netHost20=netHost;netHost=function(){const was=NET.role;_netHost20();if(!was&&NET.role==='host'&&!lobActive)lobbyTimer();};
-function lobbyTimer(){lobActive=true;lobEnd=Date.now()+30000;lobEl.style.display='block';$('mp').style.display='none';clearInterval(lobTimer);lobTimer=setInterval(lobbyTick,250);lobbyRender();}
+function lobbyTimer(){lobActive=true;lobEnd=Date.now()+60000;lobEl.style.display='block';$('mp').style.display='none';clearInterval(lobTimer);lobTimer=setInterval(lobbyTick,250);lobbyRender();}
 lobbyBegin=function(){lobActive=true;start();if(!NET.role)netHost();lobbyTimer();};
 const _lobbyStart20=lobbyStart;lobbyStart=function(){lobActive=false;_lobbyStart20();};
 // kamēr nav savienojuma, saites vietā rāda statusu; kad savienojums atjaunojies, saite atkal redzama

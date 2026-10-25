@@ -338,3 +338,11 @@ $('mpb').onclick=e=>{toggleMP();e.currentTarget.blur();};
 // ja atvērts ar ?join=kods, sākuma poga pievienojas drauga spēlei
 {const m=location.search.match(/[?&]join=([a-z0-9]{4,10})/);if(m){$('start').dataset.k='mp_joinbtn';$('start').onclick=()=>netJoin(m[1]);applyLang();
  const a=document.createElement('a');a.href=location.pathname;a.dataset.k='mp_solo';a.style.cssText='display:block;margin-top:10px;font-size:12px;color:#8fb8d4';$('mperr').after(a);applyLang();}}
+// ---------- Metered TURN: spēle no dažādiem tīkliem (mobilie dati, cits Wi-Fi) ----------
+// Ja TURN_APP un TURN_KEY ir aizpildīti, lapai atveroties paņem TURN piekļuves datus no Metered (līdz pogas nospiešanai tie jau ir klāt)
+const TURN_APP='',TURN_KEY='';
+let turnReady=null;
+function turnFetch(){if(!TURN_APP||!TURN_KEY)return Promise.resolve(false);if(turnReady)return turnReady;
+ turnReady=fetch('https://'+TURN_APP+'.metered.live/api/v1/turn/credentials?apiKey='+encodeURIComponent(TURN_KEY)).then(r=>r.ok?r.json():null).then(L=>{
+  if(!Array.isArray(L)||!L.length)return false;PEERCFG.iceServers=PEERCFG.iceServers.filter(s=>!String(s.urls).includes('turn:')).concat(L);return true;}).catch(()=>false);return turnReady;}
+turnFetch();
