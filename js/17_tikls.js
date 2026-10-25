@@ -258,7 +258,7 @@ function guestHit(){
   const W=WP[cur];
   if(inv.ammo[cur]>0){
    attackWait=W.rate;inv.ammo[cur]--;updateAmmo();renderW();sfx(W.rocket?'rocket':'shoot');
-   const ay=assistYaw(W.rng+4),a=ay===null?yaw:ay;if(ay!==null&&TOUCH){let df=ay-yaw;df=Math.atan2(Math.sin(df),Math.cos(df));yaw+=df*.35;}
+   const ay=assistYaw(W.rng+4),a=ay===null?yaw:ay;if(ay!==null&&TOUCH&&lid===null){let df=ay-yaw;df=Math.atan2(Math.sin(df),Math.cos(df));yaw+=df*.25;}
    for(let k=0;k<W.pel;k++){const aa=a+(Math.random()-.5)*W.sp*2;visBullet({x:player.position.x-Math.sin(aa)*.8,y:pY+1.2,z:player.position.z-Math.cos(aa)*.8,vx:-Math.sin(aa),vz:-Math.cos(aa),r:W.rocket?1:0,c:0},true);}
    netSend({t:'fire',w:cur,a:r2(a)});return;
   }

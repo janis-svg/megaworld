@@ -11,9 +11,11 @@ const jb=$('jump');jb.addEventListener('pointerdown',()=>{keys.Space=true;});
 const ab=$('atk');ab.addEventListener('pointerdown',()=>{mouseDown=true;hit();});
 ['pointerup','pointercancel','pointerleave'].forEach(n=>ab.addEventListener(n,()=>{mouseDown=false;}));
 const cv=renderer.domElement;cv.style.touchAction='none';let lid=null,lx=0,ly=0;
-cv.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){lid=e.pointerId;lx=e.clientX;ly=e.clientY;}});
-cv.addEventListener('pointermove',e=>{if(e.pointerType==='touch'&&e.pointerId===lid){yaw-=(e.clientX-lx)*.005;pitch=clampP(pitch-(e.clientY-ly)*.004);lx=e.clientX;ly=e.clientY;}});
-cv.addEventListener('pointerup',()=>{lid=null;});
+// skatīšanās ar pirkstu: pirksts tiek "noķerts", lai skats neapstātos, ja pirksts aizslīd pāri pogai vai lodziņam vai ekrānam pieskaras otrs pirksts
+const lt=new Map(); // visi pirksti uz ekrāna (ne uz pogām): skatu griež jaunākais; ja to atlaiž, turpina tas, kas vēl ir uz ekrāna
+cv.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){lt.set(e.pointerId,[e.clientX,e.clientY]);lid=e.pointerId;lx=e.clientX;ly=e.clientY;try{cv.setPointerCapture(lid);}catch(err){}}});
+cv.addEventListener('pointermove',e=>{if(e.pointerType!=='touch'||!lt.has(e.pointerId))return;lt.set(e.pointerId,[e.clientX,e.clientY]);if(e.pointerId===lid){yaw-=(e.clientX-lx)*.005;pitch=clampP(pitch-(e.clientY-ly)*.004);lx=e.clientX;ly=e.clientY;}});
+const lend=e=>{if(!lt.delete(e.pointerId))return;if(e.pointerId===lid){const k=[...lt.keys()].pop();lid=k===undefined?null:k;if(lid!==null)[lx,ly]=lt.get(lid);}};['pointerup','pointercancel','lostpointercapture'].forEach(n=>cv.addEventListener(n,lend));
 $('lang').onclick=e=>{L=L==='lv'?'en':'lv';applyLang();e.currentTarget.blur();};
 $('info').onclick=e=>{const b=$('infobox');b.style.display=b.style.display==='block'?'none':'block';e.currentTarget.blur();};
 $('invb').onclick=e=>{toggleInv();e.currentTarget.blur();};

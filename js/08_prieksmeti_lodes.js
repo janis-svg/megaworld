@@ -32,7 +32,7 @@ function assistYaw(rng){
 }
 function shoot(w){
  const W=WP[w];attackWait=W.rate;inv.ammo[w]--;sfx(W.rocket?'rocket':'shoot');
- const ay=assistYaw(W.rng+4),base=ay===null?yaw:ay;if(ay!==null&&TOUCH){let df=ay-yaw;df=Math.atan2(Math.sin(df),Math.cos(df));yaw+=df*.35;}
+ const ay=assistYaw(W.rng+4),base=ay===null?yaw:ay;if(ay!==null&&TOUCH&&lid===null){let df=ay-yaw;df=Math.atan2(Math.sin(df),Math.cos(df));yaw+=df*.25;}
  for(let k=0;k<W.pel;k++){const a=base+(Math.random()-.5)*W.sp*2,fx=-Math.sin(a),fz=-Math.cos(a);spawnBullet(player.position.x+fx*.8,pY+1.2,player.position.z+fz*.8,fx,fz,W,PT,true);}
  updateAmmo();renderInv();
 }

@@ -129,7 +129,7 @@ html.touch #badges,html.touch #look,html.touch #hpanel{left:8px;right:8px;top:11
 #hpanel small{color:#9bb3c7}
 html.touch #look .corner,html.touch #hpanel .corner{padding:8px 12px;font-size:15px}
 .sw{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:6px;vertical-align:-2px;border:1px solid rgba(255,255,255,.4)}
-#tut{position:fixed;bottom:120px;left:50%;transform:translateX(-50%);z-index:14;font-size:14px;line-height:1.6;width:min(420px,calc(100% - 32px));display:none;pointer-events:auto;border-color:#ffd36b}
-#tut .corner{margin:0}
+#tut{position:fixed;bottom:120px;left:50%;transform:translateX(-50%);z-index:14;font-size:14px;line-height:1.6;width:min(420px,calc(100% - 32px));display:none;pointer-events:none;border-color:#ffd36b}
+#tut .corner{margin:0;pointer-events:auto}
 html.touch #tut{bottom:330px}
 @media (max-height:520px){html.touch #tut{bottom:12px;width:min(380px,calc(100% - 300px))}}
