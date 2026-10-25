@@ -47,7 +47,7 @@ function wireFence(g,B){const R=32,gate=6,post=0x5d4037,wire=0x9e9e9e;
   for(let k=0;k<=n;k++){const x=x1+(x2-x1)*k/n,z=z1+(z2-z1)*k/n,p=cube(.14,1.8,.14,post,1);p.position.set(x,.9,z);g.add(p);}
   for(const y of [.45,.95,1.45]){const w=cube(ax?len:.03,.03,ax?.03:len,wire,.5);w.position.set((x1+x2)/2,y,(z1+z2)/2);w.castShadow=false;g.add(w);}
   for(let k=0;k<n*3;k++){const x=x1+(x2-x1)*(k+.5)/(n*3),z=z1+(z2-z1)*(k+.5)/(n*3),c=new THREE.Mesh(new THREE.TorusGeometry(.28,.025,4,10),mat(wire,.5));c.position.set(x,1.95,z);c.rotation.y=ax?0:Math.PI/2;c.castShadow=false;g.add(c);}
-  WOB.push({x:(x1+x2)/2,z:(z1+z2)/2,hx:ax?len/2:.15,hz:ax?.15:len/2,y0:0,y1:2.1});};
+  WOB.push({x:(x1+x2)/2,z:(z1+z2)/2,hx:ax?len/2:.15,hz:ax?.15:len/2,y0:0,y1:2.1,win:true});};
  const inX=B.d>0?1:-1; // vārti ir pusēs, kas skatās uz kartes centru
  for(const sgn of [-1,1]){
   if(sgn===inX){seg(B.x-R,B.z+sgn*R,B.x-gate,B.z+sgn*R);seg(B.x+gate,B.z+sgn*R,B.x+R,B.z+sgn*R);sandbag(g,B.x-gate-1.2,B.z+sgn*(R-2),2.4,1);sandbag(g,B.x+gate+1.2,B.z+sgn*(R-2),2.4,1);}else seg(B.x-R,B.z+sgn*R,B.x+R,B.z+sgn*R);
@@ -106,8 +106,8 @@ function addTank(x,z,a){const g=tankMesh();g.position.set(x,0,z);g.rotation.y=a|
 const _spawnTanks13=spawnTanks;spawnTanks=function(){_spawnTanks13();for(const t of tanks){t.kind='tank';t.hp=2;}for(let i=0;i<2;i++){let x=0,z=0;for(let k=0;k<30;k++){[x,z]=roadPoint(0,0,1e9);if(Math.hypot(x,z)>40)break;}addApc(x,z,Math.random()*6.283);}};
 const _destroyTank13=destroyTank;destroyTank=function(t,team,n){if(t.dead)return;if(n&&(t.hp||1)>n){t.hp-=n;explosionFx(t.g.position.x,1.6,t.g.position.z,2,0xff9e40);sfxAt('boom',t.g.position.x,t.g.position.z,80);return;}
  const d=t.driver;if(d){t.driver=null;d.tankV=null;d.inside=false;killBot(d,team||null);}_destroyTank13(t,team);t.ammo=0;};
-const _enterTank13=enterTank;enterTank=function(t){if(t.driver){say(t('busy'),1);return;}_enterTank13(t);};
-const _fireTank13=fireTank;fireTank=function(){const t=inTank;if(!t||t.kind!=='apc')return _fireTank13();if(attackWait>0)return;if(!(t.ammo>0)){say(t('heli_noammo'),1.5);return;}attackWait=.12;t.ammo--;
+const _enterTank13=enterTank;enterTank=function(tk){if(tk.driver){say(t('busy'),1);return;}_enterTank13(tk);};
+const _fireTank13=fireTank;fireTank=function(){const t=inTank;if(!t||t.kind!=='apc')return _fireTank13();if(attackWait>0)return;if(!(t.ammo>0)){say(T[L].heli_noammo,1.5);return;}attackWait=.12;t.ammo--;
  const px=player.position.x,pz=player.position.z,tg=apcAim(px,pz,yaw,PT);const tx=tg?tg.x:px-Math.sin(yaw)*40,ty=tg?tg.y:1,tz=tg?tg.z:pz-Math.cos(yaw)*40;if(tg)yaw+=Math.atan2(Math.sin(Math.atan2(-(tx-px),-(tz-pz))-yaw),Math.cos(Math.atan2(-(tx-px),-(tz-pz))-yaw))*.3;
  mgShot(px-Math.sin(yaw)*1.5,2.4,pz-Math.cos(yaw)*1.5,tx+(Math.random()-.5),ty,tz+(Math.random()-.5),PT,true,20);if(Math.random()<.6)tone(150,.05,'square',.06,90);renderW();};
 function apcAim(px,pz,a,team){let best=null,bs=1e9;const look=(x,y,z,kb)=>{const dx=x-px,dz=z-pz,d=Math.hypot(dx,dz);if(d>70||d<2)return;let df=Math.atan2(-dx,-dz)-a;df=Math.abs(Math.atan2(Math.sin(df),Math.cos(df)));if(df>.6)return;const s=df*40+d*.2-kb;if(s<bs){bs=s;best={x,y,z};}};

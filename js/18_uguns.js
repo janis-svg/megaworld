@@ -36,7 +36,7 @@ function updateFires(dt){
   const f=fires[i];f.t-=dt;const near=Math.hypot(f.x-player.position.x,f.z-player.position.z)<70;
   if(near&&fxs.length<320){const big=f.w>1,n=big?7:3;for(let k=0;k<n;k++){const smoke=f.t<1.5&&Math.random()<.5,m=new THREE.Mesh(FXG,FIREM[smoke?2:Math.random()<.5?0:1]);m.scale.setScalar((smoke?2.2:1.4+Math.random())*(big?3:1.3));m.position.set(f.x+(Math.random()-.5)*f.w*2,.3+Math.random()*f.h*.7,f.z+(Math.random()-.5)*f.d*2);scene.add(m);fxs.push({m,vx:(Math.random()-.5)*.6,vy:1.5+Math.random()*2.5,vz:(Math.random()-.5)*.6,life:.5+Math.random()*.5,up:true,shared:true});}}
   if(near&&Math.random()<dt*6)noise(.12,.06,1800);
-  if(f.dmg&&(f.tick=(f.tick||0)-dt)<=0){f.tick=.5; // kas iekšā deg, tas saņem bojājumu
+  if((f.dmg||f.w<1.5)&&NET.role!=='guest'&&(f.tick=(f.tick||0)-dt)<=0){f.tick=.5; // kas iekšā deg, tas saņem bojājumu
    const inside=(x,z)=>Math.abs(x-f.x)<f.w+.3&&Math.abs(z-f.z)<f.d+.3;
    for(const h of [...HL])if(inside(h.p.x,h.p.z)&&(h.y||0)<3)hurt(h,8,null,false);
    for(const z of [...zombies])if(!z.userData.dead&&inside(z.position.x,z.position.z))dmgMonster(z,15,false);}

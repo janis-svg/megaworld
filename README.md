@@ -94,7 +94,8 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - Boti sadalās vienībās (Alfa, Bravo...). Katra armija sākumā izvēlas plānu: Flangi, Zibens uzbrukums, Viltība vai Cietoksnis. 📻 Radio ziņas stāsta, ko dara tava armija. Helikopteri, lidmašīnas un tehnika piesedz vienības.
 - ⭐ Par katru uzvarētu pretinieku dabū 1-5 zvaigznes: bruņots pretinieks, karoga nesējs, tāls šāviens, vairāki pēc kārtas, pilots un tehnika dod vairāk. No zvaigznēm aug 🎖️ pakāpe: no Kareivja līdz Ģenerālim.
 - Kritušais pretinieks atstāj kasti ar ieroci vai lodēm.
-- 🔭 Novērošanas torņos ir snaipera šautene: viens trāpījums notriec cilvēku, bet tehnikai tā neko nedara. Šautene tornī parādās atkal katru rītu.
+- Ieroču darbības attālums: pistole 50 m, M16 80 m, bise 22 m, prettanku 70 m, snaipera šautene 150 m, bruņmašīnas ložmetējs 90 m, helikoptera 80 m. Ložmetēji nešauj cauri sienām, bet caur dzeloņstieplēm var šaut.
+- 🔭 Novērošanas torņos ir snaipera šautene (SNP): ieslēdzot to, skats pāriet uz tēmēkli ar pietuvinājumu. Viens trāpījums notriec cilvēku, bet tehnikai tā neko nedara. Šautene tornī parādās atkal katru rītu.
 - Raķete sagrauj novērošanas torni, un tas vairs neatjaunojas.
 - Iznīcinātā tehnika pēc ~15 sekundēm atkal ir bāzē.
 - 🪂 Ik pa laikam kartē nolaižas gaisa piegāde ar retiem ieročiem.
@@ -155,6 +156,7 @@ Pasauli skaita tā cilvēka ierīce, kurš uzaicināja. Ja viņš aizver lapu, s
 | `js/29_kars.js` | Režīms "Karš", bruņmašīna, helikoptera raķetes, kaujas bruņas, atpazīstamas ēkas |
 | `js/30_kara_taktika.js` | Armijas izvēle, botu vienības un plāni, zvaigznes un pakāpes, snaipers, torņu sagraušana, gaisa piegādes |
 | `js/31_kara_vide.js` | Kara vide: bez tirgotājiem, tranšejas, nopostītas mājas, krāteri |
+| `js/32_labojumi.js` | Ieroču darbības attālumi, ložmetēji neiet cauri sienām, snaipera tēmēklis |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 

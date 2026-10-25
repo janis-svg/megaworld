@@ -51,7 +51,7 @@ function init(){
  player.userData={leg1,leg2,arm1,arm2,boot1,boot2,guns};scene.add(player);
  clock=new THREE.Clock();
  window.addEventListener('resize',resize);
- renderer.domElement.addEventListener('click',()=>{if(active)renderer.domElement.requestPointerLock?.();});
+ renderer.domElement.addEventListener('click',()=>{if(active&&!TOUCH)renderer.domElement.requestPointerLock?.();});
  document.addEventListener('mousemove',e=>{if(document.pointerLockElement===renderer.domElement){yaw-=e.movementX*.0022;pitch=clampP(pitch-e.movementY*.0018);}});
 }
 function resize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);}

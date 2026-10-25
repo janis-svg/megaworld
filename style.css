@@ -149,3 +149,8 @@ html.touch #tut{bottom:330px}
 #starpop.show{opacity:1}
 #starpop b{display:block;font-size:34px;letter-spacing:4px}
 #starpop small{display:block;font-size:13px;color:#ffe082}
+/* snaipera tēmēklis */
+#scope{position:fixed;inset:0;z-index:9;pointer-events:none;display:none;background:radial-gradient(circle at center,transparent 0,transparent 32vmin,rgba(0,0,0,.92) 33vmin)}
+#scope::before,#scope::after{content:'';position:absolute;left:50%;top:50%;background:rgba(0,0,0,.85)}
+#scope::before{width:66vmin;height:2px;transform:translate(-50%,-50%)}
+#scope::after{width:2px;height:66vmin;transform:translate(-50%,-50%)}

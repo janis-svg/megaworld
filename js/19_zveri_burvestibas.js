@@ -135,7 +135,7 @@ function updatePets(dt){
  // iestādītie koki ik pa laikam nomet ābolu (+15 dzīvības)
  for(const p of plants)if(p.k==='tree'&&(p.gr||0)>=1){p.ap=(p.ap??(80+Math.random()*60))-dt;if(p.ap<=0){p.ap=110+Math.random()*60;const a=Math.random()*6.283;dropItem(p.x+Math.cos(a)*1.4,p.z+Math.sin(a)*1.4,'apple');}}
  if(NET.role==='host'&&NET.guests.size){petT-=dt;if(petT<=0){petT=.1;
-  const E=pets.map(p=>[p.id,Math.max(0,PETK.indexOf(p.kind)),r2(p.g.position.x),r2(p.g.position.z),r2(p.g.rotation.y),p.owner?1:0,p.name||'',p.lvl||1,petOwnerId(p.owner)]),C=chickens.map(c=>[c.id,r2(c.g.position.x),r2(c.g.position.z),LIVEK.indexOf(c.kind||'chicken')]),D=drops.filter(d=>d.kind).map(d=>[d.id,d.kind,r2(d.x),r2(d.z)]);
+  const E=pets.map(p=>[p.id,Math.max(0,PETK.indexOf(p.kind)),r2(p.g.position.x),r2(p.g.position.z),r2(p.g.rotation.y),p.owner?1:0,p.name||'',p.lvl||1,petOwnerId(p.owner)]),C=chickens.map(c=>[c.id,r2(c.g.position.x),r2(c.g.position.z),LIVEK.indexOf(c.kind||'chicken')]),D=drops.filter(d=>d.kind).map(d=>[d.id,d.kind,r2(d.x),r2(d.z),r2(d.m.position.y)]);
   for(const G of NET.guests.values())if(G.ready)netTo(G,{t:'pe',E,C,D,co:PT.coins||0,pr:prices});}}
 }
 function woof(){tone(520,.08,'square',.09,300);tone(480,.1,'square',.08,260,.15);}
@@ -280,7 +280,7 @@ const _netGuestMsg=netGuestMsg;netGuestMsg=function(d){
  if(d&&d.t==='pe'){PT.coins=d.co;if(d.pr)Object.assign(prices,d.pr);
   for(const [id,k,x,z,ry] of d.E){let o=netPets.get(id);if(!o){o={g:petMesh(PETK[k]||'dog')};o.g.position.set(x,0,z);netPets.set(id,o);}o.tx=x;o.tz=z;o.ry=ry;o.seen=gtime;}
   for(const [id,x,z,ki] of d.C){let o=netCk.get(id);if(!o){o={g:liveMesh(LIVEK[ki||0])};o.g.position.set(x,0,z);netCk.set(id,o);}o.tx=x;o.tz=z;o.seen=gtime;}
-  for(const [id,k,x,z] of d.D){let o=netDr.get(id);if(!o){const g=typeof dropMeshFor==='function'?dropMeshFor(k):k==='coin'?coinMesh():(()=>{const q=new THREE.Group();q.add(cube(.25,.25,.25,0xd32f2f,.6));return q;})();g.position.set(x,.4,z);scene.add(g);o={g,coin:1};netDr.set(id,o);}o.tx=x;o.tz=z;o.seen=gtime;}
+  for(const [id,k,x,z,y] of d.D){let o=netDr.get(id);if(!o){const g=typeof dropMeshFor==='function'?dropMeshFor(k):k==='coin'?coinMesh():(()=>{const q=new THREE.Group();q.add(cube(.25,.25,.25,0xd32f2f,.6));return q;})();g.position.set(x,.4,z);scene.add(g);o={g,coin:1};netDr.set(id,o);}o.tx=x;o.tz=z;o.ty=y;o.seen=gtime;}
   return;}
  if(d&&d.t==='pl'){for(const [id,k,x,z,b] of d.P)if(!plants.some(p=>p.id===id))addPlant(k,x,z,id,b);if(d.DH)for(const [x,z] of d.DH)placeDoghouse(x,z,null);return;}
  if(d&&d.t==='shop'){renderShop(d.kind);return;}
@@ -296,7 +296,7 @@ function guestPets(dt){const k=Math.min(1,dt*10);shopAutoClose();
  for(const M of [netPets,netCk,netDr])for(const [id,o] of M){
   if(gtime-o.seen>1.5){M.delete(id);if(M!==netDr)debris(o.g.position.x,.5,o.g.position.z,M===netCk?0xffffff:0x8d6e63,4);scene.remove(o.g);freeObj(o.g);continue;}
   const g=o.g,ox=g.position.x,oz=g.position.z;g.position.x+=(o.tx-ox)*k;g.position.z+=(o.tz-oz)*k;
-  if(M===netDr){g.rotation.y+=dt*2;continue;}
+  if(M===netDr){g.rotation.y+=dt*2;if(o.ty!==undefined)g.position.y=o.ty;continue;}
   if(o.ry!==undefined)g.rotation.y=lerpA(g.rotation.y,o.ry,k);else if(Math.hypot(g.position.x-ox,g.position.z-oz)>.001)g.rotation.y=Math.atan2(-(g.position.x-ox),-(g.position.z-oz));
   const mv=Math.hypot(g.position.x-ox,g.position.z-oz)>.002,sw=mv?Math.sin(clock.elapsedTime*14+id)*.6:0;g.userData.legs.forEach((l,j)=>l.rotation.x=j%2?sw:-sw);}
  if(!traders.length&&active)spawnTraders(false);
