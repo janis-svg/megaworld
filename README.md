@@ -36,6 +36,19 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - 🏠 Suņa būda: naktī suns sargā pie būdas un rej uz ienaidniekiem arī tad, ja tevis tur nav.
 - 📈 Cenas mainās: ko daudz pērk, tas kļūst dārgāks (⬆), ko daudz pārdod, par to maksā mazāk (⬇). Katru rītu cenas pamazām atgriežas.
 
+## Uzdevumi, nozīmītes un citas lietas
+
+- 😊 🙂 😈 Sākumā izvēlas grūtību: vieglajā monstru ir mazāk un tie sit vājāk, grūtajā otrādi.
+- 📋 Katru rītu ir 3 dienas uzdevumi. Par katru dabū monētas un ⭐. Telefonā uzspied uz uzdevumu lodziņa, lai to atvērtu.
+- 🏅 Nozīmītes (18 dažādas) krāj visa komanda kopā. Katra nozīmīte dara dzīvību stiprāku (mazāk sāp, līdz -45%). Arī boti krāj savas nozīmītes, tās redz virs galvas (🏅3).
+- 🗺️ Minikarte stūrī: 🏠 tava māja, 🛒 tirgotāji, 🐪 ceļojošais tirgotājs, 🚜 tanki, draugi un komanda. Uzspiežot tā pietuvina.
+- 👕 Izskats: krāsa, cepure un mugursoma par monētām. Nopirkto pārlūks atceras, un draugi to redz.
+- 🐕 Mājdzīvniekiem ir vārdi un līmeņi (⭐1 līdz ⭐5). Jo ilgāk dzīvo, jo stiprāki. Suns no ⭐2 kož briesmoņiem un ienaidniekiem. Vārdu var mainīt 🎒 inventārā ar ✏️.
+- 🐪 Ceļojošais tirgotājs katru dienu 9:00-18:00 kādā ielā: 🐴 zirgs (var jāt, ļoti ātrs), 🐔 zelta vista (zelta olas) un 🐒 pērtiķis (savāc monētas) vai 🦜 papagailis (brīdina par briesmoņiem).
+- 🏠 Savā mājā spied 🤚, lai to uzlabotu: žogs ar vārtiem, laterna (naktī pie mājas zombiji neizlien), otrais stāvs (atdzimstot 50 bruņas), šķūnis (sakrāj ražu).
+- 🌕 Ik 5. dienas nakts ir pilnmēness: divreiz vairāk monstru un Mēness milzis, kuru var uzvarēt tikai kopā.
+- 🧑 Pirmajā spēlē Kaspars parāda, kā spēlēt. Ja gribi apmācību vēlreiz, pieliec saitei `?tut`.
+
 ## Spēlēt kopā (līdz 4 spēlētājiem)
 
 1. Viens atver spēli, spiež 🌐 un "Sākt kopīgo spēli".
@@ -74,6 +87,10 @@ Pasauli skaita tā cilvēka ierīce, kurš uzaicināja. Ja viņš aizver lapu, s
 | `js/19_zveri_burvestibas.js` | Nauda, tirgotāji, zvēri, vistas, sēklas, saimnieki |
 | `js/20_saimnieciba.js` | Raža, tirgus cenas, govis un cūkas, augšana, suņa būda |
 | `js/21_privatmajas.js` | Privātmājas, saimniecību apvienošanās, bandu uzbrukumi saimniecībām |
+| `js/22_uzdevumi.js` | Grūtība, dienas uzdevumi, nozīmītes, apmācība |
+| `js/23_karte_izskats.js` | Minikarte un tēla izskats |
+| `js/24_majdzivnieki.js` | Mājdzīvnieku vārdi un līmeņi, dzīvnieku skaņas, ceļojošais tirgotājs, zirgs |
+| `js/25_liela_nakts_maja.js` | Pilnmēness nakts, Mēness milzis, mājas uzlabojumi |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 

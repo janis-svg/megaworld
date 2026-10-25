@@ -133,7 +133,7 @@ function netHostFrame(dt){
   netTo(G,{t:'s',h:r2(hour),d:day,sc:score,nb:humans.length,tm:PT.members.length,gone:netGone,
    M:M.filter(m=>near(m[2],m[3],G)),B:B.filter(b=>near(b[1],b[2],G)),K,P:P.filter(p=>p[0]!==G.id),q:netQ.filter(e=>e.o!==G.id)});}
  netGone=[];netQ=[];
- netBiT-=.1;if(netBiT<=0){netBiT=4;for(const G of NET.guests.values())if(G.ready)netTo(G,{t:'bi',bi:humans.map(b=>[b.nid,b.name,b.helmet?1:0])});}
+ netBiT-=.1;if(netBiT<=0){netBiT=4;for(const G of NET.guests.values())if(G.ready)netTo(G,{t:'bi',bi:humans.map(b=>[b.nid,b.name+(b.badges&&b.badges.size?' 🏅'+b.badges.size:''),b.helmet?1:0])});}
  netDoorT-=.1;if(netDoorT<=0){netDoorT=.5;const dr=[];for(const c of chunks.values())for(const o of c.inter)if(o.type==='door'){const s=(o.open?1:0)+':'+o.hp;if(o._ns===undefined){o._ns=s;if(s!=='0:100')dr.push([o.id,o.open?1:0,o.hp]);}else if(o._ns!==s){o._ns=s;dr.push([o.id,o.open?1:0,o.hp]);}}if(dr.length)for(const G of NET.guests.values())if(G.ready)netTo(G,{t:'dr',dr});}
 }
 // notikumi, ko saimnieks pārsūta viesiem (lodes, sprādzieni, kluči, atvērtās atvilknes, ziņas)

@@ -101,3 +101,32 @@ html.touch #mp{left:8px;right:8px;top:118px;width:auto}
 #shop .corner{margin:0}
 html.touch #shop{left:8px;right:8px;top:118px;width:auto;max-height:calc(100% - 330px);overflow:auto}
 html.touch #shop .corner{padding:8px 12px;font-size:15px}
+/* grūtības līmenis, uzdevumi, nozīmītes, apmācība, minikarte, izskats, mājas uzlabojumi */
+#diffrow{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:-4px 0 12px}
+#diffrow .corner{margin:0;padding:8px 12px}
+.corner.on{background:rgba(46,204,113,.35);border-color:#2ecc71}
+#quests{position:fixed;top:64px;left:16px;z-index:11;font-size:12px;line-height:1.6;padding:8px 12px;max-width:290px;display:none;pointer-events:auto}
+#quests .ql i{color:#ffd36b;font-style:normal}
+#quests .ql.ok{color:#8fe3a8}
+html.touch #quests{top:auto;bottom:286px;left:16px;max-width:calc(100% - 120px)}
+html.touch #quests:not(.open) .ql{display:none}
+@media (max-height:520px){html.touch #quests{bottom:258px}}
+#mmap{position:fixed;right:16px;bottom:16px;z-index:11;border-radius:10px;border:2px solid rgba(255,255,255,.35);display:none;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,.5)}
+html.touch #mmap{right:auto;left:16px;bottom:160px}
+@media (max-height:520px){html.touch #mmap{bottom:132px}}
+#badges,#look,#hpanel{position:fixed;top:160px;left:16px;z-index:15;font-size:13px;line-height:1.6;display:none;max-width:calc(100% - 32px);width:380px;pointer-events:auto;max-height:calc(100% - 190px);overflow:auto}
+html.touch #badges,html.touch #look,html.touch #hpanel{left:8px;right:8px;top:118px;width:auto;max-height:calc(100% - 300px)}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:6px;margin:8px 0}
+.bdg{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px;font-size:11px;text-align:center;opacity:.4;line-height:1.3}
+.bdg span{display:block;font-size:24px}
+.bdg.on{opacity:1;border-color:#ffd36b;background:rgba(255,211,107,.12)}
+#look .row,#hpanel .row{display:flex;align-items:center;gap:6px;margin-top:6px}
+#look .row span,#hpanel .row span{flex:1}
+#look .corner,#hpanel .corner{margin:0}
+#hpanel small{color:#9bb3c7}
+html.touch #look .corner,html.touch #hpanel .corner{padding:8px 12px;font-size:15px}
+.sw{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:6px;vertical-align:-2px;border:1px solid rgba(255,255,255,.4)}
+#tut{position:fixed;bottom:120px;left:50%;transform:translateX(-50%);z-index:14;font-size:14px;line-height:1.6;width:min(420px,calc(100% - 32px));display:none;pointer-events:auto;border-color:#ffd36b}
+#tut .corner{margin:0}
+html.touch #tut{bottom:330px}
+@media (max-height:520px){html.touch #tut{bottom:12px;width:min(380px,calc(100% - 300px))}}

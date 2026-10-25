@@ -107,7 +107,7 @@ function updatePets(dt){
   let en=null,ed=p.kind==='bear'?14:18;
   for(const z of zombies){const u=z.userData;if(u.dead||u.rise>0)continue;const d=Math.hypot(z.position.x-pos.x,z.position.z-pos.z);if(d<ed){ed=d;en=z;}}
   let tx,tz,sp;
-  if(p.kind==='bear'&&en&&p.owner){tx=en.position.x;tz=en.position.z;sp=4.5;p.cd-=dt;if(ed<2.2&&p.cd<=0){p.cd=1;dmgMonster(en,25,false);}}
+  if(p.kind==='bear'&&en&&p.owner){tx=en.position.x;tz=en.position.z;sp=4.5;p.cd-=dt;if(ed<2.2&&p.cd<=0){p.cd=1;dmgMonster(en,20+5*(p.lvl||1),false);}}
   else if(p.kind==='dog'&&p.owner&&(hour>=21||hour<7)&&doghouseOf(p.owner)){const dh=doghouseOf(p.owner);tx=dh.x;tz=dh.z+1.3;sp=5;p.guard=true;}
   else if(op){p.guard=false;p.slot+=dt*.2;tx=op.x+Math.cos(p.slot)*2.6;tz=op.z+Math.sin(p.slot)*2.6;sp=Math.hypot(tx-pos.x,tz-pos.z)>8?8:4.5;if(Math.hypot(tx-pos.x,tz-pos.z)>60){pos.x=tx;pos.z=tz;}}
   else{if(Math.hypot(p.wx-pos.x,p.wz-pos.z)<1){p.wx=pos.x+(Math.random()-.5)*14;p.wz=pos.z+(Math.random()-.5)*14;}tx=p.wx;tz=p.wz;sp=1.6;}
@@ -118,8 +118,8 @@ function updatePets(dt){
   p.bark-=dt;if(p.kind==='dog'&&p.owner&&p.bark<=0){if(p.guard&&!en)for(const z of zombies){const u=z.userData;if(!u.dead&&!(u.rise>0)&&Math.hypot(z.position.x-pos.x,z.position.z-pos.z)<25){en=z;break;}}let foe=en;if(!foe&&tm)for(const b of humans)if(tm.enemies.has(b.team)&&Math.hypot(b.g.position.x-pos.x,b.g.position.z-pos.z)<18){foe=b;break;}
    if(foe){p.bark=2.5;if(Math.hypot(pos.x-player.position.x,pos.z-player.position.z)<35){woof();popup('🐕 '+t('woof'),pos.clone().add(new THREE.Vector3(0,1.4,0)));}else if(p.guard&&p.owner==='P'&&gtime>(p.alertT||0)){p.alertT=gtime+25;say(t('dhbark'),2.5);}if(NET.role==='host')netQ.push({e:'bark',x:r2(pos.x),z:r2(pos.z)});}}
   // ienaidnieki suni nogalina ar vienu šāvienu vai kodienu; lāci tikai pamazām
-  for(const b of bullets){if(b.team===tm||b.rocket)continue;if(Math.hypot(b.m.position.x-pos.x,b.m.position.z-pos.z)<.6){p.hp-=p.kind==='dog'?99:b.dmg;b.life=0;}}
-  for(const z of zombies){const u=z.userData;if(!u.dead&&!(u.rise>0)&&Math.hypot(z.position.x-pos.x,z.position.z-pos.z)<1.4+(p.kind==='bear'?.6:0)){if(p.kind==='dog'){if(p.owner&&Math.random()<dt*1.5)p.hp=0;}else p.hp-=10*dt;}}
+  for(const b of bullets){if(b.team===tm||b.rocket)continue;if(Math.hypot(b.m.position.x-pos.x,b.m.position.z-pos.z)<.6){p.hp-=p.kind==='dog'&&!(p.lvl>1)?99:b.dmg;b.life=0;}}
+  for(const z of zombies){const u=z.userData;if(!u.dead&&!(u.rise>0)&&Math.hypot(z.position.x-pos.x,z.position.z-pos.z)<1.4+(p.kind==='bear'?.6:0)){if(p.kind==='dog'&&!(p.lvl>1)){if(p.owner&&Math.random()<dt*1.5)p.hp=0;}else p.hp-=10*dt;}}
   if(p.hp<=0){killPet(p);continue;}
   g.visible=Math.hypot(pos.x-player.position.x,pos.z-player.position.z)<85;
  }
@@ -135,7 +135,7 @@ function updatePets(dt){
  // iestādītie koki ik pa laikam nomet ābolu (+15 dzīvības)
  for(const p of plants)if(p.k==='tree'&&(p.gr||0)>=1){p.ap=(p.ap??(80+Math.random()*60))-dt;if(p.ap<=0){p.ap=110+Math.random()*60;const a=Math.random()*6.283;dropItem(p.x+Math.cos(a)*1.4,p.z+Math.sin(a)*1.4,'apple');}}
  if(NET.role==='host'&&NET.guests.size){petT-=dt;if(petT<=0){petT=.1;
-  const E=pets.map(p=>[p.id,p.kind==='dog'?0:1,r2(p.g.position.x),r2(p.g.position.z),r2(p.g.rotation.y),p.owner?1:0]),C=chickens.map(c=>[c.id,r2(c.g.position.x),r2(c.g.position.z),LIVEK.indexOf(c.kind||'chicken')]),D=drops.filter(d=>d.kind).map(d=>[d.id,d.kind,r2(d.x),r2(d.z)]);
+  const E=pets.map(p=>[p.id,Math.max(0,PETK.indexOf(p.kind)),r2(p.g.position.x),r2(p.g.position.z),r2(p.g.rotation.y),p.owner?1:0,p.name||'',p.lvl||1,petOwnerId(p.owner)]),C=chickens.map(c=>[c.id,r2(c.g.position.x),r2(c.g.position.z),LIVEK.indexOf(c.kind||'chicken')]),D=drops.filter(d=>d.kind).map(d=>[d.id,d.kind,r2(d.x),r2(d.z)]);
   for(const G of NET.guests.values())if(G.ready)netTo(G,{t:'pe',E,C,D,co:PT.coins||0,pr:prices});}}
 }
 function woof(){tone(520,.08,'square',.09,300);tone(480,.1,'square',.08,260,.15);}
@@ -278,7 +278,7 @@ const netPets=new Map(),netCk=new Map(),netDr=new Map();
 const _netGuestMsg=netGuestMsg;netGuestMsg=function(d){
  if(d&&d.t==='wel'){_netGuestMsg(d);for(const M of [netPets,netCk,netDr]){for(const o of M.values()){scene.remove(o.g);freeObj(o.g);}M.clear();}for(const p of [...plants])removePlant(p);if(!traders.length)spawnTraders(false);return;}
  if(d&&d.t==='pe'){PT.coins=d.co;if(d.pr)Object.assign(prices,d.pr);
-  for(const [id,k,x,z,ry] of d.E){let o=netPets.get(id);if(!o){o={g:k?bearMesh():dogMesh()};o.g.position.set(x,0,z);netPets.set(id,o);}o.tx=x;o.tz=z;o.ry=ry;o.seen=gtime;}
+  for(const [id,k,x,z,ry] of d.E){let o=netPets.get(id);if(!o){o={g:petMesh(PETK[k]||'dog')};o.g.position.set(x,0,z);netPets.set(id,o);}o.tx=x;o.tz=z;o.ry=ry;o.seen=gtime;}
   for(const [id,x,z,ki] of d.C){let o=netCk.get(id);if(!o){o={g:liveMesh(LIVEK[ki||0])};o.g.position.set(x,0,z);netCk.set(id,o);}o.tx=x;o.tz=z;o.seen=gtime;}
   for(const [id,k,x,z] of d.D){let o=netDr.get(id);if(!o){const g=k==='coin'?coinMesh():(()=>{const q=new THREE.Group();q.add(cube(.25,.25,.25,0xd32f2f,.6));return q;})();g.position.set(x,.4,z);scene.add(g);o={g,coin:1};netDr.set(id,o);}o.tx=x;o.tz=z;o.seen=gtime;}
   return;}
