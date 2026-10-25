@@ -38,7 +38,7 @@ function updateFires(dt){
   if(near&&Math.random()<dt*6)noise(.12,.06,1800);
   if(f.dmg&&(f.tick=(f.tick||0)-dt)<=0){f.tick=.5; // kas iekšā deg, tas saņem bojājumu
    const inside=(x,z)=>Math.abs(x-f.x)<f.w+.3&&Math.abs(z-f.z)<f.d+.3;
-   for(const h of [...HL])if(inside(h.p.x,h.p.z))hurt(h,8,null,false);
+   for(const h of [...HL])if(inside(h.p.x,h.p.z)&&(h.y||0)<3)hurt(h,8,null,false);
    for(const z of [...zombies])if(!z.userData.dead&&inside(z.position.x,z.position.z))dmgMonster(z,15,false);}
   if(f.t<=0){fires.splice(i,1);f.fin();}
  }

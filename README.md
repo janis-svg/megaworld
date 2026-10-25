@@ -49,6 +49,22 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - 🌕 Ik 5. dienas nakts ir pilnmēness: divreiz vairāk monstru un Mēness milzis, kuru var uzvarēt tikai kopā.
 - 🧑 Pirmajā spēlē Kaspars parāda, kā spēlēt. Ja gribi apmācību vēlreiz, pieliec saitei `?tut`.
 
+## Lidmašīnas
+
+- ✈️ Mežā ir 2 lidlauki ar 4 pamestām kara lidmašīnām (minikartē ✈️). Pieej klāt un spied 🤚.
+- Lidmašīnu modeļi:
+  - **Vanags**: iznīcinātājs, 3 raķetes, raķetes notriec arī citas lidmašīnas.
+  - **Bizons**: bumbvedējs, 5 raķetes, liels sprādziens, iztur visvairāk trāpījumu, bet lēns.
+  - **Zibens**: visātrākais un veiklākais, 2 raķetes, bet trausls.
+  - **Ērglis**: līdzsvarots, 4 raķetes, notriec arī lidmašīnas.
+- Vadība: uz augšu/leju = augstums, pa kreisi/labi = pagrieziens, ⚔️ = raķete, 🤚 = katapultēties. Viena raķete iznīcina jebkuru briesmoni (arī cilvēkēdāju un milzi) un tanku.
+- Kad raķetes beidzas, pilots katapultējas un nolaižas ar izpletni. Lidmašīna ietriecas, uzsprāgst, un viss 5 m apkārt deg 2 minūtes (māja nodeg). Ja ielido debesskrāpī, lidmašīna uzsprāgst.
+- Boti arī lido, īpaši karotāji. Gaisā notiek kaujas: boti uzbrūk ienaidniekiem, arī tev, un nedraudzīgie karo savā starpā.
+- 🚜 Tanks pats pagriežas pret mērķi un ar šāviņu var notriekt lidmašīnu.
+- Katru rītu lidlaukos parādās jaunas lidmašīnas tām, kas avarēja.
+- 🗺️ Minikarti var aizvērt ar ✖, tad paliek 🗺️ poga, ar kuru to atver.
+- Ja iesprūsti, spied lēcienu un reizē kustini uz sāniem: tēls izlec ārā.
+
 ## Spēlēt kopā (līdz 4 spēlētājiem)
 
 1. Viens atver spēli, spiež 🌐 un "Sākt kopīgo spēli".
@@ -91,6 +107,8 @@ Pasauli skaita tā cilvēka ierīce, kurš uzaicināja. Ja viņš aizver lapu, s
 | `js/23_karte_izskats.js` | Minikarte un tēla izskats |
 | `js/24_majdzivnieki.js` | Mājdzīvnieku vārdi un līmeņi, dzīvnieku skaņas, ceļojošais tirgotājs, zirgs |
 | `js/25_liela_nakts_maja.js` | Pilnmēness nakts, Mēness milzis, mājas uzlabojumi |
+| `js/26_iestregsana.js` | Lai tēli neiesprūst (briesmoņi ēkās, spēlētājs stūros) |
+| `js/27_lidlauki.js` | Lidlauki, lidmašīnas, gaisa kaujas, izpletnis, avārijas ugunsgrēks |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 

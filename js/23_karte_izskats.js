@@ -4,7 +4,14 @@ Object.assign(T.lv,{look:'Izskats',lcol:'Krāsa',lhat:'Cepure',lbag:'Mugurā',we
 Object.assign(T.en,{look:'Look',lcol:'Colour',lhat:'Hat',lbag:'On the back',wear:'Wear',worn:'Wearing',
  l_c0:'Default',l_c1:'Red',l_c2:'Green',l_c3:'Yellow',l_c4:'Purple',l_c5:'Pink',l_c6:'Black',l_c7:'Orange',l_h0:'No hat',l_cap:'Cap',l_cowboy:'Cowboy hat',l_wizard:'Wizard hat',l_crown:'Crown',l_b0:'Nothing',l_bag:'Backpack',l_cape:'Superhero cape'});
 // ---------- minikarte ----------
-const mm=document.createElement('canvas');mm.id='mmap';document.body.appendChild(mm);let mmZoom=0,mmT=0;
+// karti var aizvērt (✖): tad paliek tikai 🗺️ poga, ar kuru to atver atkal
+const mmW=document.createElement('div');mmW.id='mmwrap';document.body.appendChild(mmW);
+const mm=document.createElement('canvas');mm.id='mmap';mmW.appendChild(mm);let mmZoom=0,mmT=0,mmOff=!!LS.get('mmoff',false);
+const mmX=document.createElement('button');mmX.id='mmx';mmX.textContent='✖';mmW.appendChild(mmX);
+const mmO=document.createElement('button');mmO.id='mmo';mmO.className='corner';mmO.textContent='🗺️';mmW.appendChild(mmO);
+function mmShow(){mm.style.display=mmX.style.display=mmOff?'none':'block';mmO.style.display=mmOff?'block':'none';}mmShow();
+mmX.onpointerdown=e=>{e.stopPropagation();e.preventDefault();mmOff=true;LS.set('mmoff',true);mmShow();};
+mmO.onpointerdown=e=>{e.stopPropagation();e.preventDefault();mmOff=false;LS.set('mmoff',false);mmShow();mmT=0;};
 mm.onpointerdown=e=>{e.stopPropagation();e.preventDefault();mmZoom=1-mmZoom;mmT=0;};
 const hex=c=>'#'+new THREE.Color(c).getHexString();
 function drawMap(){
@@ -74,4 +81,4 @@ const _netExtraEv26=netExtraEv2;netExtraEv2=function(e){if(e.e==='ap'){apOf.set(
 // draugu tēli: uzvelk viņu izskatu, kad tas mainās; karte atjaunojas 4x sekundē
 const _updateFx6=updateFx;updateFx=function(dt){_updateFx6(dt);
  if(NET.role==='guest'){for(const [id,o] of netPl){const a=apOf.get(id);if(a&&o.g.userData.apk!==a.join())dressMesh(o.g,a,false);}}
- mmT-=dt;if(mmT<=0){mmT=.25;mm.style.display=active?'block':'none';if(active)drawMap();}};
+ mmT-=dt;if(mmT<=0){mmT=.25;mmW.style.display=active?'block':'none';if(active&&!mmOff)drawMap();}};

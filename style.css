@@ -111,9 +111,12 @@ html.touch #shop .corner{padding:8px 12px;font-size:15px}
 html.touch #quests{top:auto;bottom:286px;left:16px;max-width:calc(100% - 120px)}
 html.touch #quests:not(.open) .ql{display:none}
 @media (max-height:520px){html.touch #quests{bottom:258px}}
-#mmap{position:fixed;right:16px;bottom:16px;z-index:11;border-radius:10px;border:2px solid rgba(255,255,255,.35);display:none;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,.5)}
-html.touch #mmap{right:auto;left:16px;bottom:160px}
-@media (max-height:520px){html.touch #mmap{bottom:132px}}
+#mmwrap{position:fixed;right:16px;bottom:16px;z-index:11;display:none;pointer-events:auto}
+#mmap{display:block;border-radius:10px;border:2px solid rgba(255,255,255,.35);box-shadow:0 4px 16px rgba(0,0,0,.5)}
+#mmx{position:absolute;top:4px;right:4px;width:24px;height:24px;padding:0;border-radius:6px;font-size:12px;background:rgba(10,18,26,.75);color:#fff;border:1px solid rgba(255,255,255,.3);box-shadow:none}
+#mmo{margin:0;font-size:20px;padding:6px 10px}
+html.touch #mmwrap{right:auto;left:16px;bottom:160px}
+@media (max-height:520px){html.touch #mmwrap{bottom:132px}}
 #badges,#look,#hpanel{position:fixed;top:160px;left:16px;z-index:15;font-size:13px;line-height:1.6;display:none;max-width:calc(100% - 32px);width:380px;pointer-events:auto;max-height:calc(100% - 190px);overflow:auto}
 html.touch #badges,html.touch #look,html.touch #hpanel{left:8px;right:8px;top:118px;width:auto;max-height:calc(100% - 300px)}
 .bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:6px;margin:8px 0}
