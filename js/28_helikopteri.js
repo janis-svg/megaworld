@@ -212,8 +212,8 @@ const _gameOver11=gameOver;gameOver=function(){if(heliMode)exitHeli();_gameOver1
 const _toggleBuild11=toggleBuild;toggleBuild=function(){if(heliMode)return;_toggleBuild11();};
 {const bm=$('bmb');bm.addEventListener('pointerdown',()=>{if(heliMode)hDown=true;});['pointerup','pointercancel','pointerleave'].forEach(n=>bm.addEventListener(n,()=>{hDown=false;}));}
 const _renderW11=renderW;renderW=function(){_renderW11();if(!TOUCH||!heliMode)return;$('atk').innerHTML='🔫<small>'+heliMode.ammo+'</small>';$('bmb').textContent='⬇';};
-function heliNear(){const px=player.position.x,pz=player.position.z;if(NET.role==='guest'){for(const [id,o] of netHelis)if(o.st===0&&Math.hypot(o.x-px,o.z-pz)<4.2)return{id,mk:o.mk,f:o.fuel,a:o.ammo};return null;}
- for(const H of HELIS)if(H.st==='park'&&Math.hypot(H.x-px,H.z-pz)<4.2&&Math.abs(H.y-pY)<2)return{id:H.id,mk:H.mk,f:Math.round(H.fuel),a:H.ammo,H};return null;}
+function heliNear(){const px=player.position.x,pz=player.position.z;if(NET.role==='guest'){for(const [id,o] of netHelis)if(o.st===0&&Math.hypot(o.x-px,o.z-pz)<5.5)return{id,mk:o.mk,f:o.fuel,a:o.ammo};return null;}
+ for(const H of HELIS)if(H.st==='park'&&Math.hypot(H.x-px,H.z-pz)<5.5&&Math.abs(H.y-pY)<2)return{id:H.id,mk:H.mk,f:Math.round(H.fuel),a:H.ammo,H};return null;}
 const _nearInter11=nearInter;nearInter=function(){if(heliMode)return{type:'hland'};if(!inTank&&!(typeof jetMode!=='undefined'&&jetMode)&&!paraMode){const h=heliNear();if(h)return{type:'heli',h};}return _nearInter11();};
 const _updateHint11=updateHint;updateHint=function(){const o=nearInter(),h=$('hint');
  if(o&&o.type==='hland'){const H=heliMode;h.textContent=tf('heli_fly',{f:Math.round(H.fuel),a:H.ammo,h:Math.round(H.hp)});h.style.display='block';setAct('🛬');return;}
@@ -229,7 +229,7 @@ const _start11=start;start=function(){heliMode=null;hDown=false;heliFog(false);c
 const netHelis=new Map(),netJV=[];
 function guestHelis(dt){const k=Math.min(1,dt*10);for(const [id,o] of netHelis){if(heliMode&&heliMode.id===id)continue;o.g.position.x+=(o.x-o.g.position.x)*k;o.g.position.y+=(o.y-o.g.position.y)*k;o.g.position.z+=(o.z-o.g.position.z)*k;o.g.rotation.y=lerpA(o.g.rotation.y,o.a,k);if(o.st===1)heliSpin({g:o.g},dt,true);}}
 const _netHostMsg11=netHostMsg;netHostMsg=function(G,d){
- if(d&&G.ready&&d.t==='heli'){const H=HELIS.find(q=>q.id===d.id);if(!H||H.st!=='park'||G.dead)return;if(H.res){H.res.heliGoal=null;H.res=null;}H.st='fly';H.pilot=G;G.inHeli=H;remOb(H.ob);const s=loadHeli(H,G.I);if(stealCheck(H,PT))netTo(G,{t:'msg',s:t('heli_mine'),d:3});H.owner=PT;
+ if(d&&G.ready&&d.t==='heli'){const H=HELIS.find(q=>q.id===d.id);if(!H||H.st!=='park'||G.dead){netTo(G,{t:'msg',s:t('jet_busy').replace('✈️','🚁'),d:1.5});return;}if(H.res){H.res.heliGoal=null;H.res=null;}H.st='fly';H.pilot=G;G.inHeli=H;remOb(H.ob);const s=loadHeli(H,G.I);if(stealCheck(H,PT))netTo(G,{t:'msg',s:t('heli_mine'),d:3});H.owner=PT;
   netTo(G,{t:'heliok',id:H.id,x:H.x,y:H.y,z:H.z,a:H.a,mk:H.mk,f:H.fuel,am:H.ammo,hp:H.hp});if(s)netTo(G,{t:'msg',s,d:3});netMe(G);return;}
  if(d&&G.ready&&d.t==='hf'){const H=HELIS.find(q=>q.id===d.id);if(H&&H.pilot===G&&H.ammo>0&&Array.isArray(d.a)){H.ammo--;const a=d.a.map(Number);heliShot(H,...a,PT,true);}return;}
  if(d&&G.ready&&d.t==='hexit'){const H=HELIS.find(q=>q.id===d.id);if(H&&H.pilot===G){H.x=+d.x;H.y=+d.y;H.z=+d.z;H.a=+d.a;H.fuel=Math.min(H.fuel,+d.f);heliPark(H);H.owner=PT;H.g.position.set(H.x,H.y,H.z);G.inHeli=null;}return;}
@@ -250,3 +250,8 @@ const _drawMap11=drawMap;drawMap=function(){_drawMap11();const g=mm.getContext('
  g.font=Math.round(W*.07)+'px serif';const L=NET.role==='guest'?[...netHelis.values()].map(o=>[o.x,o.z]):HELIS.filter(H=>H.st!=='gone').map(H=>[H.x,H.z]);for(const [x,z] of L)g.fillText('🚁',X(x),Y(z));
  if(heliMode&&heliMode.m.radar){g.fillStyle='#ff1744';const P=NET.role==='guest'?[...netMon.values()].map(o=>o.z.position).concat([...netBot.values()].filter(o=>o.rel===2).map(o=>o.g.position)):zombies.filter(z=>!z.userData.dead).map(z=>z.position).concat(humans.filter(b=>!b.dead&&PT.enemies.has(b.team)).map(b=>b.g.position));
   for(const p of P)if(Math.hypot(p.x-player.position.x,p.z-player.position.z)<150){g.beginPath();g.arc(X(p.x),Y(p.z),3,0,6.283);g.fill();}}};
+// ---------- versiju pārbaude kopīgajā spēlē ----------
+Object.assign(T.lv,{oldv:'⚠️ Tev ir veca spēles versija, tāpēc daļa lietu nestrādā. Aizver lapu un atver saiti vēlreiz.'});Object.assign(T.en,{oldv:'⚠️ You have an old version of the game, so some things do not work. Close the page and open the link again.'});
+const _netHostMsg12=netHostMsg;netHostMsg=function(G,d){if(d&&d.t==='hello'){_netHostMsg12(G,d);const gv=+d.v||0,hv=+MWV||0;if(gv<hv){netTo(G,{t:'msg',s:t('oldv'),d:8});netTo(G,{t:'ver',v:MWV});}else if(gv>hv)say(t('oldv'),8);return;}_netHostMsg12(G,d);};
+// jaunāka draugu versija pati pārlādējas ar svaigu lapu (vienu reizi)
+const _netGuestMsg12=netGuestMsg;netGuestMsg=function(d){if(d&&d.t==='ver'){let n=0;try{n=+sessionStorage.getItem('mw_rl')||0;}catch(e){}if((+d.v||0)>(+MWV||0)&&n<2){try{sessionStorage.setItem('mw_rl',n+1);}catch(e){}const m=location.search.match(/[?&]join=([a-z0-9]+)/);location.replace(location.pathname+'?join='+(m?m[1]:'')+'&r='+Date.now());}return;}_netGuestMsg12(d);};

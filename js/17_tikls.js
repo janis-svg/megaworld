@@ -3,6 +3,8 @@
 // Savienojums caur PeerJS (bezmaksas starpnieks, lai pārlūki atrastu viens otru).
 const KIND=['z','w','zw','s','c','f'],MAXG=3,PCOL=[0x3a7ab8,0x27ae60,0xe67e22,0x8e44ad];
 const r2=v=>Math.round(v*100)/100;
+// spēles versija (no ?v= skripta adresē): draugam jābūt tai pašai, citādi viņa pārlūks ielādē jaunāko
+const MWV=((document.querySelector('script[src*="01_sakums"]')||{}).src||'').replace(/.*[?&]v=(\d+).*/,'$1');
 let peer=null,hostConn=null,netT=0,netBiT=0,netDoorT=0,netSt=0,netUiT=0,netQ=[],netGone=[],netCurOwner=0,netNextId=1,netLastP=null;
 const doorState=new Map(),netMon=new Map(),netBot=new Map(),netPl=new Map(),netTk=new Map(),netTeams=new Map(),netVB=[];
 function netSend(m){if(hostConn&&hostConn.open)hostConn.send(m);}
@@ -158,7 +160,7 @@ function netJoin(code){
  const fail=setTimeout(()=>{if(!active)netFail(t('mp_fail'));},20000);
  peer.on('open',()=>{
   hostConn=peer.connect('megaworld-'+code,{reliable:true,serialization:'json'});
-  hostConn.on('open',()=>hostConn.send({t:'hello',name:$('nickname').value}));
+  hostConn.on('open',()=>hostConn.send({t:'hello',name:$('nickname').value,v:MWV}));
   hostConn.on('data',d=>netGuestMsg(d));
   hostConn.on('close',()=>{clearTimeout(fail);netFail(t(active?'mp_hostleft':'mp_fail'));});
  });
