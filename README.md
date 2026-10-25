@@ -206,3 +206,11 @@ Pievieno saitei `?debug`, un pārlūka konsolē būs komandas, piemēram `MW.set
 - Tās var atrast mežā, kara kastēs vai nopirkt veikalā.
 - Naktī tās ieslēdzas pašas: viss kļūst zaļš un gaišāks, bet cilvēki, briesmoņi un tehnika spīd kā infrasarkanajā kamerā.
 - Ja nepatīk, izslēdz ar 🥽 pogu vai taustiņu N.
+
+## 🔒 Spēle zem koda
+
+- Atverot spēli, tā prasa kodu. Ar **spēlētāja kodu** var spēlēt vienam, bet nevar sākt kopīgo spēli.
+- Ar **admin kodu** var arī sākt kopīgo spēli un nosūtīt draugiem uzaicinājuma saiti.
+- Kas atver uzaicinājuma saiti, tam kods nav vajadzīgs: viņš uzreiz pievienojas.
+- Kods tiek atcerēts šajā ierīcē. Ar pogu 🔑 sākuma ekrānā var ievadīt citu kodu.
+- Kodi failos nav ierakstīti atklātā tekstā. Tomēr šī ir tikai vienkārša aizsardzība pret nejaušu spēlēšanu: cilvēks, kurš prot pārlūkā mainīt kodu, to var apiet.
