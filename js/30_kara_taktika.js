@@ -161,3 +161,5 @@ let qgT=0;const _updateFx16=updateFx;updateFx=function(dt){_updateFx16(dt);if(is
 // savienojumi, kas 60 s neatvērās, neaizņem draugu vietas (citādi pēc 3 neveiksmīgiem mēģinājumiem neviens vairs nevarētu pievienoties)
 setInterval(()=>{if(NET.role!=='host')return;for(const G of [...NET.guests.values()])if(!G.ready&&Date.now()-(G.t0||0)>60000){try{G.conn.close();}catch(e){}NET.guests.delete(G.id);renderMP();}},5000);
 Object.assign(T.lv,{mp_s1:'savienojas ar serveri',mp_s2:'Meklē drauga spēli...',mp_s3:'Savienots! Ielādē pasauli...'});Object.assign(T.en,{mp_s1:'connecting to the server',mp_s2:'Looking for the game of your friend...',mp_s3:'Connected! Loading the world...'});
+// versija redzama sākuma ekrānā (lai var pārbaudīt, vai visiem telefoniem ir viena un tā pati)
+{const v=document.createElement('p');v.id='mwver';v.textContent='v'+MWV;v.style.cssText='font-size:11px;color:#5f7689;margin-top:6px';document.querySelector('#menu .card').appendChild(v);}
