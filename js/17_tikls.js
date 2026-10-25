@@ -3,6 +3,8 @@
 // Savienojums caur PeerJS (bezmaksas starpnieks, lai pārlūki atrastu viens otru).
 const KIND=['z','w','zw','s','c','f'],MAXG=3,PCOL=[0x3a7ab8,0x27ae60,0xe67e22,0x8e44ad];
 const r2=v=>Math.round(v*100)/100;
+// savienojuma serveri: vairāki STUN (Google, Cloudflare), lai draugi atrastu viens otru arī caur dažādiem tīkliem
+const PEERCFG={iceServers:[{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302','stun:stun2.l.google.com:19302']},{urls:'stun:stun.cloudflare.com:3478'},{urls:['turn:eu-0.turn.peerjs.com:3478','turn:us-0.turn.peerjs.com:3478'],username:'peerjs',credential:'peerjsp'}]};
 const GT=G=>G&&G.team||PT; // drauga komanda (karā var būt arī pretējā armijā)
 // spēles versija (no ?v= skripta adresē): draugam jābūt tai pašai, citādi viņa pārlūks ielādē jaunāko
 const MWV=((document.querySelector('script[src*="01_sakums"]')||{}).src||'').replace(/.*[?&]v=(\d+).*/,'$1');
@@ -29,7 +31,7 @@ function lerpA(a,b,k){let d=b-a;d=Math.atan2(Math.sin(d),Math.cos(d));return a+d
 function netHost(){
  if(NET.role)return;if(typeof Peer==='undefined'){say(t('mp_nolib'));return;}
  NET.code=code6();NET.role='host';NET.status=t('mp_wait');renderMP();
- peer=new Peer('megaworld-'+NET.code,{debug:0});
+ peer=new Peer('megaworld-'+NET.code,{debug:0,config:PEERCFG});
  peer.on('open',()=>{NET.status='';renderMP();});
  peer.on('error',e=>{if(e&&e.type==='unavailable-id'){peer.destroy();NET.role=null;netHost();return;}NET.status=t('mp_err')+' ('+((e&&e.type)||e)+')';renderMP();});
  peer.on('connection',conn=>{
@@ -157,7 +159,7 @@ function netJoin(code){
  if(typeof Peer==='undefined'){netFail(t('mp_nolib'));return;}
  if(!scene)init();
  NET.role='guest';NET.code=code;$('mperr').textContent=t('mp_connecting');$('start').disabled=true;
- peer=new Peer({debug:0});
+ peer=new Peer({debug:0,config:PEERCFG});
  // laiks pievienoties: 45 s (kara pasaule ir smagāka, un caur dažiem tīkliem savienojums veidojas lēnāk); ekrānā redzams, kurā solī esam
  let step='mp_s1';const fail=setTimeout(()=>{if(!active)netFail(t('mp_fail')+' ('+t(step)+')');},45000);
  peer.on('open',()=>{step='mp_s2';$('mperr').textContent=t('mp_s2');

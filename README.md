@@ -82,7 +82,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - Sākuma ekrānā izvēlies **⚔️ Karš** (vai **🧟 Izdzīvošana**). Kopīgajā spēlē režīmu izvēlas tas, kurš uzaicina.
 - Divas armijas: 🔴 sarkanā (visi cilvēki + 30 boti) un 🟢 zaļā (30 boti). Katrai ir sava bāze pretējos kartes stūros.
 - Bāzes ieskauj dzeloņstiepļu žogs ar vārtiem uz kartes centra pusi. Stūros ir 4 novērošanas torņi: pie kāpnēm spied 🤚, lai uzkāptu. No augšas redz tālāk, minikartē parādās ienaidnieki, un var šaut lejā.
-- Katrā bāzē ir 4 lidmašīnas, 2 tanki, 2 bruņmašīnas un noliktava 🎖️ (spied 🤚: ieroči, lodes, Javelin, bruņas; atkal pēc 45 s).
+- Katrā bāzē ir 4 lidmašīnas, 2 helikopteri (Plēsoņa un Haizivs), 2 tanki, 2 bruņmašīnas un noliktava 🎖️ (spied 🤚: ieroči, lodes, Javelin, bruņas; atkal pēc 45 s).
 - Briesmoņu nav. Pa visu karti parādās kastes 📦 ar ieročiem, lodēm, degvielu un bruņām.
 - Uzvara: iznīcini visus zaļos vai nozodz viņu karogu (minikartē tas mirgo), aiznes uz savu bāzi un noturi 2 diennaktis. Ja karogu nes kāds, kurš krīt, karogs paliek zemē; ja savējais to aizskar, tas atgriežas bāzē.
 - Boti uzbrūk, sargā karogu, medī, brauc ar tankiem un bruņmašīnām, lido ar lidmašīnām un helikopteriem.

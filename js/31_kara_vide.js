@@ -45,3 +45,12 @@ const _netGuestMsg17=netGuestMsg;netGuestMsg=function(d){_netGuestMsg17(d);if(d&
 // minikartē: frontes līnija ar tranšejām
 const _drawMap17=drawMap;drawMap=function(){_drawMap17();if(!isWar())return;const g=mm.getContext('2d'),W=mm.width,R=mmZoom?70:EDGE,cx=mmZoom?player.position.x:0,cz=mmZoom?player.position.z:0,sc=W/2/R,X=x=>W/2+(x-cx)*sc,Y=z=>W/2+(z-cz)*sc;
  g.strokeStyle='#8d6e63';g.lineWidth=Math.max(2,3*sc);for(const [x,z] of TRENCH){g.beginPath();g.moveTo(X(x-8),Y(z+8));g.lineTo(X(x+8),Y(z-8));g.stroke();}};
+// ---------- katrā bāzē 2 helikopteri (Plēsoņa un Haizivs) ar nosēšanās laukumiem; neitrālie laukumi mežā paliek ----------
+const HSLOTS0=HSLOTS.slice();let HPG=null;
+function warHeliSlots(){HSLOTS.length=0;HSLOTS.push(...HSLOTS0);if(!isWar())return;for(const B of WB)HSLOTS.push([B.x-B.d*24,B.z+B.d*6],[B.x-B.d*24,B.z-B.d*10]);}
+function baseHelipads(){if(HPG){scene.remove(HPG);freeObj(HPG);HPG=null;}if(!isWar())return;const g=new THREE.Group();
+ for(const B of WB)for(const dz of [6,-10]){const x=B.x-B.d*24,z=B.z+B.d*dz,c=new THREE.Mesh(new THREE.CircleGeometry(5,24),mat(0x3d4043,1));c.rotation.x=-Math.PI/2;c.position.set(x,.035,z);g.add(c);
+  for(const [w,d,px,pz] of [[.5,3,-.9,0],[.5,3,.9,0],[1.8,.5,0,0]]){const h=cube(w,.02,d,0xf5f5f5,.8);h.position.set(x+px,.05,z+pz);h.castShadow=false;g.add(h);}}
+ g.updateMatrixWorld(true);mergeInto(g);scene.add(g);HPG=g;}
+const _start17=start;start=function(){warHeliSlots();_start17();baseHelipads();};
+const _netGuestMsg17b=netGuestMsg;netGuestMsg=function(d){_netGuestMsg17b(d);if(d&&d.t==='mode')baseHelipads();};

@@ -37,12 +37,12 @@ function makeLandmark(ch,L,R,key){const g=ch.group,x=L.x,z=L.z,ob=(px,pz,hx,hz)=
  const b=cube(12,6,8,0x8d6e63,.95);b.position.set(x,3,z-2);g.add(b);ob(x,z-2,6,4);const rf=cube(12.4,.4,8.4,0x5d4037,.9);rf.position.set(x,6.2,z-2);g.add(rf);
  for(const cx of [-3,3]){const c=new THREE.Mesh(new THREE.CylinderGeometry(.8,1.1,16,12),mat(0x795548,.9));c.position.set(x+cx,8,z+4);g.add(c);ob(x+cx,z+4,1.1,1.1);const st=new THREE.Mesh(new THREE.CylinderGeometry(.82,.82,1.2,12),mat(0xffffff,.8));st.position.set(x+cx,14.5,z+4);g.add(st);}return{h:16};}
 // ---------- bāzes stūros (koki tur neaug abos režīmos) ----------
-const WB=[{x:-205,z:-205,d:1},{x:205,z:205,d:-1}];
-const _nearAirfield13=nearAirfield;nearAirfield=function(x,z,m){return _nearAirfield13(x,z,m)||WB.some(b=>Math.abs(x-b.x)<36+(m||0)&&Math.abs(z-b.z)<36+(m||0));};
+const WB=[{x:-198,z:-198,d:1},{x:198,z:198,d:-1}],BR=38; // bāzes centrs un žoga attālums no centra
+const _nearAirfield13=nearAirfield;nearAirfield=function(x,z,m){return _nearAirfield13(x,z,m)||WB.some(b=>Math.abs(x-b.x)<BR+6+(m||0)&&Math.abs(z-b.z)<BR+6+(m||0));};
 let WG=[],WOB=[],FL=[],ARMY=[],winner=null,dropT=0,warT=0,warNetT=0,armCd=0;
 function sandbag(g,x,z,w,d){const s=cube(w,1.1,d,0x9e8a5a,1);s.position.set(x,.55,z);g.add(s);WOB.push({x,z,hx:w/2,hz:d/2,y0:0,y1:1.1});}
 // dzeloņstiepļu žogs: stabi ik 4 m, 3 stieples un spirāle augšā; vārti uz kartes centra pusi, pie vārtiem smilšu maisi
-function wireFence(g,B){const R=32,gate=6,post=0x5d4037,wire=0x9e9e9e;
+function wireFence(g,B){const R=BR,gate=7,post=0x5d4037,wire=0x9e9e9e;
  const seg=(x1,z1,x2,z2)=>{const len=Math.hypot(x2-x1,z2-z1),n=Math.max(1,Math.round(len/4)),ax=Math.abs(x2-x1)>Math.abs(z2-z1);
   for(let k=0;k<=n;k++){const x=x1+(x2-x1)*k/n,z=z1+(z2-z1)*k/n,p=cube(.14,1.8,.14,post,1);p.position.set(x,.9,z);g.add(p);}
   for(const y of [.45,.95,1.45]){const w=cube(ax?len:.03,.03,ax?.03:len,wire,.5);w.position.set((x1+x2)/2,y,(z1+z2)/2);w.castShadow=false;g.add(w);}
@@ -64,11 +64,11 @@ function watchTower(g0,x,z){const g=new THREE.Group(),n0=WOB.length,w=0x6d4c41,H
  const lx=x+2.1;for(let k=0;k<2;k++){const s=cube(.08,H+.6,.08,w,1);s.position.set(lx,(H+.6)/2,z-.4+k*.8);g.add(s);}for(let y=.5;y<H;y+=.5){const r=cube(.08,.06,.8,w,1);r.position.set(lx,y,z);g.add(r);}
  g.updateMatrixWorld(true);mergeInto(g);scene.add(g);WG.push(g);TOWERS.push({x,z,lx,lz:z,h:H,g,obs:WOB.slice(n0),rifle:true,i:TOWERS.length});}
 function buildBases(){TOWERS.length=0;for(const g of WG){scene.remove(g);freeObj(g);}WG=[];for(const o of WOB)remOb(o);WOB=[];
- WB.forEach((B,i)=>{const g=new THREE.Group(),col=i?0x2e7d32:0xc62828;const pad=new THREE.Mesh(new THREE.PlaneGeometry(64,64),mat(0x5d5a4e,1));pad.rotation.x=-Math.PI/2;pad.position.set(B.x,.025,B.z);pad.receiveShadow=true;g.add(pad);
+ WB.forEach((B,i)=>{const g=new THREE.Group(),col=i?0x2e7d32:0xc62828;const pad=new THREE.Mesh(new THREE.PlaneGeometry(BR*2,BR*2),mat(0x5d5a4e,1));pad.rotation.x=-Math.PI/2;pad.position.set(B.x,.025,B.z);pad.receiveShadow=true;g.add(pad);
   wireFence(g,B);
   const hq=cube(8,4,6,0x556b2f,.9);hq.position.set(B.x+10,2,B.z-10*B.d);g.add(hq);WOB.push({x:B.x+10,z:B.z-10*B.d,hx:4,hz:3});const hr=cube(8.6,.4,6.6,col,.8);hr.position.set(B.x+10,4.2,B.z-10*B.d);g.add(hr);
   const cr=cube(2.4,1.4,1.6,0x6d4c41,.9);cr.position.set(B.x-8,.7,B.z);g.add(cr);const cl=cube(2.5,.15,1.7,col,.7);cl.position.set(B.x-8,1.45,B.z);g.add(cl);WOB.push({x:B.x-8,z:B.z,hx:1.2,hz:.8});
-  for(const [tx,tz] of [[-27,-27],[27,27],[-27,27],[27,-27]])watchTower(g,B.x+tx,B.z+tz);
+  for(const [tx,tz] of [[-1,-1],[1,1],[-1,1],[1,-1]])watchTower(g,B.x+tx*(BR-5),B.z+tz*(BR-5));
   g.updateMatrixWorld(true);mergeInto(g);scene.add(g);WG.push(g);});
  for(const o of WOB)addOb(o);}
 function armoryNear(x,z,T){if(!isWar())return false;const i=T?ARMY.indexOf(T):MYSIDE,B=WB[i<0?MYSIDE:i];return Math.hypot(x-(B.x-8),z-B.z)<2.6;}
@@ -267,7 +267,7 @@ const _updatePpl13=updatePpl;updatePpl=function(){_updatePpl13();if(isWar()&&ARM
 // minikartē: atpazīstamās ēkas, bāzes, karogi (mirgo, ja nav mājās)
 const _drawMap13=drawMap;drawMap=function(){_drawMap13();const g=mm.getContext('2d'),W=mm.width,R=mmZoom?70:EDGE,cx=mmZoom?player.position.x:0,cz=mmZoom?player.position.z:0,sc=W/2/R,X=x=>W/2+(x-cx)*sc,Y=z=>W/2+(z-cz)*sc;
  g.textAlign='center';g.textBaseline='middle';g.font=Math.round(W*.08)+'px serif';for(const L of LMS)g.fillText(L.ic,X(L.x),Y(L.z));
- if(!isWar())return;WB.forEach((B,i)=>{g.fillStyle=i?'rgba(46,125,50,.55)':'rgba(211,47,47,.55)';g.fillRect(X(B.x-32),Y(B.z-32),64*sc,64*sc);});
+ if(!isWar())return;WB.forEach((B,i)=>{g.fillStyle=i?'rgba(46,125,50,.55)':'rgba(211,47,47,.55)';g.fillRect(X(B.x-BR),Y(B.z-BR),BR*2*sc,BR*2*sc);});
  const blink=Math.floor(clock.elapsedTime*3)%2===0;FL.forEach((F,i)=>{const home=Math.hypot(F.x-F.home[0],F.z-F.home[1])<2;if(!home&&!blink)return;g.font=Math.round(W*(home?.08:.11))+'px serif';g.fillText(i?'🏳️':'🚩',X(F.x),Y(F.z));});};
 
 // ---------- kāpšana novērošanas tornī: no augšas redz tālāk, un minikartē parādās ienaidnieki ----------
