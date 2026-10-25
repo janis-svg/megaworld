@@ -22,9 +22,10 @@ function paintSide(){const row=$('siderow');row.style.display=MODE==='war'&&!/[?
 const _paintMode15=paintMode;paintMode=function(){_paintMode15();paintSide();};paintSide();
 const _applyLang15=applyLang;applyLang=function(){_applyLang15();paintSide();};
 // draugs pēc pievienošanās izvēlas armiju
+let sideChosen=false; // draugs armiju izvēlas vienreiz; jaunā spēlē tā pati
 const spEl=document.createElement('div');spEl.id='sidepick';spEl.className='panel';document.body.appendChild(spEl);
 function showSidePick(def){spEl.innerHTML='<b>'+t('sidepick')+'</b><br>'+[0,1].map(k=>'<button class="corner'+(k===def?' on':'')+'" data-s="'+k+'">'+t(k?'s_green':'s_red')+'</button>').join('');spEl.style.display='block';
- spEl.querySelectorAll('button').forEach(b=>b.onpointerdown=e=>{e.stopPropagation();e.preventDefault();MYSIDE=+b.dataset.s;netSend({t:'side',s:MYSIDE});spEl.style.display='none';});}
+ spEl.querySelectorAll('button').forEach(b=>b.onpointerdown=e=>{e.stopPropagation();e.preventDefault();MYSIDE=+b.dataset.s;sideChosen=true;netSend({t:'side',s:MYSIDE});spEl.style.display='none';});}
 // ---------- zvaigznes par uzvarām un pakāpes ----------
 let SHOOTER=0,HITPL=false,myStars=0;const lastKill={};
 const ownId=o=>o==='P'?0:o&&o.pos?o.id:-1;
@@ -134,7 +135,7 @@ const _netHostMsg15=netHostMsg;netHostMsg=function(G,d){
  const s0=SHOOTER;SHOOTER=G.id;try{_netHostMsg15(G,d);}finally{SHOOTER=s0;}};
 const _netWelcome15=netWelcome;netWelcome=function(G){_netWelcome15(G);netTo(G,{t:'hside',s:MYSIDE});const dead=TOWERS.filter(T=>T.dead).map(T=>T.i);if(dead.length)netTo(G,{t:'twd',L:dead});};
 const _netGuestMsg15=netGuestMsg;netGuestMsg=function(d){
- if(d&&d.t==='hside'){if(isWar())showSidePick(d.s);MYSIDE=d.s;return;}
+ if(d&&d.t==='hside'){if(sideChosen&&isWar()){netSend({t:'side',s:MYSIDE});return;}if(isWar())showSidePick(d.s);MYSIDE=d.s;return;}
  if(d&&d.t==='stars'){showStars(d.n,d.w);return;}
  if(d&&d.t==='twd'){for(const i of d.L)if(TOWERS[i]){collapseTower(TOWERS[i]);TOWERS[i].fall=.01;}return;}
  _netGuestMsg15(d);};

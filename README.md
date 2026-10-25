@@ -110,7 +110,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 
 ## Spēlēt kopā (līdz 4 spēlētājiem)
 
-1. Viens atver spēli, spiež 🌐 un "Sākt kopīgo spēli".
+1. Viens atver spēli un spiež **🌐 Spēlēt kopā ar draugiem**. Parādās saite un 30 sekunžu atskaite (var pielikt +30 s vai sākt uzreiz). Kad laiks beidzas, spēle sākas visiem vienlaikus no viena punkta. (Var arī spēles laikā spiest 🌐 un "Sākt kopīgo spēli".)
 2. Parādās saite. To nosūta draugiem (📋 Kopēt vai 📤 Sūtīt).
 3. Draugi atver saiti un spiež "PIEVIENOTIES DRAUGA SPĒLEI". Visi ir vienā komandā.
 
@@ -157,6 +157,7 @@ Pasauli skaita tā cilvēka ierīce, kurš uzaicināja. Ja viņš aizver lapu, s
 | `js/30_kara_taktika.js` | Armijas izvēle, botu vienības un plāni, zvaigznes un pakāpes, snaipers, torņu sagraušana, gaisa piegādes |
 | `js/31_kara_vide.js` | Kara vide: bez tirgotājiem, tranšejas, nopostītas mājas, krāteri |
 | `js/32_labojumi.js` | Ieroču darbības attālumi, ložmetēji neiet cauri sienām, snaipera tēmēklis |
+| `js/33_kopa_sakums.js` | Spēlēt kopā: 30 sekunžu gaidīšana un kopīgs sākums |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 
