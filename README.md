@@ -99,6 +99,11 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - Raķete sagrauj novērošanas torni, un tas vairs neatjaunojas.
 - Iznīcinātā tehnika pēc ~15 sekundēm atkal ir bāzē.
 - 🪂 Ik pa laikam kartē nolaižas gaisa piegāde ar retiem ieročiem.
+- Ko redz kāds no tavas armijas, tas parādās minikartē 3 minūtes: 🔴 karavīri, 🟣 pretinieks uz jumta, 🟠 helikopteri un lidmašīnas, 🟡 tanki.
+- Augstajām mājām ir trepes (🤚): var uzkāpt uz plakanā jumta un šaut. Karā uz jumta ir Javelin komplekts ar 3 raķetēm (atkal katru rītu).
+- Ja pretinieks pamana kādu uz jumta, viņa helikopteri un lidmašīnas lido to iznīcināt. Ja boti redz ienaidnieka helikopteri, tie, kam ir Javelin, iet to notriekt.
+- 🎯 Javelin: kamēr to tur rokās, stāvi uz vietas. Turi tehniku rāmī 3 s, līdz rāmis kļūst sarkans 🔒, tad šauj ⚔️. Pārlāde 5 s.
+- 📻 Gaisa trauksme ar sirēnu, kad ienaidnieka tehnika ir virs tavas bāzes.
 - Karā nav tirgotāju un monētu. Caur pilsētas vidu iet frontes līnija ar zigzaga tranšejām (uzbērumi aizsedz no lodēm, pāri var pārlēkt). Daļa māju ir nopostītas, uz ielām ir sprādzienu krāteri.
 
 ## Vēl jaunas lietas (abos režīmos)
@@ -158,6 +163,7 @@ Pasauli skaita tā cilvēka ierīce, kurš uzaicināja. Ja viņš aizver lapu, s
 | `js/31_kara_vide.js` | Kara vide: bez tirgotājiem, tranšejas, nopostītas mājas, krāteri |
 | `js/32_labojumi.js` | Ieroču darbības attālumi, ložmetēji neiet cauri sienām, snaipera tēmēklis |
 | `js/33_kopa_sakums.js` | Spēlēt kopā: 30 sekunžu gaidīšana un kopīgs sākums |
+| `js/34_izlukosana.js` | Pamanītie pretinieki kartē, jumti ar trepēm, Javelin uzvadīšana, gaisa trauksme |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 

@@ -148,7 +148,7 @@ function botEject(b,J){b.jet=null;b.para=true;b.inside=true;b.g.position.set(J.x
 function botFly(J,b,dt){J.t+=dt;J.fcd-=dt;J.v=Math.min(J.m.spd*.9,J.v+dt*10);
  J.ttT=(J.ttT||0)-dt;if(J.ttT<=0){J.ttT=1;let best=null,bd=170;const T=b.team;
   for(const z of zombies){const u=z.userData;if(u.dead||u.rise>0||u.kind==='f')continue;const d=Math.hypot(z.position.x-J.x,z.position.z-J.z);if(d<bd){bd=d;best={x:z.position.x,z:z.position.z};}}
-  for(const h of HL){if(h.team===T||!T.enemies.has(h.team)||(h.y||0)>5)continue;const d=Math.hypot(h.p.x-J.x,h.p.z-J.z)-25;if(d<bd){bd=d;best={x:h.p.x,z:h.p.z};}}
+  for(const h of HL){if(h.team===T||!T.enemies.has(h.team)||((h.y||0)>5&&!(typeof onRoofH==='function'&&onRoofH(h))))continue;const d=Math.hypot(h.p.x-J.x,h.p.z-J.z)-25;if(d<bd){bd=d;best={x:h.p.x,z:h.p.z};}}
   J.tg=best;J.ta=null;
   if(J.m.aa){let ad=160;for(const q of JETS){if(q===J||q.st!=='fly'||!q.pilot)continue;const T2=pilotTeam(q);if(!T2||T2===T||T2.friendly||T2.traderT)continue;const d=Math.hypot(q.x-J.x,q.z-J.z);if(d>ad)continue;
     if(!T.enemies.has(T2)){J.pc=J.pc||new Set();if(J.pc.has(T2.id)||d>110)continue;J.pc.add(T2.id);if(Math.random()<(T2===PT?.45:.6))war(T,T2);else continue;}

@@ -155,7 +155,7 @@ function botHeliLand(H,b){heliPark(H);H.owner=b.team;b.heli=null;b.inside=false;
 function botHeliFly(H,b,dt){H.t+=dt;const T=b.team;
  H.tt=(H.tt||0)-dt;if(H.tt<=0){H.tt=1;let best=null,bd=95;
   for(const z of zombies){const u=z.userData;if(u.dead||u.rise>0||u.kind==='f')continue;const d=Math.hypot(z.position.x-H.x,z.position.z-H.z);if(d<bd){bd=d;best={x:z.position.x,y:1.2,z:z.position.z};}}
-  for(const h of HL){if(h.team===T||!T.enemies.has(h.team)||(h.y||0)>4)continue;const d=Math.hypot(h.p.x-H.x,h.p.z-H.z)-10;if(d<bd){bd=d;best={x:h.p.x,y:(h.y||0)+1.2,z:h.p.z};}}
+  for(const h of HL){if(h.team===T||!T.enemies.has(h.team)||((h.y||0)>4&&!(typeof onRoofH==='function'&&onRoofH(h))))continue;const d=Math.hypot(h.p.x-H.x,h.p.z-H.z)-10;if(d<bd){bd=d;best={x:h.p.x,y:(h.y||0)+1.2,z:h.p.z};}}
   for(const Q of HELIS){if(Q===H||Q.st!=='fly')continue;const T2=heliTeam(Q);if(!T2||!T.enemies.has(T2))continue;const d=Math.hypot(Q.x-H.x,Q.z-H.z)-20;if(d<bd){bd=d;best={x:Q.x,y:Q.y+1.5,z:Q.z,Q};}}
   H.tg=best;}
  const home=H.t>H.mis||H.ammo<15||H.fuel<12;let tx,tz,alt=H.tAlt;
