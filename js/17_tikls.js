@@ -158,11 +158,13 @@ function netJoin(code){
  if(!scene)init();
  NET.role='guest';NET.code=code;$('mperr').textContent=t('mp_connecting');$('start').disabled=true;
  peer=new Peer({debug:0});
- const fail=setTimeout(()=>{if(!active)netFail(t('mp_fail'));},20000);
- peer.on('open',()=>{
+ // laiks pievienoties: 45 s (kara pasaule ir smagāka, un caur dažiem tīkliem savienojums veidojas lēnāk); ekrānā redzams, kurā solī esam
+ let step='mp_s1';const fail=setTimeout(()=>{if(!active)netFail(t('mp_fail')+' ('+t(step)+')');},45000);
+ peer.on('open',()=>{step='mp_s2';$('mperr').textContent=t('mp_s2');
   hostConn=peer.connect('megaworld-'+code,{reliable:true,serialization:'json'});
-  hostConn.on('open',()=>hostConn.send({t:'hello',name:$('nickname').value,v:MWV}));
-  hostConn.on('data',d=>netGuestMsg(d));
+  hostConn.on('open',()=>{step='mp_s3';$('mperr').textContent=t('mp_s3');hostConn.send({t:'hello',name:$('nickname').value,v:MWV});});
+  hostConn.on('error',e=>{$('mperr').textContent=t('mp_fail')+' ('+((e&&e.type)||e)+')';});
+  hostConn.on('data',d=>{if(d&&d.t==='wel')clearTimeout(fail);netGuestMsg(d);});
   hostConn.on('close',()=>{clearTimeout(fail);netFail(t(active?'mp_hostleft':'mp_fail'));});
  });
  peer.on('error',e=>{clearTimeout(fail);netFail(t('mp_fail')+' ('+((e&&e.type)||e)+')');});

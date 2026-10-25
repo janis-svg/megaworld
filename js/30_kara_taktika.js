@@ -158,5 +158,6 @@ const _nearInter16=nearInter;nearInter=function(){const o=_nearInter16();if(isWa
 const WKILL=['pistol','m16','shot','rpg','a_pistol','a_m16','a_m16','a_shot','a_rpg','a_jav','med','armor'];
 const _killBot16=killBot;killBot=function(b,src){const was=!b.dead,p=b.g.position.clone();_killBot16(b,src);if(was&&isWar()&&NET.role!=='guest'&&!b.trader)dropItem(p.x-.6,p.z+.4,'w:'+WKILL[Math.floor(Math.random()*WKILL.length)]);};
 let qgT=0;const _updateFx16=updateFx;updateFx=function(dt){_updateFx16(dt);if(isWar()){qgT-=dt;if(qgT<=0){qgT=1;renderQuests();}}};
-// savienojumi, kas 25 s neatvērās, neaizņem draugu vietas (citādi pēc 3 neveiksmīgiem mēģinājumiem neviens vairs nevarētu pievienoties)
-setInterval(()=>{if(NET.role!=='host')return;for(const G of [...NET.guests.values()])if(!G.ready&&Date.now()-(G.t0||0)>25000){try{G.conn.close();}catch(e){}NET.guests.delete(G.id);renderMP();}},5000);
+// savienojumi, kas 60 s neatvērās, neaizņem draugu vietas (citādi pēc 3 neveiksmīgiem mēģinājumiem neviens vairs nevarētu pievienoties)
+setInterval(()=>{if(NET.role!=='host')return;for(const G of [...NET.guests.values()])if(!G.ready&&Date.now()-(G.t0||0)>60000){try{G.conn.close();}catch(e){}NET.guests.delete(G.id);renderMP();}},5000);
+Object.assign(T.lv,{mp_s1:'savienojas ar serveri',mp_s2:'Meklē drauga spēli...',mp_s3:'Savienots! Ielādē pasauli...'});Object.assign(T.en,{mp_s1:'connecting to the server',mp_s2:'Looking for the game of your friend...',mp_s3:'Connected! Loading the world...'});
