@@ -193,7 +193,9 @@ const fcdEl=document.createElement('div');fcdEl.id='flagcd';document.body.append
 let fcdLast='';
 function fcdTick(){let h='';if(isWar()&&active&&!winner){const mine=FL[MYSIDE],their=FL[1-MYSIDE],f=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
   if(mine&&mine.cd!=null)h='<div class="bad"><small>'+t('fcd_my')+'</small>⏱️ '+f(Math.max(0,mine.cd))+'</div>';
-  if(their&&their.cd!=null)h+='<div class="good"><small>'+t('fcd_their')+'</small>⏱️ '+f(Math.max(0,their.cd))+'</div>';}
+  const me=F=>F&&(NET.role==='guest'?F.cid===NET.myId:F.carrier==='P');
+  if(their&&their.cd!=null)h+='<div class="good"><small>'+t(me(their)?'fcd_me':'fcd_their')+'</small>⏱️ '+f(Math.max(0,their.cd))+'</div>';
+  else if(mine&&me(mine))h+='<div class="good"><small>'+t('fcd_meback')+'</small>🚩</div>';}
  if(h!==fcdLast){fcdLast=h;fcdEl.innerHTML=h;fcdEl.style.display=h?'flex':'none';}}
 const _updateFx24c=updateFx;updateFx=function(dt){_updateFx24c(dt);fcdTick();};
 const _warSetup24c=warSetup;warSetup=function(){_warSetup24c();for(const F of FL)F.cd=null;};
@@ -204,3 +206,20 @@ const _goal24=goal;goal=function(b,x,z,road){const ox=b.gx,oz=b.gz;_goal24(b,x,z
   const o=pi?[x,z]:[p.x,p.z],G=baseGates(B).sort((a,c)=>Math.hypot(a[0][0]-o[0],a[0][1]-o[1])-Math.hypot(c[0][0]-o[0],c[0][1]-o[1]))[0];
   if(pi)b.wps=[G[1],G[0],...(road&&Math.hypot(x-G[0][0],z-G[0][1])>25?roadPath({x:G[0][0],z:G[0][1]},x,z):[])];
   else b.wps=[...(road&&Math.hypot(G[0][0]-p.x,G[0][1]-p.z)>25?roadPath(p,G[0][0],G[0][1]):[]),G[0],G[1]];break;}};
+// ---------- 10. karoga paņemšana ar pogu 🚩 (4 m attālumā), arī draugam ----------
+Object.assign(T.lv,{fcd_me:'🚩 Tu nes karogu! Skrien uz savu bāzi',fcd_meback:'🚩 Tu nes mūsu karogu! Skrien mājās',fl_take:'🚩 Paņemt pretinieku karogu un nest uz savu bāzi',fl_back:'🚩 Paņemt mūsu karogu un nest mājās'});
+Object.assign(T.en,{fcd_me:'🚩 You carry the flag! Run to your base',fcd_meback:'🚩 You carry our flag! Run home',fl_take:'🚩 Take the enemy flag and carry it to your base',fl_back:'🚩 Take our flag and carry it home'});
+// saimnieka pusē: kuru karogu šis spēlētājs var paņemt
+function flagCanTake(c,p){if(!p||!onFoot(c)||carrierAlt(c)>=1.5)return null;const A=carrierArmy(c);
+ for(const F of FL){if(F.carrier||Math.hypot(p.x-F.x,p.z-F.z)>4)continue;const away=Math.hypot(F.x-F.home[0],F.z-F.home[1])>2;
+  if(A!==F.team&&F.held!==A)return F;if(A===F.team&&away)return F;}return null;}
+function flagTake(c,F){const A=carrierArmy(c);F.carrier=c;F.holdH=0;if(A===F.team){F.held=null;fsay2('w_back',{n:carrierName(c),f:armyName(F.team)});}else{F.held=null;fsay2('w_take',{n:carrierName(c),f:armyName(F.team)});}sfx('pick');}
+// drauga pusē: aptuveni no saņemtajām karogu pozīcijām
+function flagLocal(){const p=player.position;if(pY>=1.5||inTank||jetMode||heliMode||paraMode)return null;
+ if(NET.role!=='guest'){const F=flagCanTake('P',p);return F?{type:'flag',own:F.team===PT}:null;}
+ for(const i of [1-MYSIDE,MYSIDE]){const F=FL[i];if(!F||F.cid!==-2||Math.hypot(p.x-F.x,p.z-F.z)>4)continue;const away=Math.hypot(F.x-F.home[0],F.z-F.home[1])>2;
+  if(i===MYSIDE&&away)return{type:'flag',own:true};if(i!==MYSIDE){const mh=FL[MYSIDE].home;if(!(F.held&&Math.hypot(F.x-mh[0],F.z-mh[1])<14))return{type:'flag',own:false};}}return null;}
+const _nearInter24=nearInter;nearInter=function(){if(isWar()&&active){const f=flagLocal();if(f)return f;}return _nearInter24();};
+const _updateHint24=updateHint;updateHint=function(){const o=nearInter();if(o&&o.type==='flag'){const h=$('hint');h.textContent=(TOUCH?'':'E / ')+t(o.own?'fl_back':'fl_take');h.style.display='block';setAct('🚩');return;}_updateHint24();};
+const _interact24=interact;interact=function(){if(active&&isWar()){const o=nearInter();if(o&&o.type==='flag'){if(NET.role==='guest'){netSend({t:'flg'});return;}const F=flagCanTake('P',player.position);if(F)flagTake('P',F);return;}}_interact24();};
+const _netHostMsg24=netHostMsg;netHostMsg=function(G,d){if(d&&d.t==='flg'&&G.ready&&!G.dead&&isWar()){const F=flagCanTake(G,G.pos);if(F)flagTake(G,F);return;}_netHostMsg24(G,d);};

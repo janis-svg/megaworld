@@ -84,7 +84,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - Bāzes ieskauj dzeloņstiepļu žogs ar vārtiem uz kartes centra pusi. Stūros ir 4 novērošanas torņi: pie kāpnēm spied 🤚, lai uzkāptu. No augšas redz tālāk, minikartē parādās ienaidnieki, un var šaut lejā.
 - Katrā bāzē ir 4 lidmašīnas, 2 helikopteri (Plēsoņa un Haizivs), 2 tanki, 2 bruņmašīnas un noliktava 🎖️ (spied 🤚: ieroči, lodes, Javelin, bruņas; atkal pēc 45 s).
 - Briesmoņu nav. Pa visu karti parādās kastes 📦 ar ieročiem, lodēm, degvielu un bruņām.
-- Uzvara: iznīcini visus pretiniekus vai nozodz viņu karogu (minikartē tas mirgo). Kad karogs nozagts, ekrānā sākas ⏱️ 5 minūšu atskaite: ja pretinieki šajā laikā karogu neatgūst, uzvar zagļi. Karogs ir atgūts tikai tad, kad savējais to paņem un aiznes atpakaļ uz savu bāzi; tad atskaite apstājas. Ja nesējs krīt, karogs paliek zemē, un to var paņemt jebkura puse. Taimeris ir redzams augšējā labajā stūrī. Atlikušās minūtes un 10 sekundes paziņo 📻 radio.
+- Uzvara: iznīcini visus pretiniekus vai nozodz viņu karogu (minikartē tas mirgo). Pieejot pie karoga tuvāk par 4 m, parādās poga 🚩: nospied to, lai paņemtu karogu (pretinieku karogu nes uz savu bāzi, savējo atpakaļ mājās). Kad karogs nozagts, ekrānā sākas ⏱️ 5 minūšu atskaite: ja pretinieki šajā laikā karogu neatgūst, uzvar zagļi. Karogs ir atgūts tikai tad, kad savējais to paņem un aiznes atpakaļ uz savu bāzi; tad atskaite apstājas. Ja nesējs krīt, karogs paliek zemē, un to var paņemt jebkura puse. Taimeris ir redzams augšējā labajā stūrī. Atlikušās minūtes un 10 sekundes paziņo 📻 radio.
 - Boti uzbrūk, sargā karogu, medī, brauc ar tankiem un bruņmašīnām, lido ar lidmašīnām un helikopteriem.
 - Boti neatjaunojas.
 
