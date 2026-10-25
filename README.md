@@ -86,7 +86,18 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - Briesmoņu nav. Pa visu karti parādās kastes 📦 ar ieročiem, lodēm, degvielu un bruņām.
 - Uzvara: iznīcini visus zaļos vai nozodz viņu karogu (minikartē tas mirgo), aiznes uz savu bāzi un noturi 2 diennaktis. Ja karogu nes kāds, kurš krīt, karogs paliek zemē; ja savējais to aizskar, tas atgriežas bāzē.
 - Boti uzbrūk, sargā karogu, medī, brauc ar tankiem un bruņmašīnām, lido ar lidmašīnām un helikopteriem.
-- Iznīcinātā tehnika nākamajā rītā atjaunojas bāzēs. Boti neatjaunojas.
+- Boti neatjaunojas.
+
+### Karā vēl
+- Sākumā izvēlies savu armiju (🔴 vai 🟢). Draugs pēc pievienošanās arī izvēlas armiju, tāpēc var spēlēt viens pret otru.
+- Karā nav uzdevumu un dzīvnieku. Ir 2 mērķi: iznīcināt visus pretiniekus vai nozagt karogu.
+- Boti sadalās vienībās (Alfa, Bravo...). Katra armija sākumā izvēlas plānu: Flangi, Zibens uzbrukums, Viltība vai Cietoksnis. 📻 Radio ziņas stāsta, ko dara tava armija. Helikopteri, lidmašīnas un tehnika piesedz vienības.
+- ⭐ Par katru uzvarētu pretinieku dabū 1-5 zvaigznes: bruņots pretinieks, karoga nesējs, tāls šāviens, vairāki pēc kārtas, pilots un tehnika dod vairāk. No zvaigznēm aug 🎖️ pakāpe: no Kareivja līdz Ģenerālim.
+- Kritušais pretinieks atstāj kasti ar ieroci vai lodēm.
+- 🔭 Novērošanas torņos ir snaipera šautene: viens trāpījums notriec cilvēku, bet tehnikai tā neko nedara. Šautene tornī parādās atkal katru rītu.
+- Raķete sagrauj novērošanas torni, un tas vairs neatjaunojas.
+- Iznīcinātā tehnika pēc ~15 sekundēm atkal ir bāzē.
+- 🪂 Ik pa laikam kartē nolaižas gaisa piegāde ar retiem ieročiem.
 
 ## Vēl jaunas lietas (abos režīmos)
 
@@ -141,6 +152,7 @@ Pasauli skaita tā cilvēka ierīce, kurš uzaicināja. Ja viņš aizver lapu, s
 | `js/27_lidlauki.js` | Lidlauki, lidmašīnas, gaisa kaujas, izpletnis, avārijas ugunsgrēks |
 | `js/28_helikopteri.js` | Helikopteri, ložmetējs, degviela, Javelin |
 | `js/29_kars.js` | Režīms "Karš", bruņmašīna, helikoptera raķetes, kaujas bruņas, atpazīstamas ēkas |
+| `js/30_kara_taktika.js` | Armijas izvēle, botu vienības un plāni, zvaigznes un pakāpes, snaipers, torņu sagraušana, gaisa piegādes |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 

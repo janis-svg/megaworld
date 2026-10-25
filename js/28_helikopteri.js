@@ -45,7 +45,7 @@ function javTick(dt){for(let i=JV.length-1;i>=0;i--){const j=JV[i];j.t+=dt;j.lif
   j.x+=j.vx*dt;j.y+=j.vy*dt;j.z+=j.vz*dt;j.m.position.set(j.x,j.y,j.z);j.m.lookAt(j.x+j.vx,j.y+j.vy,j.z+j.vz);if(Math.random()<dt*25)debris(j.x,j.y,j.z,0xcccccc,1);
   if(j.y<.3||j.life<=0||(j.y<40&&bldHit(j.x,j.z,j.y))){scene.remove(j.m);JV.splice(i,1);j.tg=null;javHit(j);}}}
 const _shoot11=shoot;shoot=function(w){if(w!=='jav')return _shoot11(w);attackWait=WP.jav.rate;inv.ammo.jav--;javelinFire(player.position.x,pY+1.5,player.position.z,yaw,PT,true);updateAmmo();renderInv();renderW();};
-const _guestFire11=guestFire;guestFire=function(G,d){if(d.w!=='jav')return _guestFire11(G,d);if(G.dead||!G.I.has.jav||!(G.I.ammo.jav>0))return;G.I.ammo.jav--;javelinFire(G.pos.x,G.y+1.5,G.pos.z,+d.a||0,PT,true);netMe(G);};
+const _guestFire11=guestFire;guestFire=function(G,d){if(d.w!=='jav')return _guestFire11(G,d);if(G.dead||!G.I.has.jav||!(G.I.ammo.jav>0))return;G.I.ammo.jav--;netCurOwner=G.id;javelinFire(G.pos.x,G.y+1.5,G.pos.z,+d.a||0,GT(G),true);netCurOwner=0;netMe(G);};
 // prettanku raķete un tanka šāviņš arī iznīcina tehniku
 const _rocketBoom11=rocketBoom;rocketBoom=function(p,team,pl){_rocketBoom11(p,team,pl);for(const t of tanks)if(Math.hypot(t.g.position.x-p.x,t.g.position.z-p.z)<3.5)destroyTank(t,team,1);
  for(const H of HELIS)if(H.st!=='gone'&&H.y<5&&Math.hypot(H.x-p.x,H.z-p.z)<4)destroyHeli(H,team);};
@@ -87,7 +87,7 @@ function heliMesh(k){const M=HM[k]||HM.pred,g=new THREE.Group(),c=M.c,shark=k===
  g.rotation.order='YXZ';g.userData.rot=rot;g.userData.rot2=rot2;scene.add(g);return g;}
 const HELIS=[],HSH=[],TRC=[];let heliId=0,heliMode=null,hDown=false,heliNetT=0,botHeliT=0,hEngT=0,heliFogKeep=null;
 const HSLOTS=[];for(const a of HPAD)HSLOTS.push([a.x-7,a.z],[a.x+7,a.z]);
-const heliTeam=H=>H.pilot==='P'||(H.pilot&&H.pilot.pos)?PT:H.pilot&&H.pilot.team?H.pilot.team:null;
+const heliTeam=H=>H.pilot==='P'?PT:H.pilot&&H.pilot.pos?GT(H.pilot):H.pilot&&H.pilot.team?H.pilot.team:null;
 function spawnHeli(i){const [x,z]=HSLOTS[i],mk=HMK[i%2],M=HM[mk],H={id:++heliId,isHeli:true,slot:i,mk,m:M,g:heliMesh(mk),st:'park',x,y:0,z,a:0,vx:0,vz:0,pilot:null,fuel:60,ammo:150,hp:M.hp,ob:{x,z,hx:1.3,hz:3},owner:null,rs:0};
  H.g.position.set(x,0,z);addOb(H.ob);HELIS.push(H);return H;}
 function clearHelis(){for(const H of HELIS){scene.remove(H.g);freeObj(H.g);remOb(H.ob);}HELIS.length=0;for(const j of JV)scene.remove(j.m);JV.length=0;for(const s of HSH)scene.remove(s.m);HSH.length=0;}
@@ -231,7 +231,7 @@ function guestHelis(dt){const k=Math.min(1,dt*10);for(const [id,o] of netHelis){
 const _netHostMsg11=netHostMsg;netHostMsg=function(G,d){
  if(d&&G.ready&&d.t==='heli'){const H=HELIS.find(q=>q.id===d.id);if(!H||H.st!=='park'||G.dead){netTo(G,{t:'msg',s:t('jet_busy').replace('✈️','🚁'),d:1.5});return;}if(H.res){H.res.heliGoal=null;H.res=null;}H.st='fly';H.pilot=G;G.inHeli=H;remOb(H.ob);const s=loadHeli(H,G.I);if(stealCheck(H,PT))netTo(G,{t:'msg',s:t('heli_mine'),d:3});H.owner=PT;
   netTo(G,{t:'heliok',id:H.id,x:H.x,y:H.y,z:H.z,a:H.a,mk:H.mk,f:H.fuel,am:H.ammo,hp:H.hp});if(s)netTo(G,{t:'msg',s,d:3});netMe(G);return;}
- if(d&&G.ready&&d.t==='hf'){const H=HELIS.find(q=>q.id===d.id);if(H&&H.pilot===G&&H.ammo>0&&Array.isArray(d.a)){H.ammo--;const a=d.a.map(Number);heliShot(H,...a,PT,true);}return;}
+ if(d&&G.ready&&d.t==='hf'){const H=HELIS.find(q=>q.id===d.id);if(H&&H.pilot===G&&H.ammo>0&&Array.isArray(d.a)){H.ammo--;const a=d.a.map(Number);heliShot(H,...a,GT(G),true);}return;}
  if(d&&G.ready&&d.t==='hexit'){const H=HELIS.find(q=>q.id===d.id);if(H&&H.pilot===G){H.x=+d.x;H.y=+d.y;H.z=+d.z;H.a=+d.a;H.fuel=Math.min(H.fuel,+d.f);heliPark(H);H.owner=PT;H.g.position.set(H.x,H.y,H.z);G.inHeli=null;}return;}
  _netHostMsg11(G,d);};
 const _netHostFrame11=netHostFrame;netHostFrame=function(dt){_netHostFrame11(dt);for(const G of NET.guests.values())if(G.inHeli&&G.mesh){G.mesh.visible=false;G.lab.visible=G.bar.bg.visible=G.bar.f.visible=false;}};

@@ -180,7 +180,7 @@ function fireAA(t,J){t.shells--;attackWait=1.2;const gx=t.g.position.x,gz=t.g.po
  yaw=Math.atan2(-(ax-gx),-(az-gz));const m=new THREE.Mesh(RGEO,new THREE.MeshBasicMaterial({color:0x222222}));m.scale.setScalar(1.5);m.position.set(gx,2.2,gz);scene.add(m);
  AAS.push({m,vx:(ax-gx)/l*75,vy:(ay-2)/l*75,vz:(az-gz)/l*75,life:tt+1.5,J});sfx('rocket');sfx('boom');explosionFx(gx-Math.sin(yaw)*3,2,gz-Math.cos(yaw)*3,1,0xffcc66);renderW();
  if(t.shells<=0){t.dead=true;say(t_('tank_empty'),4);setTimeout(()=>{if(inTank===t)exitTank();t.g.userData.hull.material.color.setHex(0x2a2a22);},1500);}}
-const pilotTeam=J=>J.pilot==='P'||(J.pilot&&J.pilot.pos)?PT:J.pilot&&J.pilot.team?J.pilot.team:null;
+const pilotTeam=J=>J.pilot==='P'?PT:J.pilot&&J.pilot.pos?GT(J.pilot):J.pilot&&J.pilot.team?J.pilot.team:null;
 function jetDamage(J,d,team,pl){if(J.st!=='fly'&&J.st!=='fall')return;const PTm=pilotTeam(J);if(team&&PTm&&team!==PTm)war(team,PTm);J.hp-=d;sfxAt('boom',J.x,J.z,120);
  if(J.hp<=0){shootDown(J,team);return;}if(J.pilot==='P')say(tf('jet_dmg',{n:J.hp}),1.5);else if(J.pilot&&J.pilot.pos)netTo(J.pilot,{t:'msg',s:tf('jet_dmg',{n:J.hp}),d:1.5});}
 function shootDown(J,team){const P=J.pilot;J.burn=true;explosionFx(J.x,J.y,J.z,4,0xff7a1a);sfxAt('boom',J.x,J.z,150);
@@ -196,10 +196,10 @@ function jetsTick(dt){
   if(J.st!=='gone')jetPaint(J);}
  for(let i=JR.length-1;i>=0;i--){const r=JR[i];r.life-=dt;
   if(r.tj){const q=r.tj;if(q.st==='fly'||q.st==='fall'){const dx=q.x-r.x,dy=q.y-r.y,dz=q.z-r.z,l=Math.hypot(dx,dy,dz)||1,k=Math.min(1,dt*3.5);r.vx+=(dx/l*62-r.vx)*k;r.vy+=(dy/l*62-r.vy)*k;r.vz+=(dz/l*62-r.vz)*k;
-    if(l<4.5){scene.remove(r.m);JR.splice(i,1);explosionFx(q.x,q.y,q.z,3,0xff9e40);jetDamage(q,2,r.team,r.pl);continue;}}
+    if(l<4.5){scene.remove(r.m);JR.splice(i,1);explosionFx(q.x,q.y,q.z,3,0xff9e40);SHOOTER=ownId(r.owner);jetDamage(q,2,r.team,r.pl);SHOOTER=0;continue;}}
    r.x+=r.vx*dt;r.y+=r.vy*dt;r.z+=r.vz*dt;r.m.position.set(r.x,r.y,r.z);r.m.lookAt(r.x+r.vx,r.y+r.vy,r.z+r.vz);if(Math.random()<dt*20)debris(r.x,r.y,r.z,0xffb74d,1);
-   if(r.life<=0||r.y<.4){scene.remove(r.m);JR.splice(i,1);explosionFx(r.x,r.y,r.z,2,0xff9e40);if(r.y<.4)jetBoom(r.x,r.z,r.team,r.pl,1,r.boom,r.th);}continue;}r.x+=r.vx*dt;r.y+=r.vy*dt;r.z+=r.vz*dt;r.m.position.set(r.x,r.y,r.z);if(Math.random()<dt*20)debris(r.x,r.y,r.z,0xffb74d,1);
-  if(r.y<=.4||r.life<=0||Math.hypot(r.x-r.tx,r.y-r.ty,r.z-r.tz)<1.5||(r.y<45&&bldHit(r.x,r.z,r.y))){scene.remove(r.m);JR.splice(i,1);jetBoom(r.x,r.z,r.team,r.pl,1,r.boom,r.th);}}
+   if(r.life<=0||r.y<.4){scene.remove(r.m);JR.splice(i,1);explosionFx(r.x,r.y,r.z,2,0xff9e40);if(r.y<.4){SHOOTER=ownId(r.owner);jetBoom(r.x,r.z,r.team,r.pl,1,r.boom,r.th);SHOOTER=0;}}continue;}r.x+=r.vx*dt;r.y+=r.vy*dt;r.z+=r.vz*dt;r.m.position.set(r.x,r.y,r.z);if(Math.random()<dt*20)debris(r.x,r.y,r.z,0xffb74d,1);
+  if(r.y<=.4||r.life<=0||Math.hypot(r.x-r.tx,r.y-r.ty,r.z-r.tz)<1.5||(r.y<45&&bldHit(r.x,r.z,r.y))){scene.remove(r.m);JR.splice(i,1);SHOOTER=ownId(r.owner);jetBoom(r.x,r.z,r.team,r.pl,1,r.boom,r.th);SHOOTER=0;}}
  for(let i=AAS.length-1;i>=0;i--){const s=AAS[i];s.life-=dt;if(s.J&&(s.J.st==='fly'||s.J.st==='fall')){const p=s.m.position,dx=s.J.x-p.x,dy=s.J.y-p.y,dz=s.J.z-p.z,l=Math.hypot(dx,dy,dz)||1,k=Math.min(1,dt*3);s.vx+=(dx/l*75-s.vx)*k;s.vy+=(dy/l*75-s.vy)*k;s.vz+=(dz/l*75-s.vz)*k;}s.m.position.x+=s.vx*dt;s.m.position.y+=s.vy*dt;s.m.position.z+=s.vz*dt;const p=s.m.position;let hit=null;
   for(const J of JETS)if((J.st==='fly'||J.st==='fall')&&J.pilot!=='P'&&!(J.pilot&&J.pilot.pos)&&Math.hypot(J.x-p.x,J.y-p.y,J.z-p.z)<5)hit=J;
   if(hit||s.life<=0){scene.remove(s.m);AAS.splice(i,1);explosionFx(p.x,p.y,p.z,hit?4:2,0xff9e40);if(hit)jetDamage(hit,2,PT,true);}}
@@ -221,7 +221,7 @@ function guestJets(dt){const k=Math.min(1,dt*10);for(const [id,o] of netJets){if
 const _netHostMsg10=netHostMsg;netHostMsg=function(G,d){
  if(d&&G.ready&&d.t==='jet'){const J=JETS.find(q=>q.id===d.id);if(!J||J.st!=='park'||G.dead){netTo(G,{t:'msg',s:t('jet_busy'),d:1.5});return;}if(J.res){J.res.jetGoal=null;J.res=null;}
   J.st='fly';J.pilot=G;G.inJet=J;remOb(J.ob);netTo(G,{t:'jetok',id:J.id,x:J.x,z:J.z,y:J.y,a:J.a,rk:J.rk,hp:J.hp,mk:J.mk});return;}
- if(d&&G.ready&&d.t==='jf'){const J=JETS.find(q=>q.id===d.id);if(J&&J.pilot===G&&J.rk>0){J.rk--;const tj=d.tid?JETS.find(q=>q.id===d.tid):null;spawnJetRocket(+d.x,+d.y,+d.z,+d.tx,+d.ty,+d.tz,PT,true,G,tj,J.m.boom);}return;}
+ if(d&&G.ready&&d.t==='jf'){const J=JETS.find(q=>q.id===d.id);if(J&&J.pilot===G&&J.rk>0){J.rk--;const tj=d.tid?JETS.find(q=>q.id===d.tid):null;spawnJetRocket(+d.x,+d.y,+d.z,+d.tx,+d.ty,+d.tz,GT(G),true,G,tj,J.m.boom);}return;}
  if(d&&G.ready&&(d.t==='jej'||d.t==='jcr')){const J=JETS.find(q=>q.id===d.id);if(J&&J.pilot===G){J.pilot=null;G.inJet=null;if(d.t==='jcr'){J.x=+d.x;J.z=+d.z;crashJet(J);}else{J.st='fall';J.x=+d.x;J.y=+d.y;J.z=+d.z;J.a=+d.a;J.v=+d.v||20;G.para=+d.y>4;}}return;}
  _netHostMsg10(G,d);};
 const _netGuestMsg10=netGuestMsg;netGuestMsg=function(d){

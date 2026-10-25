@@ -42,11 +42,11 @@ function updateBullets(dt){
   for(let s2=0;s2<4&&!done;s2++){
    p.x+=b.vx*dt/4;p.z+=b.vz*dt/4;
    if(Math.abs(p.x)>EDGE||Math.abs(p.z)>EDGE||wallAt(p.x,p.z,p.y,b.team)){done=true;boom=b.rocket;break;}
-   for(const z of zombies){const u=z.userData;if(u.dead||u.rise>0)continue;if(Math.hypot(z.position.x-p.x,z.position.z-p.z)<(u.kind==='zw'?1.6:1)){done=true;if(b.rocket)boom=true;else dmgMonster(z,b.dmg,b.pl);break;}}
+   for(const z of zombies){const u=z.userData;if(u.dead||u.rise>0)continue;if(Math.hypot(z.position.x-p.x,z.position.z-p.z)<(u.kind==='zw'?1.6:1)){done=true;if(b.rocket)boom=true;else{SHOOTER=b.own??0;dmgMonster(z,b.dmg,b.pl);SHOOTER=0;}break;}}
    if(done)break;
-   for(const h of HL){if(h.team===b.team||(!b.pl&&!b.team.enemies.has(h.team)))continue;if(h.b&&h.b.dead)continue;if(Math.hypot(h.p.x-p.x,h.p.z-p.z)<.6&&(b.hy||Math.abs(p.y-(h.y+1.1))<1.2)){done=true;if(b.rocket)boom=true;else hurt(h,b.pl?b.dmg:b.dmg*.65,b.team,b.pl);break;}}
+   for(const h of HL){if(h.team===b.team||(!b.pl&&!b.team.enemies.has(h.team)))continue;if(h.b&&h.b.dead)continue;if(Math.hypot(h.p.x-p.x,h.p.z-p.z)<.6&&(b.hy||Math.abs(p.y-(h.y+1.1))<1.2)){done=true;if(b.rocket)boom=true;else{SHOOTER=b.own??0;hurt(h,b.pl?b.dmg:b.dmg*.65,b.team,b.pl);SHOOTER=0;}break;}}
   }
-  if(boom){if(b.shell)tankBoom(p);else rocketBoom(p,b.team,b.pl);}
+  if(boom){SHOOTER=b.own??0;if(b.shell)tankBoom(p);else rocketBoom(p,b.team,b.pl);SHOOTER=0;}
   if(done){scene.remove(b.m);bullets.splice(i,1);}
  }
 }

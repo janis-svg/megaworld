@@ -1,18 +1,19 @@
 // 29_kars.js - Spēles režīms "Karš": sarkanā (spēlētāji + 30 boti) pret zaļo (30 boti) armiju, bāzes stūros ar lidmašīnām, tankiem un bruņmašīnām,
 // karogs (aiznes uz savu bāzi un notur 2 diennaktis), bez briesmoņiem, ieroči un lodes parādās visā kartē.
 // Abos režīmos: bruņmašīna, helikoptera 2 raķetes, kaujas bruņas (+50% dzīvība), atpazīstamas ēkas (AES, TV tornis, stadions, rūpnīca)
-Object.assign(T.lv,{m_surv:'🧟 Izdzīvošana',m_war:'⚔️ Karš',red:'Sarkanā armija',green:'Zaļā armija',w_start:'⚔️ Karš! Tu esi sarkanajā armijā. Iznīcini zaļos vai nozodz viņu karogu, aiznes uz savu bāzi un noturi 2 diennaktis.',
+Object.assign(T.lv,{m_surv:'🧟 Izdzīvošana',m_war:'⚔️ Karš',red:'Sarkanā armija',green:'Zaļā armija',w_start:'⚔️ Karš! Tu esi {a} armijā. Iznīcini pretiniekus vai nozodz viņu karogu, aiznes uz savu bāzi un noturi 2 diennaktis.',in_red:'sarkanajā',in_green:'zaļajā',
  w_take:'🚩 {n} paņēma {f} karogu!',w_drop:'🚩 Nomests {f} karogs!',w_ret:'🚩 Atgriezts {f} karogs',w_cap:'🚩 Atnests {f} karogs uz {a} bāzi! Noturiet to 2 diennaktis.',g_red:'sarkano',g_green:'zaļo',w_hold:'🚩 Noturiet vēl {n} h',
  w_win:'🏆 Uzvara! Sarkanā armija uzvarēja!',w_lose:'💀 Zaudējums. Zaļā armija uzvarēja.',w_new:'Jauna spēle',w_wait:'Gaidām, kad saimnieks sāks jaunu spēli',w_arm:'🎖️ Bāzes noliktava: paņemt ieročus',w_armok:'🎖️ Paņemti ieroči, lodes un bruņas',w_armcd:'🎖️ Noliktava atkal būs pēc {n} s',
  w_veh:'🔧 Rīts: iznīcinātā tehnika atjaunota bāzēs',w_fl_home:'🚩 Karogi mājās',w_fl_my:'🚩 Mūsu karogs nozagts!',w_fl_their:'🚩 Zaļo karogs pie mums: vēl {n} h',w_fl_lost:'🚩 Zaļie tur mūsu karogu: vēl {n} h',
  apc:'🚙 Bruņmašīna (ložmetējs pret helikopteriem un kājniekiem)',apc_in:'🚙 Kāpt bruņmašīnā (🔫 {n})',busy:'Aizņemts',shop_harmor:'🦺 Kaujas bruņas (dzīvība +50%)',harmor:'🦺 Kaujas bruņas: dzīvība +50%',
  lm_aes:'Atomelektrostacija',lm_tv:'TV tornis',lm_stad:'Stadions',lm_fab:'Rūpnīca',h_rk:'🚀 {n}'});
-Object.assign(T.en,{m_surv:'🧟 Survival',m_war:'⚔️ War',red:'Red army',green:'Green army',w_start:'⚔️ War! You are in the red army. Destroy the greens or steal their flag, bring it to your base and hold it for 2 days.',
+Object.assign(T.en,{m_surv:'🧟 Survival',m_war:'⚔️ War',red:'Red army',green:'Green army',w_start:'⚔️ War! You are in the {a} army. Destroy the enemy or steal their flag, bring it to your base and hold it for 2 days.',in_red:'red',in_green:'green',
  w_take:'🚩 {n} took the {f} flag!',w_drop:'🚩 Dropped: the {f} flag!',w_ret:'🚩 Returned: the {f} flag',w_cap:'🚩 The {f} flag is at the {a} base! Hold it for 2 days.',g_red:'red',g_green:'green',w_hold:'🚩 Hold for {n} h more',
  w_win:'🏆 Victory! The red army won!',w_lose:'💀 Defeat. The green army won.',w_new:'New game',w_wait:'Waiting for the host to start a new game',w_arm:'🎖️ Base armoury: take weapons',w_armok:'🎖️ Took weapons, ammo and armour',w_armcd:'🎖️ The armoury is ready again in {n} s',
  w_veh:'🔧 Morning: destroyed vehicles are back at the bases',w_fl_home:'🚩 Flags at home',w_fl_my:'🚩 Our flag was stolen!',w_fl_their:'🚩 Green flag is with us: {n} h left',w_fl_lost:'🚩 Greens hold our flag: {n} h left',
  apc:'🚙 Armoured car (machine gun against helicopters and infantry)',apc_in:'🚙 Get in the armoured car (🔫 {n})',busy:'Busy',shop_harmor:'🦺 Combat armour (life +50%)',harmor:'🦺 Combat armour: life +50%',
  lm_aes:'Nuclear power plant',lm_tv:'TV tower',lm_stad:'Stadium',lm_fab:'Factory',h_rk:'🚀 {n}'});
+let MYSIDE=LS.get('side',0)?1:0;
 let MODE=LS.get('mode','surv');if(MODE!=='war')MODE='surv';const isWar=()=>MODE==='war';
 {const row=document.createElement('div');row.id='moderow';row.innerHTML=['surv','war'].map(k=>'<button class="corner" data-m="'+k+'"></button>').join('');$('diffrow').before(row);
  row.querySelectorAll('button').forEach(b=>b.onclick=e=>{e.preventDefault();MODE=b.dataset.m;LS.set('mode',MODE);paintMode();});if(/[?&]join=/.test(location.search))row.style.display='none';}
@@ -53,7 +54,7 @@ function wireFence(g,B){const R=32,gate=6,post=0x5d4037,wire=0x9e9e9e;
   if(sgn===inX){seg(B.x+sgn*R,B.z-R,B.x+sgn*R,B.z-gate);seg(B.x+sgn*R,B.z+gate,B.x+sgn*R,B.z+R);sandbag(g,B.x+sgn*(R-2),B.z-gate-1.2,1,2.4);sandbag(g,B.x+sgn*(R-2),B.z+gate+1.2,1,2.4);}else seg(B.x+sgn*R,B.z-R,B.x+sgn*R,B.z+R);}}
 // novērošanas tornis: 4 kājas, kāpnes, platforma 6 m augstumā ar margām un jumtu; uz platformas var stāvēt (tā ir kā klucis)
 const TOWERS=[];
-function watchTower(g,x,z){const w=0x6d4c41,H=6;
+function watchTower(g0,x,z){const g=new THREE.Group(),n0=WOB.length,w=0x6d4c41,H=6;
  for(const [a,b] of [[-1.5,-1.5],[1.5,-1.5],[-1.5,1.5],[1.5,1.5]]){const l=cube(.25,H+2.6,.25,w,1);l.position.set(x+a,(H+2.6)/2,z+b);g.add(l);WOB.push({x:x+a,z:z+b,hx:.15,hz:.15,y0:0,y1:H});}
  for(const y of [2,4]){for(const s of [-1.5,1.5]){const c=cube(3.2,.12,.12,w,1);c.position.set(x,y,z+s);g.add(c);const c2=cube(.12,.12,3.2,w,1);c2.position.set(x+s,y,z);g.add(c2);}}
  const pl=cube(3.8,.25,3.8,0x795548,1);pl.position.set(x,H-.12,z);g.add(pl);WOB.push({x,z,hx:1.9,hz:1.9,y0:H-.25,y1:H});
@@ -61,7 +62,7 @@ function watchTower(g,x,z){const w=0x6d4c41,H=6;
   const sb=cube(3.8,.5,.15,0x9e8a5a,1);sb.position.set(x,H+.25,z+s);g.add(sb);}
  const roof=new THREE.Mesh(new THREE.ConeGeometry(3,1.2,4),mat(0x3e463c,.9));roof.position.set(x,H+3.1,z);roof.rotation.y=Math.PI/4;g.add(roof);
  const lx=x+2.1;for(let k=0;k<2;k++){const s=cube(.08,H+.6,.08,w,1);s.position.set(lx,(H+.6)/2,z-.4+k*.8);g.add(s);}for(let y=.5;y<H;y+=.5){const r=cube(.08,.06,.8,w,1);r.position.set(lx,y,z);g.add(r);}
- TOWERS.push({x,z,lx,lz:z,h:H});}
+ g.updateMatrixWorld(true);mergeInto(g);scene.add(g);WG.push(g);TOWERS.push({x,z,lx,lz:z,h:H,g,obs:WOB.slice(n0),rifle:true,i:TOWERS.length});}
 function buildBases(){TOWERS.length=0;for(const g of WG){scene.remove(g);freeObj(g);}WG=[];for(const o of WOB)remOb(o);WOB=[];
  WB.forEach((B,i)=>{const g=new THREE.Group(),col=i?0x2e7d32:0xc62828;const pad=new THREE.Mesh(new THREE.PlaneGeometry(64,64),mat(0x5d5a4e,1));pad.rotation.x=-Math.PI/2;pad.position.set(B.x,.025,B.z);pad.receiveShadow=true;g.add(pad);
   wireFence(g,B);
@@ -70,14 +71,14 @@ function buildBases(){TOWERS.length=0;for(const g of WG){scene.remove(g);freeObj
   for(const [tx,tz] of [[-27,-27],[27,27],[-27,27],[27,-27]])watchTower(g,B.x+tx,B.z+tz);
   g.updateMatrixWorld(true);mergeInto(g);scene.add(g);WG.push(g);});
  for(const o of WOB)addOb(o);}
-function armoryNear(x,z){if(!isWar())return false;const B=WB[0];return Math.hypot(x-(B.x-8),z-B.z)<2.6;}
+function armoryNear(x,z,T){if(!isWar())return false;const i=T?ARMY.indexOf(T):MYSIDE,B=WB[i<0?MYSIDE:i];return Math.hypot(x-(B.x-8),z-B.z)<2.6;}
 function armoryGive(I){for(const w of ['pistol','m16','shot','rpg','a_m16','a_m16','a_shot','a_rpg','jav'])giveLoot(w,I,null);I.meds=Math.max(I.meds,2);I.armor=Math.max(I.armor,50);I.hbelt=(I.hbelt||0)+1;I.fuel=(I.fuel||0)+1;}
 // ---------- karogi ----------
 function flagMesh(col){const g=new THREE.Group(),p=cube(.1,3.2,.1,0xdddddd,.4);p.position.y=1.6;g.add(p);const c=cube(1.3,.8,.05,col,.6);c.material.emissive=new THREE.Color(col).multiplyScalar(.35);c.position.set(.68,2.75,0);g.add(c);g.userData.cloth=c;scene.add(g);return g;}
 function armyName(T){return T===ARMY[0]?t('g_red'):t('g_green');}
 const fsay2=bcastMsgOf((k,o,d)=>say(o?tf(k,o):t(k),d||3.5));
 function carrierPos(c){return c==='P'?(active?player.position:null):c&&c.pos?(c.dead||!NET.guests.has(c.id)?null:c.pos):c&&c.g?(c.dead?null:c.g.position):null;}
-function carrierArmy(c){return c==='P'||(c&&c.pos)?ARMY[0]:c&&c.team;}
+function carrierArmy(c){return c==='P'?PT:c&&c.pos?GT(c):c&&c.team;}
 function carrierName(c){return c==='P'?$('nickname').value:c&&c.name?c.name:'?';}
 function onFoot(c){return c==='P'?!inTank&&!jetMode&&!heliMode&&!paraMode:c&&c.pos?!c.inJet&&!c.inHeli:c&&!c.inside;}
 function flagTick(dt){for(const F of FL){const other=F.team===ARMY[0]?ARMY[1]:ARMY[0];
@@ -92,7 +93,7 @@ function flagTick(dt){for(const F of FL){const other=F.team===ARMY[0]?ARMY[1]:AR
 function flagDraw(){for(const F of FL){if(!F.g)F.g=flagMesh(F.col);const lift=F.cid!==undefined?F.cid!==-2:!!F.carrier;F.g.position.set(F.x,lift?1.8:0,F.z);F.g.userData.cloth.rotation.y=Math.sin(clock.elapsedTime*3)*.3;}}
 // ---------- uzvara ----------
 const winEl=document.createElement('div');winEl.id='warwin';winEl.className='panel';document.body.appendChild(winEl);
-function showWin(w){winEl.innerHTML='<h1>'+t(w==='red'?'w_win':'w_lose')+'</h1>'+(NET.role==='guest'?'<p>'+t('w_wait')+'</p>':'<button id="warnew">'+t('w_new')+'</button>');winEl.style.display='block';fanfare();
+function showWin(w){winEl.innerHTML='<h1>'+t((w==='red')===(MYSIDE===0)?'w_win':'w_lose')+'</h1>'+(NET.role==='guest'?'<p>'+t('w_wait')+'</p>':'<button id="warnew">'+t('w_new')+'</button>');winEl.style.display='block';fanfare();
  const b=$('warnew');if(b)b.onclick=()=>{winEl.style.display='none';start();};}
 function warWin(T){if(winner)return;winner=T===ARMY[0]?'red':'green';showWin(winner);if(NET.role==='host')netQ.push({e:'win',w:winner});}
 // ---------- bruņmašīna (kā tanks: vada tas, kurš uzaicināja) ----------
@@ -125,7 +126,7 @@ function heliRocketTarget(H,team){const fx=-Math.sin(H.a),fz=-Math.cos(H.a);let 
  if(team!==PT&&inTank&&team.enemies.has(PT))look(inTank.g.position.x,inTank.g.position.z,1.2);
  for(const Q of HELIS)if(Q!==H&&Q.st==='park'&&Q.owner!==team)look(Q.x,Q.z,Q.y+1);
  return best||{x:H.x+fx*25,y:0,z:H.z+fz*25};}
-function heliRocket(H,team,pl,tp){if(!(H.rk>0))return;H.rk--;tp=tp||heliRocketTarget(H,team);spawnJetRocket(H.x-Math.sin(H.a)*2,H.y+1,H.z-Math.cos(H.a)*2,tp.x,tp.y,tp.z,team,pl,null,null,.8);JR[JR.length-1].th=1;}
+function heliRocket(H,team,pl,tp){if(!(H.rk>0))return;H.rk--;tp=tp||heliRocketTarget(H,team);spawnJetRocket(H.x-Math.sin(H.a)*2,H.y+1,H.z-Math.cos(H.a)*2,tp.x,tp.y,tp.z,team,pl,H.pilot,null,.8);JR[JR.length-1].th=1;}
 function heliRocketLocal(){const H=heliMode;if(!H||!(H.rk>0)||H.y<2)return;const tp=heliRocketTarget(H,PT);if(NET.role==='guest'){H.rk--;netSend({t:'hrk',id:H.id,a:[r2(tp.x),r2(tp.y),r2(tp.z)]});}else heliRocket(H,PT,true,tp);renderW();}
 {const w=$('wsw');w.addEventListener('pointerdown',()=>{if(typeof heliMode!=='undefined'&&heliMode)heliRocketLocal();});}
 document.addEventListener('keydown',e=>{if(e.code==='KeyR'&&!e.repeat&&typeof heliMode!=='undefined'&&heliMode)heliRocketLocal();});
@@ -152,17 +153,17 @@ function clearNonTraders(){for(const b of [...humans]){if(b.trader)continue;scen
  for(let i=teams.length-1;i>=0;i--){const T=teams[i];T.members=T.members.filter(m=>humans.includes(m));if(!T.isPlayer&&!T.traderT&&!T.members.length)teams.splice(i,1);}}
 function warSetup(){winner=null;winEl.style.display='none';buildBases();
  clearNonTraders();for(const z of [...zombies])removeMonster(z);for(const c of [...chickens])if(!c.owned)removeChicken(c);
- PT.color=0xd32f2f;PT.base={x:WB[0].x,z:WB[0].z};PT.inner=0;PT.plan=[];
- const G=newTeam(0x2e7d32);G.noOffer=true;G.base={x:WB[1].x,z:WB[1].z};G.inner=0;G.plan=[];G.blocks=0;ARMY=[PT,G];war(PT,G);
+ const hs=MYSIDE;PT.color=hs?0x2e7d32:0xd32f2f;PT.base={x:WB[hs].x,z:WB[hs].z};PT.inner=0;PT.plan=[];
+ const G=newTeam(hs?0xd32f2f:0x2e7d32);G.noOffer=true;G.base={x:WB[1-hs].x,z:WB[1-hs].z};G.inner=0;G.plan=[];G.blocks=0;ARMY=hs?[G,PT]:[PT,G];war(PT,G);for(const g of NET.guests.values())g.team=g.side===undefined?PT:ARMY[g.side];
  const nm=[...NAMES].sort(()=>Math.random()-.5);let ni=0;
  ARMY.forEach((T,ai)=>{const B=WB[ai];for(let i=0;i<30;i++){const I=botInv(true);if(Math.random()<.25){I.has.jav=true;I.ammo.jav=2;}I.ammo.m16=Math.max(I.ammo.m16,40);I.has.m16=true;
-  const heavy=Math.random()<.25,b=newBot(T,B.x+(Math.random()-.5)*40,B.z+(Math.random()-.5)*40,nm[ni++%nm.length],I,heavy);b.heavy=heavy;b.wrole=ai===0&&i<4?'esc':['att','def','hunt'][i%3];b.cmd=b.wrole==='esc'?'follow':'gather';b.role='gather';}});
+  const heavy=Math.random()<.25,b=newBot(T,B.x+(Math.random()-.5)*40,B.z+(Math.random()-.5)*40,nm[ni++%nm.length],I,heavy);b.heavy=heavy;b.wrole=T===PT&&i<4?'esc':['att','def','hunt'][i%3];b.cmd=b.wrole==='esc'?'follow':'gather';b.role='gather';}});
  for(const t of tanks){scene.remove(t.g);freeObj(t.g);remOb(t.ob);}tanks.length=0;inTank=null;
  WB.forEach((B,ai)=>{const a=B.d>0?Math.PI:0;for(let k=0;k<2;k++){const t=addTank(B.x-12+k*8,B.z-18*B.d,a);t.home={x:t.g.position.x,z:t.g.position.z,a};t.army=ARMY[ai];const c=addApc(B.x+6+k*7,B.z-18*B.d,a);c.home={x:c.g.position.x,z:c.g.position.z,a};c.army=ARMY[ai];}});
  for(const J of JETS){J.a=WB[J.slot<4?0:1].d>0?Math.PI:0;J.g.rotation.y=J.a;J.army=ARMY[J.slot<4?0:1];}
  FL=WB.map((B,i)=>({team:ARMY[i],col:i?0x2e7d32:0xd32f2f,home:[B.x,B.z],x:B.x,z:B.z,carrier:null,held:null,holdH:0,g:FL[i]&&FL[i].g}));
- player.position.set(WB[0].x+2,0,WB[0].z+4);armCd=0;dropT=3;
- newQuests();renderQuests();renderTeam();updatePpl();say(t('w_start'),7);if(NET.role==='host')netQ.push({e:'tkk',L:tanks.map(t=>t.kind)});}
+ player.position.set(WB[hs].x+2,0,WB[hs].z+4);armCd=0;dropT=3;
+ newQuests();renderQuests();renderTeam();updatePpl();say(tf('w_start',{a:t(MYSIDE?'in_green':'in_red')}),7);if(NET.role==='host')netQ.push({e:'tkk',L:tanks.map(t=>t.kind)});}
 function warTeardown(){for(const g of WG){scene.remove(g);freeObj(g);}WG=[];for(const o of WOB)remOb(o);WOB=[];for(const F of FL)if(F.g){scene.remove(F.g);freeObj(F.g);}FL=[];ARMY=[];winner=null;winEl.style.display='none';}
 const _start13=start;start=function(){warSlots();if(!isWar())warTeardown();_start13();if(isWar())warSetup();else if(NET.role==='host')netQ.push({e:'tkk',L:tanks.map(t=>t.kind)});};
 // briesmoņu karā nav
@@ -193,7 +194,7 @@ function botTankDrive(t,b,dt){const p=t.g.position,T=b.team;let best=null,bd=t.k
  for(const h of HL){if(h.team===T||!T.enemies.has(h.team))continue;const d=Math.hypot(h.p.x-p.x,h.p.z-p.z);if(d<bd){bd=d;best={x:h.p.x,y:(h.y||0)+1.2,z:h.p.z};}}
  if(t.kind==='apc')for(const H of HELIS)if(H.st==='fly'&&heliTeam(H)&&T.enemies.has(heliTeam(H))){const d=Math.hypot(H.x-p.x,H.z-p.z);if(d<bd){bd=d;best={x:H.x,y:H.y+1.5,z:H.z};}}
  for(const q of tanks)if(q!==t&&!q.dead&&((q.driver&&T.enemies.has(q.driver.team))||(q===inTank&&T.enemies.has(PT)))){const d=Math.hypot(q.g.position.x-p.x,q.g.position.z-p.z)-15;if(d<bd){bd=d;best={x:q.g.position.x,y:1.2,z:q.g.position.z};}}
- const E=enemyArmy(T),F=FL.find(q=>q.team===E),goalP=best||(F?{x:F.home[0],z:F.home[1]}:{x:0,z:0}),dist=Math.hypot(goalP.x-p.x,goalP.z-p.z);
+ const E=enemyArmy(T),F=FL.find(q=>q.team===E),goalP=best||t.supp||(F?{x:F.home[0],z:F.home[1]}:{x:0,z:0}),dist=Math.hypot(goalP.x-p.x,goalP.z-p.z);
  const ox=p.x,oz=p.z;if(dist>(best?(t.kind==='apc'?18:25):6))stepTo(p,goalP.x,goalP.z,t.kind==='apc'?7:4.5,dt,1.7,T,t.st);if(Math.hypot(p.x-ox,p.z-oz)>.01){let df=Math.atan2(-(p.x-ox),-(p.z-oz))-t.g.rotation.y;df=Math.atan2(Math.sin(df),Math.cos(df));t.g.rotation.y+=df*Math.min(1,dt*3);}
  if(best){t.g.userData.tur.rotation.y=Math.atan2(-(best.x-p.x),-(best.z-p.z))-t.g.rotation.y;t.fcd-=dt;
   if(t.kind==='apc'){if(t.fcd<=0&&t.ammo>0&&bd<60){t.fcd=.18;t.ammo--;mgShot(p.x,2.4,p.z,best.x+(Math.random()-.5)*1.6,best.y,best.z+(Math.random()-.5)*1.6,T,false,14);sfxAt('shoot',p.x,p.z,40);}}
@@ -229,14 +230,14 @@ function warTick(dt){
  for(const t of tanks)if(t.driver){if(t.driver.dead||t.dead){t.driver.tankV=null;t.driver=null;}else botTankDrive(t,t.driver,dt);}
  for(let i=BSH.length-1;i>=0;i--){const s=BSH[i],p=s.m.position;s.life-=dt;p.x+=s.vx*dt;p.z+=s.vz*dt;if(s.life<=0||wallAt(p.x,p.z,1.9)){scene.remove(s.m);BSH.splice(i,1);jetBoom(p.x,p.z,s.T,false,.8,.8);}}
  flagTick(dt);dropTick(dt);
- warT-=dt;if(warT<=0){warT=1.5;warVehPick();warAA();if(!winner&&ARMY.length===2){if(!ARMY[1].members.length)warWin(ARMY[0]);else if(!ARMY[0].members.length&&!active&&![...NET.guests.values()].some(G=>G.ready&&!G.dead))warWin(ARMY[1]);}}
+ warT-=dt;if(warT<=0){warT=1.5;warVehPick();warAA();if(!winner&&ARMY.length===2){if(!ARMY[1].members.length&&!(active&&PT===ARMY[1])&&![...NET.guests.values()].some(G=>G.ready&&!G.dead&&GT(G)===ARMY[1]))warWin(ARMY[0]);else if(!ARMY[0].members.length&&!(active&&PT===ARMY[0])&&![...NET.guests.values()].some(G=>G.ready&&!G.dead&&GT(G)===ARMY[0]))warWin(ARMY[1]);}}
  // bota helikopteris ar raķetēm šauj uz ienaidnieku tehniku
  for(const H of HELIS)if(H.st==='fly'&&H.pilot&&H.pilot.g&&H.rk>0){H.rkT=(H.rkT||0)-dt;if(H.rkT<=0){H.rkT=2;const tp=heliRocketTarget(H,H.pilot.team);if(tp.y>0)heliRocket(H,H.pilot.team,false,tp);}}
  if(NET.role==='host'&&NET.guests.size){warNetT-=dt;if(warNetT<=0){warNetT=.4;const cid=c=>c==='P'?0:c&&c.pos?c.id:c?-1:-2;
   const msg={t:'wf',F:FL.map(F=>[r2(F.x),r2(F.z),cid(F.carrier),F.held?1:0,Math.round(F.holdH)]),n:ARMY.map(T=>T.members.length),A:tanks.map(t=>t.ammo||0)};for(const G of NET.guests.values())if(G.ready)netTo(G,msg);}}}
 // ---------- informācija uz ekrāna ----------
 const wbar=document.createElement('div');wbar.id='warbar';wbar.className='panel';document.body.appendChild(wbar);
-function warHud(){if(!isWar()||!active){wbar.style.display='none';return;}wbar.style.display='block';const F0=FL[0],F1=FL[1];let s=t('w_fl_home');
+function warHud(){if(!isWar()||!active){wbar.style.display='none';return;}wbar.style.display='block';const F0=FL[MYSIDE],F1=FL[1-MYSIDE];let s=t('w_fl_home');
  if(F0&&(F0.carrier||F0.cid>-2))s=t('w_fl_my');if(F0&&F0.held)s=tf('w_fl_lost',{n:Math.max(0,48-Math.round(F0.holdH))});if(F1&&F1.held)s=tf('w_fl_their',{n:Math.max(0,48-Math.round(F1.holdH))});
  const n=NET.role==='guest'?(warN||[0,0]):[ARMY[0]?ARMY[0].members.length:0,ARMY[1]?ARMY[1].members.length:0];wbar.textContent='🔴 '+n[0]+' · 🟢 '+n[1]+' · '+s;}
 let warN=null,hudT=0;
@@ -245,11 +246,11 @@ const _updateFx13=updateFx;updateFx=function(dt){_updateFx13(dt);const host=NET.
   if(NET.role==='guest')for(const [i,o] of netTk){const k=TKK[i]||'tank';if((k==='apc')!==!!o.apc){scene.remove(o.g);freeObj(o.g);o.g=k==='apc'?apcMesh():tankMesh();scene.add(o.g);o.apc=k==='apc';o.dead=false;}}}
  if(inTank&&inTank.kind==='apc'&&mouseDown&&!TOUCH)fireTank();};
 // armory un helikoptera raķete draugam
-const _nearInter13=nearInter;nearInter=function(){const o=_nearInter13();if((!o||o.type==='burn')&&armoryNear(player.position.x,player.position.z))return{type:'armory'};return o;};
+const _nearInter13=nearInter;nearInter=function(){const o=_nearInter13();if((!o||o.type==='burn')&&armoryNear(player.position.x,player.position.z,NET.role==='guest'?null:PT))return{type:'armory'};return o;};
 const _interact13=interact;interact=function(){if(active){const o=nearInter();if(o&&o.type==='armory'){if(NET.role==='guest'){netSend({t:'arm'});return;}if(gtime<armCd){say(tf('w_armcd',{n:Math.ceil(armCd-gtime)}),1.5);return;}armCd=gtime+45;armoryGive(inv);autoGun();updateAmmo();renderInv();updateHealth();say(t('w_armok'),2);sfx('pick');return;}}_interact13();};
 const _netHostMsg13=netHostMsg;netHostMsg=function(G,d){
- if(d&&G.ready&&d.t==='arm'){if(!armoryNear(G.pos.x,G.pos.z))return;if(gtime<(G.armCd||0)){netTo(G,{t:'msg',s:tf('w_armcd',{n:Math.ceil(G.armCd-gtime)}),d:1.5});return;}G.armCd=gtime+45;armoryGive(G.I);netTo(G,{t:'msg',s:t('w_armok'),d:2});netMe(G);return;}
- if(d&&G.ready&&d.t==='hrk'){const H=HELIS.find(q=>q.id===d.id);if(H&&H.pilot===G&&H.rk>0&&Array.isArray(d.a)){const a=d.a.map(Number);heliRocket(H,PT,true,{x:a[0],y:a[1],z:a[2]});}return;}
+ if(d&&G.ready&&d.t==='arm'){if(!armoryNear(G.pos.x,G.pos.z,GT(G)))return;if(gtime<(G.armCd||0)){netTo(G,{t:'msg',s:tf('w_armcd',{n:Math.ceil(G.armCd-gtime)}),d:1.5});return;}G.armCd=gtime+45;armoryGive(G.I);netTo(G,{t:'msg',s:t('w_armok'),d:2});netMe(G);return;}
+ if(d&&G.ready&&d.t==='hrk'){const H=HELIS.find(q=>q.id===d.id);if(H&&H.pilot===G&&H.rk>0&&Array.isArray(d.a)){const a=d.a.map(Number);heliRocket(H,GT(G),true,{x:a[0],y:a[1],z:a[2]});}return;}
  _netHostMsg13(G,d);};
 // draugam: režīms pirms pasaules, karogi, uzvara, bruņmašīnas
 let TKK=[];
@@ -262,7 +263,7 @@ const _netGuestMsg13=netGuestMsg;netGuestMsg=function(d){
  _netGuestMsg13(d);if(d&&d.t==='wel'&&isWar())for(const o of WOB){remOb(o);addOb(o);}};
 const _netExtraEv213=netExtraEv2;netExtraEv2=function(e){if(e.e==='win'){winner=e.w;showWin(e.w);return;}if(e.e==='tkk'){TKK=e.L;return;}_netExtraEv213(e);};
 // cik cilvēku katrā armijā
-const _updatePpl13=updatePpl;updatePpl=function(){_updatePpl13();if(isWar()&&ARMY.length===2)$('ppl').textContent='🔴 '+(ARMY[0].members.length+1+[...NET.guests.values()].filter(G=>G.ready).length)+' · 🟢 '+ARMY[1].members.length+'  🪙 '+(PT.coins||0);};
+const _updatePpl13=updatePpl;updatePpl=function(){_updatePpl13();if(isWar()&&ARMY.length===2){const hu=i=>(PT===ARMY[i]?1:0)+[...NET.guests.values()].filter(G=>G.ready&&GT(G)===ARMY[i]).length;$('ppl').textContent='🔴 '+(ARMY[0].members.length+hu(0))+' · 🟢 '+(ARMY[1].members.length+hu(1))+'  🪙 '+(PT.coins||0);}};
 // minikartē: atpazīstamās ēkas, bāzes, karogi (mirgo, ja nav mājās)
 const _drawMap13=drawMap;drawMap=function(){_drawMap13();const g=mm.getContext('2d'),W=mm.width,R=mmZoom?70:EDGE,cx=mmZoom?player.position.x:0,cz=mmZoom?player.position.z:0,sc=W/2/R,X=x=>W/2+(x-cx)*sc,Y=z=>W/2+(z-cz)*sc;
  g.textAlign='center';g.textBaseline='middle';g.font=Math.round(W*.08)+'px serif';for(const L of LMS)g.fillText(L.ic,X(L.x),Y(L.z));

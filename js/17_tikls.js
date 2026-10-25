@@ -3,6 +3,7 @@
 // Savienojums caur PeerJS (bezmaksas starpnieks, lai pārlūki atrastu viens otru).
 const KIND=['z','w','zw','s','c','f'],MAXG=3,PCOL=[0x3a7ab8,0x27ae60,0xe67e22,0x8e44ad];
 const r2=v=>Math.round(v*100)/100;
+const GT=G=>G&&G.team||PT; // drauga komanda (karā var būt arī pretējā armijā)
 // spēles versija (no ?v= skripta adresē): draugam jābūt tai pašai, citādi viņa pārlūks ielādē jaunāko
 const MWV=((document.querySelector('script[src*="01_sakums"]')||{}).src||'').replace(/.*[?&]v=(\d+).*/,'$1');
 let peer=null,hostConn=null,netT=0,netBiT=0,netDoorT=0,netSt=0,netUiT=0,netQ=[],netGone=[],netCurOwner=0,netNextId=1,netLastP=null;
@@ -33,7 +34,7 @@ function netHost(){
  peer.on('error',e=>{if(e&&e.type==='unavailable-id'){peer.destroy();NET.role=null;netHost();return;}NET.status=t('mp_err')+' ('+((e&&e.type)||e)+')';renderMP();});
  peer.on('connection',conn=>{
   if(NET.guests.size>=MAXG){conn.on('open',()=>{conn.send({t:'full'});setTimeout(()=>conn.close(),500);});return;}
-  const id=netNextId++,G={id,conn,name:'?',pos:new THREE.Vector3(player.position.x+2,0,player.position.z+2),y:0,yaw:0,hp:100,dead:false,I:newInv(),ready:false,col:PCOL[id%4]};
+  const id=netNextId++,G={id,conn,t0:Date.now(),name:'?',pos:new THREE.Vector3(player.position.x+2,0,player.position.z+2),y:0,yaw:0,hp:100,dead:false,I:newInv(),ready:false,col:PCOL[id%4]};
   conn.on('data',d=>netHostMsg(G,d));
   conn.on('close',()=>netDropGuest(G));
   NET.guests.set(id,G);
@@ -71,22 +72,22 @@ function netMe(G){netTo(G,{t:'me',hp:r2(G.hp),inv:G.I,bl:PT.blocks,di:PT.doorI||
 function damageGuest(G,dmg,src,pierce){
  if(G.dead||gtime<(G.invul||0))return;
  const a=pierce?0:Math.min(G.I.armor,dmg*.6);G.I.armor-=a;G.hp-=dmg-a;
- if(src&&src!==PT){war(PT,src);PT.alarm={T:src,until:gtime+15};}
+ if(src&&src!==GT(G)){war(GT(G),src);GT(G).alarm={T:src,until:gtime+15};}
  if(G.hp<=0){G.hp=0;G.dead=true;G.respawn=gtime+5;netTo(G,{t:'msg',s:t('mp_died'),d:4});}
  netMe(G);
 }
 function guestFire(G,d){
  const w=d.w,W=WP[w];if(!W||w==='hands'||G.dead||!G.I.has[w]||G.I.ammo[w]<=0)return;
  G.I.ammo[w]--;netCurOwner=G.id;
- for(let k=0;k<W.pel;k++){const a=(+d.a||0)+(Math.random()-.5)*W.sp*2,fx=-Math.sin(a),fz=-Math.cos(a);spawnBullet(G.pos.x+fx*.8,G.y+1.2,G.pos.z+fz*.8,fx,fz,W,PT,true);}
+ for(let k=0;k<W.pel;k++){const a=(+d.a||0)+(Math.random()-.5)*W.sp*2,fx=-Math.sin(a),fz=-Math.cos(a);spawnBullet(G.pos.x+fx*.8,G.y+1.2,G.pos.z+fz*.8,fx,fz,W,GT(G),true);}
  netCurOwner=0;sfxAt(W.rocket?'rocket':'shoot',G.pos.x,G.pos.z,40);netMe(G);
 }
 function guestMelee(G,a){
  if(G.dead)return;const fx=-Math.sin(a),fz=-Math.cos(a);let tg=null,best=2.7,bot=false;
  for(const z of zombies){if(z.userData.rise>0||z.userData.dead)continue;const dx=z.position.x-G.pos.x,dz=z.position.z-G.pos.z,l=Math.hypot(dx,dz);if(l<best&&(dx*fx+dz*fz)/(l||1)>.05){best=l;tg=z;}}
- for(const b of humans){if(b.team===PT)continue;const dx=b.g.position.x-G.pos.x,dz=b.g.position.z-G.pos.z,l=Math.hypot(dx,dz);if(l<best&&(dx*fx+dz*fz)/(l||1)>.05){best=l;tg=b;bot=true;}}
+ for(const b of humans){if(b.team===GT(G))continue;const dx=b.g.position.x-G.pos.x,dz=b.g.position.z-G.pos.z,l=Math.hypot(dx,dz);if(l<best&&(dx*fx+dz*fz)/(l||1)>.05){best=l;tg=b;bot=true;}}
  sfxAt('melee',G.pos.x,G.pos.z,25);if(!tg)return;
- if(bot)hurtBot(tg,25,PT,true);else dmgMonster(tg,25,true);
+ if(bot)hurtBot(tg,25,GT(G),true);else dmgMonster(tg,25,true);
 }
 function guestAct(G){
  if(G.dead)return;const px=G.pos.x,pz=G.pos.z;let best=null,bd=1e9;
@@ -114,7 +115,7 @@ function guestBuild(G,d){
 function netHostFrame(dt){
  for(const G of NET.guests.values()){
   if(!G.ready)continue;
-  if(G.dead&&gtime>G.respawn){G.dead=false;G.hp=100;G.invul=gtime+4;const b=PT.base;G.pos.set((b?b.x:player.position.x)+2,0,(b?b.z:player.position.z)+1);G.y=0;netTo(G,{t:'tp',x:r2(G.pos.x),z:r2(G.pos.z)});netMe(G);}
+  if(G.dead&&gtime>G.respawn){G.dead=false;G.hp=100;G.invul=gtime+4;const b=GT(G).base;G.pos.set((b?b.x:player.position.x)+2,0,(b?b.z:player.position.z)+1);G.y=0;netTo(G,{t:'tp',x:r2(G.pos.x),z:r2(G.pos.z)});netMe(G);}
   if(!G.dead&&G.y<1.5){ // laupījums zemē viesim
    for(const ch of chunks.values())for(let i=ch.items.length-1;i>=0;i--){const it=ch.items[i];if(Math.hypot(it.x-G.pos.x,it.z-G.pos.z)<1.5){ch.group.remove(it.m);freeObj(it.m);ch.items.splice(i,1);taken.add(it.id);const s=giveLoot(it.type,G.I,PT);netTo(G,{t:'msg',s:t('found')+' '+s});netMe(G);}}
    for(const dp of [...drops])if(Math.hypot(dp.x-G.pos.x,dp.z-G.pos.z)<1.5){takeDrop(dp,{I:G.I,team:PT});netTo(G,{t:'msg',s:t('bag')});netMe(G);}
@@ -126,14 +127,14 @@ function netHostFrame(dt){
  netT-=dt;if(netT>0)return;netT=.1;
  const M=[],B=[],K=[];
  for(const z of zombies){const u=z.userData;if(u.dead)continue;M.push([u.nid,KIND.indexOf(u.kind),r2(z.position.x),r2(z.position.z),r2(z.position.y),r2(z.rotation.y),Math.ceil(u.hp),u.max,u.boom!==undefined?1:0]);}
- for(const b of humans)if(!b.dead&&!b.jet&&!b.para&&!b.heli)B.push([b.nid,r2(b.g.position.x),r2(b.g.position.z),r2(b.g.rotation.y),Math.ceil(b.hp),b.team.color,b.team===PT?1:PT.enemies.has(b.team)?2:0]);
+ for(const b of humans)if(!b.dead&&!b.jet&&!b.para&&!b.heli)B.push([b.nid,r2(b.g.position.x),r2(b.g.position.z),r2(b.g.rotation.y),Math.ceil(b.hp),b.team.color,b.team===PT?1:PT.enemies.has(b.team)?2:0,b.team]);
  tanks.forEach((tk,i)=>K.push([i,r2(tk.g.position.x),r2(tk.g.position.z),r2(tk.g.rotation.y),r2(tk.g.userData.tur.rotation.y),tk.shells,tk.dead?1:0]));
  const P=[[0,r2(player.position.x),r2(pY),r2(player.position.z),r2(yaw),Math.ceil(health),active?0:1,inTank||(typeof jetMode!=='undefined'&&jetMode)||(typeof heliMode!=='undefined'&&heliMode)?1:0,PCOL[0],$('nickname').value.slice(0,16)]];
  for(const G of NET.guests.values())if(G.ready)P.push([G.id,r2(G.pos.x),r2(G.y),r2(G.pos.z),r2(G.yaw),Math.ceil(G.hp),G.dead?1:0,G.inJet||G.inHeli?1:0,G.col,G.name]);
  const near=(x,z,G)=>Math.hypot(x-G.pos.x,z-G.pos.z)<130;
  for(const G of NET.guests.values()){if(!G.ready)continue;
   netTo(G,{t:'s',h:r2(hour),d:day,sc:score,nb:humans.length,tm:PT.members.length,gone:netGone,
-   M:M.filter(m=>near(m[2],m[3],G)),B:B.filter(b=>near(b[1],b[2],G)),K,P:P.filter(p=>p[0]!==G.id),q:netQ.filter(e=>e.o!==G.id)});}
+   M:M.filter(m=>near(m[2],m[3],G)),B:B.filter(b=>near(b[1],b[2],G)).map(b=>{const T=b[7],g=GT(G);return[b[0],b[1],b[2],b[3],b[4],b[5],T===g?1:g.enemies.has(T)?2:0];}),K,P:P.filter(p=>p[0]!==G.id),q:netQ.filter(e=>e.o!==G.id)});}
  netGone=[];netQ=[];
  netBiT-=.1;if(netBiT<=0){netBiT=4;for(const G of NET.guests.values())if(G.ready)netTo(G,{t:'bi',bi:humans.map(b=>[b.nid,b.name+(b.badges&&b.badges.size?' 🏅'+b.badges.size:''),b.helmet?1:0])});}
  netDoorT-=.1;if(netDoorT<=0){netDoorT=.5;const dr=[];for(const c of chunks.values())for(const o of c.inter)if(o.type==='door'){const s=(o.open?1:0)+':'+o.hp;if(o._ns===undefined){o._ns=s;if(s!=='0:100')dr.push([o.id,o.open?1:0,o.hp]);}else if(o._ns!==s){o._ns=s;dr.push([o.id,o.open?1:0,o.hp]);}}if(dr.length)for(const G of NET.guests.values())if(G.ready)netTo(G,{t:'dr',dr});}

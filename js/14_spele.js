@@ -196,7 +196,7 @@ function resume(){
  updateHealth();active=true;renderW();say(t('respawn'));
 }
 function buildHL(){HL.length=0;if(active)HL.push({p:player.position,y:pY,team:PT,pl:true});for(const b of humans)if(!b.dead)HL.push({p:b.g.position,y:0,team:b.team,b});
- for(const G of NET.guests.values())if(G.ready&&!G.dead)HL.push({p:G.pos,y:G.y,team:PT,gst:G,b:G});}
+ for(const G of NET.guests.values())if(G.ready&&!G.dead)HL.push({p:G.pos,y:G.y,team:G.team||PT,gst:G,b:G});}
 function start(){
  if(!scene)init();
  $('menu').style.display='none';$('dead').style.display='none';

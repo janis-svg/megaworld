@@ -140,3 +140,12 @@ html.touch #tut{bottom:330px}
 @media (max-width:760px){#warbar{top:auto;bottom:6px;transform:translateX(-50%);font-size:11px}}
 #warwin{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:30;text-align:center;padding:28px 32px;display:none;width:min(420px,calc(100% - 32px))}
 #warwin button{margin-top:14px}
+#siderow{display:none;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;margin:0 0 8px}
+#siderow small{color:#9bb3c7;font-size:12px}
+#siderow .corner{margin:0;padding:8px 12px}
+#sidepick{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);z-index:25;text-align:center;display:none;pointer-events:auto;font-size:15px}
+#sidepick .corner{margin:12px 6px 0;padding:12px 18px;font-size:16px}
+#starpop{position:fixed;top:34%;left:50%;transform:translateX(-50%);z-index:16;text-align:center;pointer-events:none;opacity:0;transition:opacity .3s;text-shadow:0 2px 10px #000}
+#starpop.show{opacity:1}
+#starpop b{display:block;font-size:34px;letter-spacing:4px}
+#starpop small{display:block;font-size:13px;color:#ffe082}
