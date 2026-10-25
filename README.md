@@ -113,6 +113,10 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - 🦺 Kaujas bruņas: tēls saņem ķiveri un vesti, un dzīvība ir +50% (mazāk sāp). Krītot tās pazūd.
 - Kartē ir atpazīstamas ēkas: ☢️ atomelektrostacija, 📡 TV tornis, 🏟️ stadions, 🏭 rūpnīca.
 
+## Grafika
+
+- 🎨 poga (telefonā zem ⚙️) maina kvalitāti: Zema / Vidēja / Augsta. Ja telefons bremzē, izvēlies Zemu.
+
 ## Spēlēt kopā (līdz 4 spēlētājiem)
 
 1. Viens atver spēli un spiež **🌐 Spēlēt kopā ar draugiem**. Parādās saite un 30 sekunžu atskaite (var pielikt +30 s vai sākt uzreiz). Kad laiks beidzas, spēle sākas visiem vienlaikus no viena punkta. (Var arī spēles laikā spiest 🌐 un "Sākt kopīgo spēli".)
@@ -164,6 +168,7 @@ Pasauli skaita tā cilvēka ierīce, kurš uzaicināja. Ja viņš aizver lapu, s
 | `js/32_labojumi.js` | Ieroču darbības attālumi, ložmetēji neiet cauri sienām, snaipera tēmēklis |
 | `js/33_kopa_sakums.js` | Spēlēt kopā: 30 sekunžu gaidīšana un kopīgs sākums |
 | `js/34_izlukosana.js` | Pamanītie pretinieki kartē, jumti ar trepēm, Javelin uzvadīšana, gaisa trauksme |
+| `js/35_grafika.js` | Grafika: gaisma pēc diennakts, saule, zāle un asfalts, lodes kā gaismas strīpas, sprādzieni ar dūmiem, astes, kvalitāte 🎨 |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 

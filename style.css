@@ -165,3 +165,4 @@ html.touch #tut{bottom:330px}
 /* Javelin uzvadīšanas rāmis */
 #jlock{position:fixed;z-index:12;display:none;pointer-events:none;border:2px dashed #ff5252;border-radius:6px;color:#ff5252;font-weight:800;font-size:18px;display:none;align-items:center;justify-content:center;text-shadow:0 1px 4px #000;box-sizing:border-box}
 #jlock.lock{border:3px solid #ff1744;box-shadow:0 0 12px #ff1744}
+html.touch:not(.cfg) #gfxb{display:none}
