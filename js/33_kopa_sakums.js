@@ -35,3 +35,13 @@ lobbyBegin=function(){lobActive=true;start();if(!NET.role)netHost();lobbyTimer()
 const _lobbyStart20=lobbyStart;lobbyStart=function(){lobActive=false;_lobbyStart20();};
 // kamēr nav savienojuma, saites vietā rāda statusu; kad savienojums atjaunojies, saite atkal redzama
 setInterval(()=>{if(lobEl.style.display==='block'&&!(document.activeElement&&document.activeElement.id==='loblink'))lobbyRender();},1000);
+// karā, kamēr gaidām draugus, karš vēl nesākas: boti stāv, tehnikā nekāpj, lidmašīnas un helikopteri nepaceļas
+Object.assign(T.lv,{lob_nowar:'⏳ Karš vēl nav sācies: tehnikā varēs kāpt pēc {n} s'});Object.assign(T.en,{lob_nowar:'⏳ The war has not started yet: vehicles are available in {n} s'});
+const warWait=()=>isWar()&&lobActive&&NET.role==='host';
+const lobLeft=()=>Math.max(0,Math.ceil((lobEnd-Date.now())/1000));
+const _updateBots22=updateBots;updateBots=function(dt){if(warWait())return;_updateBots22(dt);};
+const _warTick22=warTick;warTick=function(dt){if(warWait())return;_warTick22(dt);};
+const _updateFx22=updateFx;updateFx=function(dt){if(warWait()){botJetT=botHeliT=5;}_updateFx22(dt);};
+for(const fn of ['enterTank','enterJet','enterHeli']){const o=window[fn];window[fn]=function(...a){if(warWait()){say(tf('lob_nowar',{n:lobLeft()}),2);return;}return o.apply(this,a);};}
+const _guestAct22=guestAct;guestAct=function(G){if(warWait()&&!G.dead&&(tanks.some(t=>!t.dead&&Math.hypot(t.g.position.x-G.pos.x,t.g.position.z-G.pos.z)<4.5))){netTo(G,{t:'msg',s:tf('lob_nowar',{n:lobLeft()}),d:2});return;}_guestAct22(G);};
+const _netHostMsg22=netHostMsg;netHostMsg=function(G,d){if(d&&warWait()&&(d.t==='jet'||d.t==='heli')){netTo(G,{t:'msg',s:tf('lob_nowar',{n:lobLeft()}),d:2});return;}_netHostMsg22(G,d);};
