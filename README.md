@@ -84,7 +84,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - Bāzes ieskauj dzeloņstiepļu žogs ar vārtiem uz kartes centra pusi. Stūros ir 4 novērošanas torņi: pie kāpnēm spied 🤚, lai uzkāptu. No augšas redz tālāk, minikartē parādās ienaidnieki, un var šaut lejā.
 - Katrā bāzē ir 4 lidmašīnas, 2 helikopteri (Plēsoņa un Haizivs), 2 tanki, 2 bruņmašīnas un noliktava 🎖️ (spied 🤚: ieroči, lodes, Javelin, bruņas; atkal pēc 45 s).
 - Briesmoņu nav. Pa visu karti parādās kastes 📦 ar ieročiem, lodēm, degvielu un bruņām.
-- Uzvara: iznīcini visus pretiniekus vai nozodz viņu karogu (minikartē tas mirgo). Kad karogs nozagts, ekrānā sākas ⏱️ 5 minūšu atskaite: ja pretinieki šajā laikā karogu neatgūst (neaizskar to ārpus savas bāzes), uzvar zagļi. Ja karogu nes kāds, kurš krīt, karogs paliek zemē; ja savējais to aizskar, tas atgriežas bāzē un atskaite apstājas. Atlikušās minūtes un 10 sekundes paziņo 📻 radio.
+- Uzvara: iznīcini visus pretiniekus vai nozodz viņu karogu (minikartē tas mirgo). Kad karogs nozagts, ekrānā sākas ⏱️ 5 minūšu atskaite: ja pretinieki šajā laikā karogu neatgūst, uzvar zagļi. Karogs ir atgūts tikai tad, kad savējais to paņem un aiznes atpakaļ uz savu bāzi; tad atskaite apstājas. Ja nesējs krīt, karogs paliek zemē, un to var paņemt jebkura puse. Taimeris ir redzams augšējā labajā stūrī. Atlikušās minūtes un 10 sekundes paziņo 📻 radio.
 - Boti uzbrūk, sargā karogu, medī, brauc ar tankiem un bruņmašīnām, lido ar lidmašīnām un helikopteriem.
 - Boti neatjaunojas.
 
@@ -103,6 +103,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - Karā nav Kaspara apmācības tekstu, ir tikai 📻 radio sarunas.
 - 🍾 **Molotova kokteilis**: līdzi var nest vienu. Met to ar uzbrukuma pogu (jo augstāk skaties, jo tālāk lido). Kur tas trāpa, 30 sekundes deg uguns 3 m diametrā; kas ieiet ugunī, tas deg. Tehnika (tanks, bruņumašīna, helikopteris) 30 sekundēs zaudē pusi dzīvības, otrs kokteilis to iznīcina. Mazās mājas nodeg pilnībā un vairs neatjaunojas, novērošanas tornis nodeg un sabrūk. Kokteiļi ir kastēs, pie kritušajiem pretiniekiem un veikalā.
 - **AK Kalašņikovs**: nedaudz spēcīgāks par M16, bet mazāk precīzs. Katrā bāzē ik minūti ir 2 kastes ar Kalašņikoviem, daļai botu tas jau ir.
+- Boti karā iet bāzē iekšā un ārā caur vārtiem, nevis iestrēgst pie dzeloņstieplēm. Karoga nesējs nekāpj tehnikā, bet skrien uz bāzi.
 - 🚩 Ja pretinieks nozog karogu, visa armija pārtrauc savus uzdevumus un atgūst to: tuvākie dzenas pakaļ, tālākie skrien pārtvert ceļā uz pretinieku bāzi, tehnika un helikopteri arī palīdz. Ja karogu nes kāds no mūsējiem, visi pārējie viņu sargā līdz bāzei. Ja karogs guļ zemē, to cenšas paņemt abas puses.
 - 🚁 Ja zaglis ar karogu lido ar helikopteri vai lidmašīnu, Javelin šāvēji dzenas pakaļ, lai viņu notriektu, bruņumašīnas šauj uz viņu, savas lidmašīnas viņu medī, bet pārējie dodas uz zagļa bāzi atgūt karogu. Karogs tiek ieskaitīts tikai pēc nolaišanās bāzē, nevis lidojot tai pāri. Ja zagli notriec, karogs nokrīt zemē.
 - 🔫 Karā atdzimstot tev vienmēr ir M16 vai Kalašņikovs (nejauši) ar pilnu lodju komplektu (60).

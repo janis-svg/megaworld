@@ -82,13 +82,16 @@ function carrierArmy(c){return c==='P'?PT:c&&c.pos?GT(c):c&&c.team;}
 function carrierName(c){return c==='P'?$('nickname').value:c&&c.name?c.name:'?';}
 function onFoot(c){return c==='P'?!inTank&&!jetMode&&!heliMode&&!paraMode:c&&c.pos?!c.inJet&&!c.inHeli:c&&!c.inside;}
 function flagTick(dt){for(const F of FL){const other=F.team===ARMY[0]?ARMY[1]:ARMY[0];
-  if(F.carrier){const p=carrierPos(F.carrier);if(!p){F.carrier=null;fsay2('w_drop',{f:armyName(F.team)});}else{F.x=p.x;F.z=p.z;const home=FL.find(q=>q.team===other).home;
+  if(F.carrier){const p=carrierPos(F.carrier);if(!p){F.carrier=null;fsay2('w_drop',{f:armyName(F.team)});}else{F.x=p.x;F.z=p.z;
+    // savējais nes karogu atpakaļ: atgūts tikai tad, kad nogādāts savā bāzē
+    if(carrierArmy(F.carrier)===F.team){if(Math.hypot(F.x-F.home[0],F.z-F.home[1])<8&&(typeof carrierAlt!=='function'||carrierAlt(F.carrier)<3)){F.carrier=null;F.x=F.home[0];F.z=F.home[1];F.held=null;F.holdH=0;fsay2('w_ret',{f:armyName(F.team)});}continue;}
+    const home=FL.find(q=>q.team===other).home;
     if(Math.hypot(F.x-home[0],F.z-home[1])<14&&(typeof carrierAlt!=='function'||carrierAlt(F.carrier)<3)){F.carrier=null;F.x=home[0]+3;F.z=home[1]+3;F.held=other;F.holdH=0;fsay2('w_cap',{f:armyName(F.team),a:armyName(other)},5);}}continue;}
   const atHome=Math.hypot(F.x-F.home[0],F.z-F.home[1])<2;
   const touch=[];if(active&&pY<1.5)touch.push('P');for(const G of NET.guests.values())if(G.ready&&!G.dead&&G.y<1.5)touch.push(G);for(const b of humans)if(!b.dead&&!b.inside&&(b.team===ARMY[0]||b.team===ARMY[1]))touch.push(b);
   for(const c of touch){const p=carrierPos(c);if(!p||!onFoot(c)||Math.hypot(p.x-F.x,p.z-F.z)>2.2)continue;const A=carrierArmy(c);
    if(A===other&&F.held!==other){F.carrier=c;F.held=null;F.holdH=0;fsay2('w_take',{n:carrierName(c),f:armyName(F.team)});break;}
-   if(A===F.team&&!atHome){F.x=F.home[0];F.z=F.home[1];F.held=null;F.holdH=0;fsay2('w_ret',{f:armyName(F.team)});break;}}
+   if(A===F.team&&!atHome){F.carrier=c;F.held=null;F.holdH=0;fsay2('w_back',{n:carrierName(c),f:armyName(F.team)});break;}}
   if(F.held){F.holdH+=dt*24/600;if(F.holdH>=48)warWin(F.held);}}}
 function flagDraw(){for(const F of FL){if(!F.g)F.g=flagMesh(F.col);const lift=F.cid!==undefined?F.cid!==-2:!!F.carrier;F.g.position.set(F.x,lift?1.8:0,F.z);F.g.userData.cloth.rotation.y=Math.sin(clock.elapsedTime*3)*.3;}}
 // ---------- uzvara ----------

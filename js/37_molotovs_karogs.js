@@ -1,8 +1,8 @@
 // 37_molotovs_karogs.js - Smalkāka tehnika, lielie koki, molotova kokteilis, Kalašņikovs, karoga atgūšana visai armijai, atdzimšana pie drauga
-Object.assign(T.lv,{wmolo:'Molotova kokteilis',wak:'Kalašņikovs',molo_one:'🍾 Līdzi var nest tikai vienu kokteili',molo_hit:'🔥 Tehnika deg!',molo_house:'🔥 Māja deg!',molo_tower:'🔥 Tornis deg!',
+Object.assign(T.lv,{w_back:'🚩 {n} nes {f} karogu atpakaļ uz bāzi!',r_back:'📻 {n} nes mūsu karogu mājās! Sargājam viņu!',r_retake:'📻 Viņi nes savu karogu atpakaļ! Apturiet nesēju!',wmolo:'Molotova kokteilis',wak:'Kalašņikovs',molo_one:'🍾 Līdzi var nest tikai vienu kokteili',molo_hit:'🔥 Tehnika deg!',molo_house:'🔥 Māja deg!',molo_tower:'🔥 Tornis deg!',
  r_flagl:'📻 Mūsu karogs nozagts! Visi atpakaļ, atgūstam karogu!',r_flaga:'📻 Zaglis ar mūsu karogu lido! Javelin šāvēji, notriecam viņu! Pārējie uz pretinieku bāzi atgūt karogu!',r_flagb:'📻 {n} ved karogu pa gaisu! Visi uz bāzi, sargājam nolaišanos!',r_flagw:'📻 {n} nes pretinieku karogu! Visi sargājam viņu līdz bāzei!',r_flagok:'📻 Karogs atkal mājās. Atgriežamies pie uzdevumiem.',r_flagg:'📻 Pretinieku karogs guļ zemē! Paņemiet to!',
  rs_friend:'🤝 Tu atgriezies pie {n}',ak_base:'📦 Bāzē atvesti Kalašņikovi',shop_ak:'AK Kalašņikovs (spēcīgāks, bet neprecīzāks par M16)',shop_a_ak:'AK Kalašņikova lodes (+20)',shop_molo:'🍾 Molotova kokteilis (deg 30 s)'});
-Object.assign(T.en,{wmolo:'Molotov cocktail',wak:'Kalashnikov',molo_one:'🍾 You can carry only one cocktail',molo_hit:'🔥 The vehicle is burning!',molo_house:'🔥 The house is burning!',molo_tower:'🔥 The tower is burning!',
+Object.assign(T.en,{w_back:'🚩 {n} carries the {f} flag back to base!',r_back:'📻 {n} is carrying our flag home! Protect them!',r_retake:'📻 They are carrying their flag back! Stop the carrier!',wmolo:'Molotov cocktail',wak:'Kalashnikov',molo_one:'🍾 You can carry only one cocktail',molo_hit:'🔥 The vehicle is burning!',molo_house:'🔥 The house is burning!',molo_tower:'🔥 The tower is burning!',
  r_flagl:'📻 Our flag is stolen! Everyone back, get the flag!',r_flaga:'📻 The thief is flying away with our flag! Javelin shooters, shoot them down! Everyone else to the enemy base to get the flag back!',r_flagb:'📻 {n} is flying the flag home! Everyone to the base, guard the landing!',r_flagw:'📻 {n} carries the enemy flag! Everyone protect them to the base!',r_flagok:'📻 The flag is back home. Back to our tasks.',r_flagg:'📻 The enemy flag is on the ground! Grab it!',
  rs_friend:'🤝 You are back with {n}',ak_base:'📦 Kalashnikovs delivered to the base',shop_ak:'AK Kalashnikov (stronger but less accurate than the M16)',shop_a_ak:'AK Kalashnikov ammo (+20)',shop_molo:'🍾 Molotov cocktail (burns 30 s)'});
 // ---------- 1. tehnikai vairāk detaļu ----------
@@ -119,19 +119,23 @@ function inMoloFire(x,z){return fires.find(f=>(f.molo||f.gv)&&Math.abs(x-f.x)<f.
 const FLS={};let flagThinkT=0;
 function flagState(T){const E=enemyArmy(T),my=FL.find(F=>F.team===T),th=FL.find(F=>F.team===E);if(!my||!th)return{};
  const lost=Math.hypot(my.x-my.home[0],my.z-my.home[1])>2,cp=th.carrier?carrierPos(th.carrier):null,esc=cp&&carrierArmy(th.carrier)===T?cp:null,grab=!th.carrier&&!th.held&&Math.hypot(th.x-th.home[0],th.z-th.home[1])>2;
- const air=my.carrier?carrierCraft(my.carrier):null,escAir=esc?carrierCraft(th.carrier):null;
- return{my,th,lost,esc,grab,air,escAir};}
+ const back=!!my.carrier&&carrierArmy(my.carrier)===T,retake=!!th.carrier&&carrierArmy(th.carrier)===E?carrierPos(th.carrier):null;
+ const air=my.carrier&&!back?carrierCraft(my.carrier):null,escAir=esc?carrierCraft(th.carrier):null;
+ return{my,th,lost,esc,grab,air,escAir,back,retake};}
 // karoga nesējs helikopterā vai lidmašīnā (gaisā, nevis stāvvietā)
 function carrierCraft(c){const A=c==='P'?(heliMode||jetMode):c&&c.pos?(c.inHeli||c.inJet):c&&(c.heli||c.jet);return A&&A.y>3&&A.st!=='gone'?A:null;}
 function carrierAlt(c){if(c==='P')return pY;if(c&&c.pos)return c.y||0;if(!c)return 0;const A=c.heli||c.jet;return A?A.y:(c.g?c.g.position.y:0);}
-function flagRadio(){if(!isWar()||NET.role==='guest')return;for(const T of ARMY){const s=flagState(T),k=(s.lost?'L':'')+(s.air?'A':'')+(s.esc?'E':'')+(s.escAir?'B':'')+(s.grab?'G':''),o=FLS[ARMY.indexOf(T)]||'';if(k===o)continue;FLS[ARMY.indexOf(T)]=k;
+function flagRadio(){if(!isWar()||NET.role==='guest')return;for(const T of ARMY){const s=flagState(T),k=(s.lost?'L':'')+(s.back?'R':'')+(s.retake?'T':'')+(s.air?'A':'')+(s.esc?'E':'')+(s.escAir?'B':'')+(s.grab?'G':''),o=FLS[ARMY.indexOf(T)]||'';if(k===o)continue;FLS[ARMY.indexOf(T)]=k;
   if(s.lost&&!o.includes('L'))radio(T,'r_flagl');else if(!s.lost&&o.includes('L'))radio(T,'r_flagok');
-  if(s.esc&&!o.includes('E'))radio(T,'r_flagw',{n:carrierName(s.th.carrier)});if(s.grab&&!o.includes('G'))radio(T,'r_flagg');if(s.air&&!o.includes('A'))radio(T,'r_flaga');if(s.escAir&&!o.includes('B'))radio(T,'r_flagb',{n:carrierName(s.th.carrier)});}}
+  if(s.esc&&!o.includes('E'))radio(T,'r_flagw',{n:carrierName(s.th.carrier)});if(s.grab&&!o.includes('G'))radio(T,'r_flagg');if(s.air&&!o.includes('A'))radio(T,'r_flaga');if(s.back&&!o.includes('R'))radio(T,'r_back',{n:carrierName(s.my.carrier)});if(s.retake&&!o.includes('T'))radio(T,'r_retake');if(s.escAir&&!o.includes('B'))radio(T,'r_flagb',{n:carrierName(s.th.carrier)});}}
 const _botThink24=botThink;botThink=function(b){
+ // karoga nesējs neiet pēc lidmašīnas, helikoptera vai tanka, bet skrien uz bāzi
+ if(isWar()&&!b.jet&&!b.heli&&!b.tankV&&!b.para&&FL.some(F=>F.carrier===b)){for(const k of ['jetGoal','heliGoal','tankGoal']){const v=b[k];if(v&&v.res===b)v.res=null;b[k]=null;}b.aaGoal=null;}
  if(!isWar()||b.trader||b.jet||b.para||b.heli||b.tankV||b.jetGoal||b.heliGoal||ARMY.indexOf(b.team)<0)return _botThink24(b);
  const p=b.g.position,fi=inMoloFire(p.x,p.z);if(fi){const dx=p.x-fi.x,dz=p.z-fi.z,l=Math.hypot(dx,dz)||1;b.follow=false;b.tg=null;goal(b,fi.x+dx/l*(fi.w+3),fi.z+dz/l*(fi.d+3),false);return;}
  if(b.wrole==='esc')return _botThink24(b);const s=flagState(b.team);if(!s.my)return _botThink24(b);
  // karoga nesējs skrien uz mājām, neapstājoties kaujā
+ if(s.my.carrier===b){b.follow=false;b.tg=null;b.tankGoal=null;if(b.gx==null||Math.hypot(b.gx-s.my.home[0],b.gz-s.my.home[1])>3)goal(b,s.my.home[0],s.my.home[1],Math.hypot(s.my.home[0]-p.x,s.my.home[1]-p.z)>70);return;}
  if(s.th.carrier===b){b.follow=false;b.tg=null;b.tankGoal=null;if(b.gx==null||Math.hypot(b.gx-s.my.home[0],b.gz-s.my.home[1])>3)goal(b,s.my.home[0],s.my.home[1],Math.hypot(s.my.home[0]-p.x,s.my.home[1]-p.z)>70);return;}
  let tx=null,tz=null,near=4;
  // zaglis lido: Javelin šāvēji seko un notriec, pārējie dodas uz pretinieku bāzi, kur karogs nonāks
@@ -139,7 +143,10 @@ const _botThink24=botThink;botThink=function(b){
  else if(s.escAir){tx=s.my.home[0]+((b.nid%7)-3)*3;tz=s.my.home[1]+((b.nid%5)-2)*3;near=4;}
  else if(s.lost&&(b.wrole!=='att'||!s.esc)){const cp=s.my.carrier?carrierPos(s.my.carrier):null;tx=cp?cp.x:s.my.x;tz=cp?cp.z:s.my.z;near=1;
   // tālie skrien pārtvert: uz vietu starp zagli un viņa bāzi
-  if(cp){const k=Math.min(.6,Math.hypot(cp.x-p.x,cp.z-p.z)/300);tx+=(s.th.home[0]-cp.x)*k;tz+=(s.th.home[1]-cp.z)*k;}}
+  if(cp&&!s.back){const k=Math.min(.6,Math.hypot(cp.x-p.x,cp.z-p.z)/300);tx+=(s.th.home[0]-cp.x)*k;tz+=(s.th.home[1]-cp.z)*k;}
+  else if(cp){const a=(b.nid%8)/8*6.283,r=4+(b.nid%3)*2;tx+=Math.cos(a)*r;tz+=Math.sin(a)*r;near=3;}}
+ // pretinieki nes savu karogu atpakaļ: apturam nesēju
+ else if(s.retake&&(b.wrole==='att'||Math.hypot(s.retake.x-p.x,s.retake.z-p.z)<90)){tx=s.retake.x;tz=s.retake.z;near=1;}
  else if(s.esc){const a=(b.nid%8)/8*6.283,r=4+(b.nid%3)*2;tx=s.esc.x+Math.cos(a)*r;tz=s.esc.z+Math.sin(a)*r;}
  else if(s.grab&&(b.wrole==='att'||Math.hypot(s.th.x-p.x,s.th.z-p.z)<80)){tx=s.th.x;tz=s.th.z;near=1;}
  if(tx===null)return _botThink24(b);
@@ -190,3 +197,10 @@ function fcdTick(){let h='';if(isWar()&&active&&!winner){const mine=FL[MYSIDE],t
  if(h!==fcdLast){fcdLast=h;fcdEl.innerHTML=h;fcdEl.style.display=h?'flex':'none';}}
 const _updateFx24c=updateFx;updateFx=function(dt){_updateFx24c(dt);fcdTick();};
 const _warSetup24c=warSetup;warSetup=function(){_warSetup24c();for(const F of FL)F.cd=null;};
+// ---------- 9. karā ceļš bāzē iekšā vai ārā iet caur vārtiem, nevis taisni pret dzeloņstieplēm ----------
+function baseGates(B){return[[[B.x+B.d*(BR+5),B.z],[B.x+B.d*(BR-5),B.z]],[[B.x,B.z+B.d*(BR+5)],[B.x,B.z+B.d*(BR-5)]]];}
+const _goal24=goal;goal=function(b,x,z,road){const ox=b.gx,oz=b.gz;_goal24(b,x,z,road);if(!isWar()||(b.gx===ox&&b.gz===oz))return;const p=b.g.position;
+ for(const B of WB){const ins=(X,Z)=>Math.abs(X-B.x)<BR+.5&&Math.abs(Z-B.z)<BR+.5,pi=ins(p.x,p.z),ti=ins(x,z);if(pi===ti)continue;
+  const o=pi?[x,z]:[p.x,p.z],G=baseGates(B).sort((a,c)=>Math.hypot(a[0][0]-o[0],a[0][1]-o[1])-Math.hypot(c[0][0]-o[0],c[0][1]-o[1]))[0];
+  if(pi)b.wps=[G[1],G[0],...(road&&Math.hypot(x-G[0][0],z-G[0][1])>25?roadPath({x:G[0][0],z:G[0][1]},x,z):[])];
+  else b.wps=[...(road&&Math.hypot(G[0][0]-p.x,G[0][1]-p.z)>25?roadPath(p,G[0][0],G[0][1]):[]),G[0],G[1]];break;}};
