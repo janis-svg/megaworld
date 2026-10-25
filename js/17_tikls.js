@@ -33,7 +33,11 @@ function netHost(){
  NET.code=code6();NET.role='host';NET.status=t('mp_wait');renderMP();
  peer=new Peer('megaworld-'+NET.code,{debug:0,config:PEERCFG});
  peer.on('open',()=>{NET.status='';renderMP();});
- peer.on('error',e=>{if(e&&e.type==='unavailable-id'){peer.destroy();NET.role=null;netHost();return;}NET.status=t('mp_err')+' ('+((e&&e.type)||e)+')';renderMP();});
+ // ja telefons uz brīdi pazaudē savienojumu ar serveri (piem., pārslēdzoties uz citu lietotni, lai nosūtītu saiti), pieslēdzas atpakaļ ar to pašu kodu
+ peer.on('disconnected',()=>{NET.status=t('mp_recon');renderMP();netRecon();});
+ peer.on('error',e=>{const ty=e&&e.type;if(ty==='unavailable-id'){peer.destroy();NET.role=null;netHost();return;}
+  if(ty==='network'||ty==='server-error'||ty==='socket-error'||ty==='socket-closed'||ty==='disconnected'){NET.status=t('mp_recon');renderMP();netRecon();return;}
+  NET.status=t('mp_err')+' ('+(ty||e)+')';renderMP();});
  peer.on('connection',conn=>{
   if(NET.guests.size>=MAXG){conn.on('open',()=>{conn.send({t:'full'});setTimeout(()=>conn.close(),500);});return;}
   const id=netNextId++,G={id,conn,t0:Date.now(),name:'?',pos:new THREE.Vector3(player.position.x+2,0,player.position.z+2),y:0,yaw:0,hp:100,dead:false,I:newInv(),ready:false,col:PCOL[id%4]};
@@ -42,6 +46,9 @@ function netHost(){
   NET.guests.set(id,G);
  });
 }
+let reconT=null;
+function netRecon(){if(reconT||!peer||peer.destroyed)return;reconT=setTimeout(()=>{reconT=null;if(!peer||peer.destroyed||NET.role!=='host')return;if(peer.disconnected){try{peer.reconnect();}catch(e){}setTimeout(()=>{if(peer&&peer.disconnected)netRecon();},4000);}},1500);}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&NET.role==='host'&&peer&&peer.disconnected)netRecon();});
 function netStop(){
  if(NET.role==='host'){for(const G of [...NET.guests.values()]){netTo(G,{t:'bye'});netDropGuest(G);}}
  if(peer)peer.destroy();peer=null;NET.role=null;renderMP();
@@ -160,16 +167,19 @@ function netJoin(code){
  if(!scene)init();
  NET.role='guest';NET.code=code;$('mperr').textContent=t('mp_connecting');$('start').disabled=true;
  peer=new Peer({debug:0,config:PEERCFG});
- // laiks pievienoties: 45 s (kara pasaule ir smagāka, un caur dažiem tīkliem savienojums veidojas lēnāk); ekrānā redzams, kurā solī esam
- let step='mp_s1';const fail=setTimeout(()=>{if(!active)netFail(t('mp_fail')+' ('+t(step)+')');},45000);
- peer.on('open',()=>{step='mp_s2';$('mperr').textContent=t('mp_s2');
-  hostConn=peer.connect('megaworld-'+code,{reliable:true,serialization:'json'});
-  hostConn.on('open',()=>{step='mp_s3';$('mperr').textContent=t('mp_s3');hostConn.send({t:'hello',name:$('nickname').value,v:MWV});});
-  hostConn.on('error',e=>{$('mperr').textContent=t('mp_fail')+' ('+((e&&e.type)||e)+')';});
-  hostConn.on('data',d=>{if(d&&d.t==='wel')clearTimeout(fail);netGuestMsg(d);});
-  hostConn.on('close',()=>{clearTimeout(fail);netFail(t(active?'mp_hostleft':'mp_fail'));});
- });
- peer.on('error',e=>{clearTimeout(fail);netFail(t('mp_fail')+' ('+((e&&e.type)||e)+')');});
+ // laiks pievienoties: 60 s; ja draugs vēl nav gatavs vai uz brīdi pazaudējis savienojumu, mēģina vēlreiz ik pēc 3 s
+ let step='mp_s1',done=false;const fail=setTimeout(()=>{if(!active)netFail(t('mp_fail')+' ('+t(step)+')');},60000);
+ const tryConn=()=>{if(done||!peer||peer.destroyed)return;step='mp_s2';$('mperr').textContent=t('mp_s2');
+  hostConn=peer.connect('megaworld-'+code,{reliable:true,serialization:'json'});const hc=hostConn;
+  hc.on('open',()=>{step='mp_s3';$('mperr').textContent=t('mp_s3');hc.send({t:'hello',name:$('nickname').value,v:MWV});});
+  hc.on('error',e=>{$('mperr').textContent=t('mp_retry');});
+  hc.on('data',d=>{if(d&&d.t==='wel'){done=true;clearTimeout(fail);}netGuestMsg(d);});
+  hc.on('close',()=>{if(hc!==hostConn)return;clearTimeout(fail);netFail(t(active?'mp_hostleft':'mp_fail'));});};
+ peer.on('open',tryConn);
+ peer.on('disconnected',()=>{if(!done&&peer&&!peer.destroyed)try{peer.reconnect();}catch(e){}});
+ peer.on('error',e=>{const ty=e&&e.type;if(done)return;
+  if(ty==='peer-unavailable'||ty==='network'||ty==='server-error'||ty==='socket-error'){step='mp_s2';$('mperr').textContent=t('mp_retry');setTimeout(()=>{if(peer&&peer.disconnected&&!peer.destroyed)try{peer.reconnect();}catch(err){}else tryConn();},3000);return;}
+  clearTimeout(fail);netFail(t('mp_fail')+' ('+(ty||e)+')');});
 }
 function netFail(msg){
  const was=active;active=false;NET.role=null;try{if(peer)peer.destroy();}catch(e){}peer=null;hostConn=null;

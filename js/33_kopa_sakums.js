@@ -26,3 +26,12 @@ function lobbyStart(){start();
 const _netGuestMsg19=netGuestMsg;netGuestMsg=function(d){if(d&&d.t==='lob'){if(d.s>0){lobG.textContent=tf('lob_wait',{n:d.s});lobG.style.display='block';}else lobG.style.display='none';return;}_netGuestMsg19(d);};
 // karā armijā jau ir 30, tāpēc nozīmīte "Komanda no 5" nepienākas
 const _badge19=badge;badge=function(id){if(isWar()&&id==='team')return;_badge19(id);};
+// 30 s gaidīšana sākas arī tad, ja kopīgo spēli sāk ar 🌐 pogu spēles laikā
+Object.assign(T.lv,{mp_recon:'⏳ Atjauno savienojumu ar serveri...',mp_retry:'Draugs vēl nav sasniedzams, mēģina vēlreiz...'});Object.assign(T.en,{mp_recon:'⏳ Reconnecting to the server...',mp_retry:'Your friend is not reachable yet, trying again...'});
+let lobActive=false;
+const _netHost20=netHost;netHost=function(){const was=NET.role;_netHost20();if(!was&&NET.role==='host'&&!lobActive)lobbyTimer();};
+function lobbyTimer(){lobActive=true;lobEnd=Date.now()+30000;lobEl.style.display='block';$('mp').style.display='none';clearInterval(lobTimer);lobTimer=setInterval(lobbyTick,250);lobbyRender();}
+lobbyBegin=function(){lobActive=true;start();if(!NET.role)netHost();lobbyTimer();};
+const _lobbyStart20=lobbyStart;lobbyStart=function(){lobActive=false;_lobbyStart20();};
+// kamēr nav savienojuma, saites vietā rāda statusu; kad savienojums atjaunojies, saite atkal redzama
+setInterval(()=>{if(lobEl.style.display==='block'&&!(document.activeElement&&document.activeElement.id==='loblink'))lobbyRender();},1000);
