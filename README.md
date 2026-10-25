@@ -6,7 +6,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 
 ## Kā spēlēt
 
-- Diena ilgst apmēram 6 minūtes, nakts (20:00-6:00) apmēram 3,5 minūtes: nakts paiet par 20% ātrāk. Pulkstenis ir augšā.
+- Diena ilgst apmēram 6 minūtes, nakts (20:00-6:00) apmēram 2,3 minūtes: nakts paiet 1,8 reizes ātrāk. Pulkstenis ir augšā.
 - Dienā zombiju nav. Meklē ieročus, lodes, bruņas un klucīšus mājās, atvilknēs un plauktos.
 - Cilvēkus vari aicināt komandā (līdz 9). Vājāki paši atnāk un piedāvā pievienoties.
 - 🤝 Daži cilvēki ir draudzīgi un paši nāk piedāvāt draudzību. 🕊️ Mierīgie nekad neuzbrūk pirmie, bet aizsargājas, ja viņiem šauj.

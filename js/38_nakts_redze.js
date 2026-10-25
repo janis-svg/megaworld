@@ -31,5 +31,5 @@ function nvTick(dt){const want=active&&inv&&inv.nv&&isNight()&&!nvOff;nvb.style.
  if(want!==nvOn){nvOn=want;document.documentElement.classList.toggle('nv',nvOn);if(renderer)renderer.domElement.style.filter=nvOn?'brightness(2.3) contrast(1.15) sepia(1) hue-rotate(55deg) saturate(2.4)':'';if(!nvOn)nvHideAll();drawSky(nvK);}
  if(nvOn&&(nvT-=dt)<=0){nvT=.5;nvMarkAll();}if(nvOn)nvFace();}
 const _updateFx25=updateFx;updateFx=function(dt){_updateFx25(dt);nvTick(dt);};
-// nakts (20:00-6:00) paiet par 20% ātrāk nekā diena
-const _updateTime25=updateTime;updateTime=function(dt){_updateTime25(dt);if(isNight()){hour+=dt*24/600*.2;if(hour>=24)hour-=24;}};
+// nakts (20:00-6:00) paiet 1,8 reizes ātrāk nekā diena
+const _updateTime25=updateTime;updateTime=function(dt){_updateTime25(dt);if(isNight()){hour+=dt*24/600*.8;if(hour>=24)hour-=24;}};
