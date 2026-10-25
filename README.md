@@ -111,7 +111,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - 🤝 Kopīgajā spēlē, ja draugs ir tuvumā un pie viņa nav ienaidnieku, krītot tu atdzimsti blakus draugam, nevis bāzē.
 - Tehnikai ir vairāk detaļu: kāpurķēžu riteņi, maskēšanās plankumi, degvielas mucas, antenas, ložmetējs uz torņa, helikopteriem dzinēji un navigācijas ugunis.
 - 🪂 Ik pa laikam kartē nolaižas gaisa piegāde ar retiem ieročiem.
-- Ko redz kāds no tavas armijas, tas parādās minikartē 3 minūtes: 🔴 karavīri, 🟣 pretinieks uz jumta, 🟠 helikopteri un lidmašīnas, 🟡 tanki.
+- Kara minikarte ir vienkārša: tu esi liela balta bulta ar apli, savējie ir zaļi punkti, draugi lieli zili punkti ar vārda burtu, tava bāze zaļā rāmī, pretinieku bāze sarkanā, karogi zaļš un sarkans (mirgo, ja nozagts). Pretinieki parādās sarkani tikai tad, ja kāds no tavas armijas tos redzējis (izbalē 3 minūtēs): punkts ir karavīrs, kvadrāts tehnika, trīsstūris helikopters vai lidmašīna.
 - Augstajām mājām ir trepes (🤚): var uzkāpt uz plakanā jumta un šaut. Karā uz jumta ir Javelin komplekts ar 3 raķetēm (atkal katru rītu).
 - Ja pretinieks pamana kādu uz jumta, viņa helikopteri un lidmašīnas lido to iznīcināt. Ja boti redz ienaidnieka helikopteri, tie, kam ir Javelin, iet to notriekt.
 - 🎯 Javelin: kamēr to tur rokās, stāvi uz vietas. Turi tehniku rāmī 3 s, līdz rāmis kļūst sarkans 🔒, tad šauj ⚔️. Pārlāde 5 s.
@@ -203,7 +203,7 @@ Pievieno saitei `?debug`, un pārlūka konsolē būs komandas, piemēram `MW.set
 
 ## 🥽 Nakts redzamības brilles
 
-- Tās var atrast mežā, kara kastēs vai nopirkt veikalā.
+- Tās mētājas pa visu karti kā spīdoši zaļi artefakti (vienmēr ap 6, paņemtās parādās no jauna citā vietā). Tās var atrast arī mežā, kara kastēs vai nopirkt veikalā. Boti tās neņem.
 - Naktī tās ieslēdzas pašas: viss kļūst zaļš un gaišāks, bet cilvēki, briesmoņi un tehnika spīd kā infrasarkanajā kamerā.
 - Ja nepatīk, izslēdz ar 🥽 pogu vai taustiņu N.
 
