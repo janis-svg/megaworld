@@ -129,7 +129,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 
 - 🎨 poga (telefonā zem ⚙️) maina kvalitāti: Zema / Vidēja / Augsta. Ja telefons bremzē, izvēlies Zemu.
 
-## Spēlēt kopā (līdz 4 spēlētājiem)
+## Spēlēt kopā (līdz 5 spēlētājiem)
 
 1. Viens atver spēli un spiež **🌐 Spēlēt kopā ar draugiem**. Parādās saite un 60 sekunžu atskaite (var pielikt +30 s vai sākt uzreiz). Kad laiks beidzas, spēle sākas visiem vienlaikus no viena punkta. (Var arī spēles laikā spiest 🌐 un "Sākt kopīgo spēli".) Karā gaidīšanas laikā karš vēl nesākas: boti stāv, tehnikā kāpt nevar, lidmašīnas un helikopteri nepaceļas.
 2. Parādās saite. To nosūta draugiem (📋 Kopēt vai 📤 Sūtīt).

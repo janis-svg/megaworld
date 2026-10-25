@@ -1,7 +1,7 @@
-// 17_tikls.js - Kopīgā spēle (multiplayer) līdz 4 spēlētājiem.
+// 17_tikls.js - Kopīgā spēle (multiplayer) līdz 5 spēlētājiem.
 // Saimnieks (kurš uzaicina) skaita visu pasauli; viesi sūta savu kustību un darbības, un saņem stāvokli 10x sekundē.
 // Savienojums caur PeerJS (bezmaksas starpnieks, lai pārlūki atrastu viens otru).
-const KIND=['z','w','zw','s','c','f'],MAXG=3,PCOL=[0x3a7ab8,0x27ae60,0xe67e22,0x8e44ad];
+const KIND=['z','w','zw','s','c','f'],MAXG=4,PCOL=[0x3a7ab8,0x27ae60,0xe67e22,0x8e44ad,0xf1c40f];
 const r2=v=>Math.round(v*100)/100;
 // savienojuma serveri: vairāki STUN (Google, Cloudflare), lai draugi atrastu viens otru arī caur dažādiem tīkliem
 const PEERCFG={iceServers:[{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302','stun:stun2.l.google.com:19302']},{urls:'stun:stun.cloudflare.com:3478'},{urls:['turn:eu-0.turn.peerjs.com:3478','turn:us-0.turn.peerjs.com:3478'],username:'peerjs',credential:'peerjsp'}]};
@@ -39,8 +39,11 @@ function netHost(){
   if(ty==='network'||ty==='server-error'||ty==='socket-error'||ty==='socket-closed'||ty==='disconnected'){NET.status=t('mp_recon');renderMP();netRecon();return;}
   NET.status=t('mp_err')+' ('+(ty||e)+')';renderMP();});
  peer.on('connection',conn=>{
-  if(NET.guests.size>=MAXG){conn.on('open',()=>{conn.send({t:'full'});setTimeout(()=>conn.close(),500);});return;}
-  const id=netNextId++,G={id,conn,t0:Date.now(),name:'?',pos:new THREE.Vector3(player.position.x+2,0,player.position.z+2),y:0,yaw:0,hp:100,dead:false,I:newInv(),ready:false,col:PCOL[id%4]};
+  // tā paša drauga atkārtots mēģinājums un vecie neizdevušies mēģinājumi vietu neaizņem
+  for(const O of [...NET.guests.values()])if(!O.ready&&(O.conn.peer===conn.peer||Date.now()-O.t0>20000)){try{O.conn.close();}catch(e){}NET.guests.delete(O.id);}
+  const others=new Set([...NET.guests.values()].map(O=>O.conn.peer));others.delete(conn.peer);
+  if(others.size>=MAXG){conn.on('open',()=>{conn.send({t:'full'});setTimeout(()=>conn.close(),500);});return;}
+  const id=netNextId++,G={id,conn,t0:Date.now(),name:'?',pos:new THREE.Vector3(player.position.x+2,0,player.position.z+2),y:0,yaw:0,hp:100,dead:false,I:newInv(),ready:false,col:PCOL[id%5]};
   conn.on('data',d=>netHostMsg(G,d));
   conn.on('close',()=>netDropGuest(G));
   NET.guests.set(id,G);
@@ -61,7 +64,7 @@ function netDropGuest(G){
 function sayAll(s,d){say(s,d);if(NET.role==='host')netQ.push({e:'msg',s,d});}
 function netHostMsg(G,d){
  if(!d||!d.t)return;
- if(d.t==='hello'){G.name=String(d.name||'Draugs').slice(0,16);G.mesh=avatarMesh(G.col);G.lab=mkLabel('★ '+G.name,G.col);G.bar=mkBar(.9,0x2ecc71);G.ready=true;netWelcome(G);sayAll(tf('mp_joined',{n:G.name}));renderMP();return;}
+ if(d.t==='hello'){for(const O of [...NET.guests.values()])if(O!==G&&O.conn.peer===G.conn.peer)netDropGuest(O);G.name=String(d.name||'Draugs').slice(0,16);G.mesh=avatarMesh(G.col);G.lab=mkLabel('★ '+G.name,G.col);G.bar=mkBar(.9,0x2ecc71);G.ready=true;netWelcome(G);sayAll(tf('mp_joined',{n:G.name}));renderMP();return;}
  if(!G.ready)return;
  if(d.t==='p'){if(G.dead)return;G.pos.set(+d.x||0,0,+d.z||0);clampW(G.pos);G.y=+d.y||0;G.yaw=+d.a||0;G.mv=d.m;return;}
  if(d.t==='fire')return guestFire(G,d);

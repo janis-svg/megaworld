@@ -9,7 +9,7 @@ let lobEnd=0,lobTimer=null;
 function lobbyBegin(){start();if(!NET.role)netHost();lobEnd=Date.now()+60000;lobEl.style.display='block';clearInterval(lobTimer);lobTimer=setInterval(lobbyTick,250);lobbyRender();}
 function lobbyRender(){const left=Math.max(0,Math.ceil((lobEnd-Date.now())/1000)),ready=[...NET.guests.values()].filter(G=>G.ready);
  lobEl.innerHTML='<b>'+t('lob_title')+'</b><div class="lbig">⏳ '+left+'</div>'+(NET.status?'<p>'+NET.status+'</p>':'<small>'+t('lob_send')+'</small><input id="loblink" readonly value="'+joinLink()+'"><div><button class="corner" data-a="copy">'+t('mp_copy')+'</button>'+(navigator.share?'<button class="corner" data-a="share">'+t('mp_share')+'</button>':'')+'</div>')+
-  '<div class="lppl"><b>'+t('lob_in')+' ('+(1+ready.length)+'/4)</b><br>★ '+$('nickname').value+ready.map(G=>'<br>★ '+G.name).join('')+'</div><div><button class="corner" data-a="go">'+t('lob_go')+'</button><button class="corner" data-a="more">'+t('lob_more')+'</button></div>';
+  '<div class="lppl"><b>'+t('lob_in')+' ('+(1+ready.length)+'/'+(MAXG+1)+')</b><br>★ '+$('nickname').value+ready.map(G=>'<br>★ '+G.name).join('')+'</div><div><button class="corner" data-a="go">'+t('lob_go')+'</button><button class="corner" data-a="more">'+t('lob_more')+'</button></div>';
  lobEl.querySelectorAll('button').forEach(b=>b.onpointerdown=e=>{e.stopPropagation();e.preventDefault();const a=b.dataset.a;
   if(a==='copy'){const i=$('loblink');i.select();try{navigator.clipboard.writeText(i.value);}catch(err){document.execCommand('copy');}say(t('mp_copied'),2);}
   else if(a==='share')navigator.share({title:'MegaWorld',text:t('mp_sharetext'),url:joinLink()}).catch(()=>{});
@@ -39,9 +39,9 @@ setInterval(()=>{if(lobEl.style.display==='block'&&!(document.activeElement&&doc
 Object.assign(T.lv,{lob_nowar:'⏳ Karš vēl nav sācies: tehnikā varēs kāpt pēc {n} s'});Object.assign(T.en,{lob_nowar:'⏳ The war has not started yet: vehicles are available in {n} s'});
 const warWait=()=>isWar()&&lobActive&&NET.role==='host';
 const lobLeft=()=>Math.max(0,Math.ceil((lobEnd-Date.now())/1000));
-const _updateBots22=updateBots;updateBots=function(dt){if(warWait())return;_updateBots22(dt);};
-const _warTick22=warTick;warTick=function(dt){if(warWait())return;_warTick22(dt);};
-const _updateFx22=updateFx;updateFx=function(dt){if(warWait()){botJetT=botHeliT=5;}_updateFx22(dt);};
+const _updateBots33w=updateBots;updateBots=function(dt){if(warWait())return;_updateBots33w(dt);};
+const _warTick33w=warTick;warTick=function(dt){if(warWait())return;_warTick33w(dt);};
+const _updateFx33w=updateFx;updateFx=function(dt){if(warWait()){botJetT=botHeliT=5;}_updateFx33w(dt);};
 for(const fn of ['enterTank','enterJet','enterHeli']){const o=window[fn];window[fn]=function(...a){if(warWait()){say(tf('lob_nowar',{n:lobLeft()}),2);return;}return o.apply(this,a);};}
-const _guestAct22=guestAct;guestAct=function(G){if(warWait()&&!G.dead&&(tanks.some(t=>!t.dead&&Math.hypot(t.g.position.x-G.pos.x,t.g.position.z-G.pos.z)<4.5))){netTo(G,{t:'msg',s:tf('lob_nowar',{n:lobLeft()}),d:2});return;}_guestAct22(G);};
-const _netHostMsg22=netHostMsg;netHostMsg=function(G,d){if(d&&warWait()&&(d.t==='jet'||d.t==='heli')){netTo(G,{t:'msg',s:tf('lob_nowar',{n:lobLeft()}),d:2});return;}_netHostMsg22(G,d);};
+const _guestAct33w=guestAct;guestAct=function(G){if(warWait()&&!G.dead&&(tanks.some(t=>!t.dead&&Math.hypot(t.g.position.x-G.pos.x,t.g.position.z-G.pos.z)<4.5))){netTo(G,{t:'msg',s:tf('lob_nowar',{n:lobLeft()}),d:2});return;}_guestAct33w(G);};
+const _netHostMsg33w=netHostMsg;netHostMsg=function(G,d){if(d&&warWait()&&(d.t==='jet'||d.t==='heli')){netTo(G,{t:'msg',s:tf('lob_nowar',{n:lobLeft()}),d:2});return;}_netHostMsg33w(G,d);};
