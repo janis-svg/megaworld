@@ -98,6 +98,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - Raķete sagrauj novērošanas torni, un tas vairs neatjaunojas.
 - Iznīcinātā tehnika pēc ~15 sekundēm atkal ir bāzē.
 - 🪂 Ik pa laikam kartē nolaižas gaisa piegāde ar retiem ieročiem.
+- Karā nav tirgotāju un monētu. Caur pilsētas vidu iet frontes līnija ar zigzaga tranšejām (uzbērumi aizsedz no lodēm, pāri var pārlēkt). Daļa māju ir nopostītas, uz ielām ir sprādzienu krāteri.
 
 ## Vēl jaunas lietas (abos režīmos)
 
@@ -153,6 +154,7 @@ Pasauli skaita tā cilvēka ierīce, kurš uzaicināja. Ja viņš aizver lapu, s
 | `js/28_helikopteri.js` | Helikopteri, ložmetējs, degviela, Javelin |
 | `js/29_kars.js` | Režīms "Karš", bruņmašīna, helikoptera raķetes, kaujas bruņas, atpazīstamas ēkas |
 | `js/30_kara_taktika.js` | Armijas izvēle, botu vienības un plāni, zvaigznes un pakāpes, snaipers, torņu sagraušana, gaisa piegādes |
+| `js/31_kara_vide.js` | Kara vide: bez tirgotājiem, tranšejas, nopostītas mājas, krāteri |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 

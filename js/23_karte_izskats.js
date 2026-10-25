@@ -22,7 +22,7 @@ function drawMap(){
  g.strokeStyle='#2b2e30';g.lineWidth=Math.max(1.5,8*sc);g.beginPath();for(let k=-4;k<4;k++){const r=k*40+20;g.moveTo(X(r),Y(-CITY));g.lineTo(X(r),Y(CITY));g.moveTo(X(-CITY),Y(r));g.lineTo(X(CITY),Y(r));}g.stroke();
  g.textAlign='center';g.textBaseline='middle';
  for(const H of HOUSES){const mine=H.on==='★'&&!H.free;if(mine)continue;g.fillStyle=H.free||H.col==null?'#e8e8e8':hex(H.col);const s=Math.max(3,6*sc);g.fillRect(X(H.x)-s/2,Y(H.z)-s/2,s,s);}
- for(const d of TRADER_DEF)emo('🛒',d[1],d[2]);
+ if(!(typeof isWar==='function'&&isWar()))for(const d of TRADER_DEF)emo('🛒',d[1],d[2]);
  if(typeof TRAVEL!=='undefined'&&TRAVEL.on)emo('🐪',TRAVEL.x,TRAVEL.z,.09);
  const tk=NET.role==='guest'?[...netTk.values()].filter(o=>!o.dead).map(o=>o.g.position):tanks.filter(x=>!x.dead).map(x=>x.g.position);for(const p of tk)emo('🚜',p.x,p.z,.06);
  const myH=HOUSES.find(H=>H.on==='★'&&!H.free);if(myH)emo('🏠',myH.x,myH.z,.1);
