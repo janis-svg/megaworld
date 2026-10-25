@@ -173,3 +173,12 @@ html.nv #nvov{display:block}
 #nvb.on{background:rgba(76,175,80,.55);border-color:#76ff03}
 html.touch #nvb{right:auto;left:16px;bottom:350px}
 @media (max-height:520px){html.touch #nvb{left:auto;right:16px;bottom:auto;top:120px}}
+/* nozagta karoga atskaite */
+#flagcd{position:fixed;top:212px;left:50%;transform:translateX(-50%);z-index:10;display:none;gap:10px;pointer-events:none}
+#flagcd>div{padding:6px 14px;border-radius:12px;font-size:26px;font-weight:800;text-align:center;color:#fff;text-shadow:0 1px 4px #000;background:rgba(20,24,32,.72);border:2px solid}
+#flagcd small{display:block;font-size:12px;font-weight:600}
+#flagcd .bad{border-color:#ff5252;animation:fcdp 1s infinite}
+#flagcd .good{border-color:#69f0ae}
+@keyframes fcdp{50%{background:rgba(120,20,20,.75)}}
+@media (max-width:600px){#flagcd>div{font-size:20px}}
+@media (max-height:520px){#flagcd{top:auto;bottom:118px}#flagcd>div{font-size:18px;padding:3px 10px}}

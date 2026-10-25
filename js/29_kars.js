@@ -234,11 +234,11 @@ function warTick(dt){
  // bota helikopteris ar raķetēm šauj uz ienaidnieku tehniku
  for(const H of HELIS)if(H.st==='fly'&&H.pilot&&H.pilot.g&&H.rk>0){H.rkT=(H.rkT||0)-dt;if(H.rkT<=0){H.rkT=2;const tp=heliRocketTarget(H,H.pilot.team);if(tp.y>0)heliRocket(H,H.pilot.team,false,tp);}}
  if(NET.role==='host'&&NET.guests.size){warNetT-=dt;if(warNetT<=0){warNetT=.4;const cid=c=>c==='P'?0:c&&c.pos?c.id:c?-1:-2;
-  const msg={t:'wf',F:FL.map(F=>[r2(F.x),r2(F.z),cid(F.carrier),F.held?1:0,Math.round(F.holdH)]),n:ARMY.map(T=>T.members.length),A:tanks.map(t=>t.ammo||0)};for(const G of NET.guests.values())if(G.ready)netTo(G,msg);}}}
+  const msg={t:'wf',F:FL.map(F=>[r2(F.x),r2(F.z),cid(F.carrier),F.held?1:0,Math.round(F.holdH),F.cd==null?-1:Math.ceil(F.cd)]),n:ARMY.map(T=>T.members.length),A:tanks.map(t=>t.ammo||0)};for(const G of NET.guests.values())if(G.ready)netTo(G,msg);}}}
 // ---------- informācija uz ekrāna ----------
 const wbar=document.createElement('div');wbar.id='warbar';wbar.className='panel';document.body.appendChild(wbar);
 function warHud(){if(!isWar()||!active){wbar.style.display='none';return;}wbar.style.display='block';const F0=FL[MYSIDE],F1=FL[1-MYSIDE];let s=t('w_fl_home');
- if(F0&&(F0.carrier||F0.cid>-2))s=t('w_fl_my');if(F0&&F0.held)s=tf('w_fl_lost',{n:Math.max(0,48-Math.round(F0.holdH))});if(F1&&F1.held)s=tf('w_fl_their',{n:Math.max(0,48-Math.round(F1.holdH))});
+ if(F0&&(F0.carrier||F0.cid>-2||F0.cd!=null))s=t('w_fl_my');if(F0&&F0.held)s=tf('w_fl_lost',{n:Math.max(0,48-Math.round(F0.holdH))});if(F1&&F1.held)s=tf('w_fl_their',{n:Math.max(0,48-Math.round(F1.holdH))});
  const n=NET.role==='guest'?(warN||[0,0]):[ARMY[0]?ARMY[0].members.length:0,ARMY[1]?ARMY[1].members.length:0];wbar.textContent='🔴 '+n[0]+' · 🟢 '+n[1]+' · '+s;}
 let warN=null,hudT=0;
 const _updateFx13=updateFx;updateFx=function(dt){_updateFx13(dt);const host=NET.role!=='guest'&&(active||NET.guests.size);if(isWar()&&host)warTick(dt);
@@ -257,7 +257,7 @@ let TKK=[];
 const _netWelcome13=netWelcome;netWelcome=function(G){netTo(G,{t:'mode',m:MODE});_netWelcome13(G);netTo(G,{t:'tkk',L:tanks.map(t=>t.kind||'tank')});if(winner)netTo(G,{t:'win',w:winner});};
 const _netGuestMsg13=netGuestMsg;netGuestMsg=function(d){
  if(d&&d.t==='mode'){MODE=d.m==='war'?'war':'surv';if(isWar()){if(!WG.length)buildBases();if(!FL.length)FL=WB.map((B,i)=>({col:i?0x2e7d32:0xd32f2f,home:[B.x,B.z],x:B.x,z:B.z,cid:-2,holdH:0}));}else warTeardown();return;}
- if(d&&d.t==='wf'){d.F.forEach((f,i)=>{const F=FL[i];if(!F)return;F.x=f[0];F.z=f[1];F.cid=f[2];F.held=f[3]?1:null;F.holdH=f[4];if(F.cid===NET.myId){F.x=player.position.x;F.z=player.position.z;}});warN=d.n;if(d.A)d.A.forEach((a,i)=>{if(tanks[i])tanks[i].ammo=a;});return;}
+ if(d&&d.t==='wf'){d.F.forEach((f,i)=>{const F=FL[i];if(!F)return;F.x=f[0];F.z=f[1];F.cid=f[2];F.held=f[3]?1:null;F.holdH=f[4];F.cd=f[5]>=0?f[5]:null;if(F.cid===NET.myId){F.x=player.position.x;F.z=player.position.z;}});warN=d.n;if(d.A)d.A.forEach((a,i)=>{if(tanks[i])tanks[i].ammo=a;});return;}
  if(d&&d.t==='tkk'){TKK=d.L;return;}
  if(d&&d.t==='win'){winner=d.w;showWin(d.w);return;}
  _netGuestMsg13(d);if(d&&d.t==='wel'&&isWar())for(const o of WOB){remOb(o);addOb(o);}};

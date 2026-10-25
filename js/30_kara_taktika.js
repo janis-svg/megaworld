@@ -146,8 +146,8 @@ const _drawMap15=drawMap;drawMap=function(){_drawMap15();if(!isWar())return;cons
  if(Math.floor(clock.elapsedTime*2)%2)return;g.font=Math.round(W*.08)+'px serif';const L=NET.role==='guest'?[...netDr.values()].filter(o=>o.g.children.length>2).map(o=>o.g.position):drops.filter(d=>d.chute||String(d.kind).match(/^w:(snip|harmor|jav)$/)).map(d=>d.m.position);
  for(const p of L)g.fillText('🪂',W/2+(p.x-cx)*sc,W/2+(p.z-cz)*sc);};
 // ---------- karā: tikai 2 mērķi (nevis uzdevumi), nav dzīvnieku, kritušais pretinieks atstāj ieroci vai lodes ----------
-Object.assign(T.lv,{goals:'Mērķi',g_kill:'🎯 Iznīcini visus pretiniekus ({n} palikuši)',g_flag:'🚩 Nozodz pretinieku karogu un noturi savā bāzē 2 diennaktis',g_hold:'🚩 Karogs pie mums: vēl {n} h',noanim:'Karā dzīvnieku nav'});
-Object.assign(T.en,{goals:'Goals',g_kill:'🎯 Destroy all enemies ({n} left)',g_flag:'🚩 Steal the enemy flag and hold it at your base for 2 days',g_hold:'🚩 Flag is with us: {n} h left',noanim:'There are no animals in war'});
+Object.assign(T.lv,{goals:'Mērķi',g_kill:'🎯 Iznīcini visus pretiniekus ({n} palikuši)',g_flag:'🚩 Nozodz pretinieku karogu: ja 5 minūtēs viņi to neatgūst, tu uzvari',g_hold:'🚩 Karogs pie mums: vēl {n} h',noanim:'Karā dzīvnieku nav'});
+Object.assign(T.en,{goals:'Goals',g_kill:'🎯 Destroy all enemies ({n} left)',g_flag:'🚩 Steal the enemy flag: if they do not get it back in 5 minutes, you win',g_hold:'🚩 Flag is with us: {n} h left',noanim:'There are no animals in war'});
 const _newQuests16=newQuests;newQuests=function(){if(isWar()){QS.q=[];qDirty=true;return;}_newQuests16();};
 const _renderQuests16=renderQuests;renderQuests=function(){if(!isWar())return _renderQuests16();const E=ARMY.length===2?ARMY[1-MYSIDE]:null,n=NET.role==='guest'?((warN||[0,0])[1-MYSIDE]):(E?E.members.length:0),F=FL[1-MYSIDE];
  qEl.innerHTML='<b>⚔️ '+t('goals')+'</b><div class="ql">'+tf('g_kill',{n})+'</div><div class="ql">'+(F&&F.held?tf('g_hold',{n:Math.max(0,48-Math.round(F.holdH))}):t('g_flag'))+'</div>';qEl.style.display=active?'block':'none';};

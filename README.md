@@ -84,7 +84,7 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - Bāzes ieskauj dzeloņstiepļu žogs ar vārtiem uz kartes centra pusi. Stūros ir 4 novērošanas torņi: pie kāpnēm spied 🤚, lai uzkāptu. No augšas redz tālāk, minikartē parādās ienaidnieki, un var šaut lejā.
 - Katrā bāzē ir 4 lidmašīnas, 2 helikopteri (Plēsoņa un Haizivs), 2 tanki, 2 bruņmašīnas un noliktava 🎖️ (spied 🤚: ieroči, lodes, Javelin, bruņas; atkal pēc 45 s).
 - Briesmoņu nav. Pa visu karti parādās kastes 📦 ar ieročiem, lodēm, degvielu un bruņām.
-- Uzvara: iznīcini visus zaļos vai nozodz viņu karogu (minikartē tas mirgo), aiznes uz savu bāzi un noturi 2 diennaktis. Ja karogu nes kāds, kurš krīt, karogs paliek zemē; ja savējais to aizskar, tas atgriežas bāzē.
+- Uzvara: iznīcini visus pretiniekus vai nozodz viņu karogu (minikartē tas mirgo). Kad karogs nozagts, ekrānā sākas ⏱️ 5 minūšu atskaite: ja pretinieki šajā laikā karogu neatgūst (neaizskar to ārpus savas bāzes), uzvar zagļi. Ja karogu nes kāds, kurš krīt, karogs paliek zemē; ja savējais to aizskar, tas atgriežas bāzē un atskaite apstājas. Atlikušās minūtes un 10 sekundes paziņo 📻 radio.
 - Boti uzbrūk, sargā karogu, medī, brauc ar tankiem un bruņmašīnām, lido ar lidmašīnām un helikopteriem.
 - Boti neatjaunojas.
 

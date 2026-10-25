@@ -33,5 +33,5 @@ function respTick(){for(let i=RESP.length-1;i>=0;i--){const r=RESP[i];if(gtime<r
   const S=SQ.find(q=>q.team===r.team&&q.role==='def');if(S){b.sq=S;b.wrole='def';S.mem.push(b);b.fo=[((S.mem.length%3)-1)*3,-Math.floor(S.mem.length/3)*3];}else makeSquad(r.team,[b],'def');
   explosionFx(b.g.position.x,1,b.g.position.z,1,0x81c784);}}
 // uzvara par visu pretinieku iznīcināšanu tikai tad, ja neviens vairs negaida atdzimšanu
-const _warWin23=warWin;warWin=function(T){const L=ARMY[0]===T?ARMY[1]:ARMY[0],byFlag=FL.some(F=>F.held===T&&F.holdH>=48);if(!byFlag&&RESP.some(r=>r.team===L))return;_warWin23(T);};
+const _warWin23=warWin;warWin=function(T){const L=ARMY[0]===T?ARMY[1]:ARMY[0],byFlag=FL.some(F=>(F.held===T&&F.holdH>=48)||(F.team!==T&&F.cd!=null&&F.cd<=0));if(!byFlag&&RESP.some(r=>r.team===L))return;_warWin23(T);};
 const _updateFx23b=updateFx;updateFx=function(dt){_updateFx23b(dt);if(isWar()&&NET.role!=='guest')respTick();};

@@ -174,3 +174,19 @@ const _updateFx24=updateFx;updateFx=function(dt){_updateFx24(dt);if(MOLO.length)
  if(isWar()&&NET.role!=='guest'){if((flagThinkT-=dt)<=0){flagThinkT=.5;flagRadio();flagVehTick();}akTick(dt);}friendRespTick();};
 // lidojot karogs ir redzams pie zagļa, nevis uz zemes
 const _flagDraw24=flagDraw;flagDraw=function(){_flagDraw24();if(NET.role==='guest')return;for(const F of FL)if(F.carrier&&F.g){const y=carrierAlt(F.carrier);if(y>2)F.g.position.y=y+1;}};
+// ---------- 8. nozagts karogs: 5 minūšu atskaite, kurā tas jāatgūst ----------
+Object.assign(T.lv,{fcd_my:'🚩 Mūsu karogs nozagts! Atgūsti to',fcd_their:'🚩 Pretinieku karogs ir mūsu rokās! Noturi to',fcd_1m:'📻 Atlikusi 1 minūte, lai atgūtu karogu!',fcd_10:'📻 10 sekundes!'});
+Object.assign(T.en,{fcd_my:'🚩 Our flag is stolen! Get it back',fcd_their:'🚩 We have the enemy flag! Hold it',fcd_1m:'📻 1 minute left to get the flag back!',fcd_10:'📻 10 seconds!'});
+const FCD=300;
+const _flagTick24=flagTick;flagTick=function(dt){_flagTick24(dt);for(const F of FL){const away=!!F.carrier||Math.hypot(F.x-F.home[0],F.z-F.home[1])>2;
+  if(!away){F.cd=null;continue;}const o=F.cd;if(F.cd==null)F.cd=FCD;F.cd-=dt;
+  if(o>60&&F.cd<=60)radio(F.team,'fcd_1m');if(o>10&&F.cd<=10)radio(F.team,'fcd_10');
+  if(F.cd<=0&&!winner)warWin(F.team===ARMY[0]?ARMY[1]:ARMY[0]);}};
+const fcdEl=document.createElement('div');fcdEl.id='flagcd';document.body.appendChild(fcdEl);
+let fcdLast='';
+function fcdTick(){let h='';if(isWar()&&active&&!winner){const mine=FL[MYSIDE],their=FL[1-MYSIDE],f=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+  if(mine&&mine.cd!=null)h='<div class="bad"><small>'+t('fcd_my')+'</small>⏱️ '+f(Math.max(0,mine.cd))+'</div>';
+  if(their&&their.cd!=null)h+='<div class="good"><small>'+t('fcd_their')+'</small>⏱️ '+f(Math.max(0,their.cd))+'</div>';}
+ if(h!==fcdLast){fcdLast=h;fcdEl.innerHTML=h;fcdEl.style.display=h?'flex':'none';}}
+const _updateFx24c=updateFx;updateFx=function(dt){_updateFx24c(dt);fcdTick();};
+const _warSetup24c=warSetup;warSetup=function(){_warSetup24c();for(const F of FL)F.cd=null;};
