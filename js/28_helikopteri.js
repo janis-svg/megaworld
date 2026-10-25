@@ -47,10 +47,10 @@ function javTick(dt){for(let i=JV.length-1;i>=0;i--){const j=JV[i];j.t+=dt;j.lif
 const _shoot11=shoot;shoot=function(w){if(w!=='jav')return _shoot11(w);attackWait=WP.jav.rate;inv.ammo.jav--;javelinFire(player.position.x,pY+1.5,player.position.z,yaw,PT,true);updateAmmo();renderInv();renderW();};
 const _guestFire11=guestFire;guestFire=function(G,d){if(d.w!=='jav')return _guestFire11(G,d);if(G.dead||!G.I.has.jav||!(G.I.ammo.jav>0))return;G.I.ammo.jav--;javelinFire(G.pos.x,G.y+1.5,G.pos.z,+d.a||0,PT,true);netMe(G);};
 // prettanku raķete un tanka šāviņš arī iznīcina tehniku
-const _rocketBoom11=rocketBoom;rocketBoom=function(p,team,pl){_rocketBoom11(p,team,pl);for(const t of tanks)if(Math.hypot(t.g.position.x-p.x,t.g.position.z-p.z)<3.5)destroyTank(t,team);
+const _rocketBoom11=rocketBoom;rocketBoom=function(p,team,pl){_rocketBoom11(p,team,pl);for(const t of tanks)if(Math.hypot(t.g.position.x-p.x,t.g.position.z-p.z)<3.5)destroyTank(t,team,1);
  for(const H of HELIS)if(H.st!=='gone'&&H.y<5&&Math.hypot(H.x-p.x,H.z-p.z)<4)destroyHeli(H,team);};
 const _tankBoom11=tankBoom;tankBoom=function(p){_tankBoom11(p);for(const H of HELIS)if(H.st!=='gone'&&H.y<6&&Math.hypot(H.x-p.x,H.z-p.z)<5)destroyHeli(H,PT);};
-const _jetBoom11=jetBoom;jetBoom=function(x,z,team,pl,power,rad){_jetBoom11(x,z,team,pl,power,rad);for(const H of HELIS)if(H.st!=='gone'&&H.y<15&&Math.hypot(H.x-x,H.z-z)<7*(rad||1)&&heliTeam(H)!==team)destroyHeli(H,team);};
+const _jetBoom11=jetBoom;jetBoom=function(x,z,team,pl,power,rad,th){_jetBoom11(x,z,team,pl,power,rad,th);for(const H of HELIS)if(H.st!=='gone'&&H.y<15&&Math.hypot(H.x-x,H.z-z)<7*(rad||1)&&heliTeam(H)!==team)destroyHeli(H,team);};
 // lidmašīnas raķete tēmē arī uz helikopteriem; trāpot helikopteris uzreiz iet bojā
 const _jetDamage11=jetDamage;jetDamage=function(J,d,team,pl){if(J.isHeli){destroyHeli(J,team);return;}_jetDamage11(J,d,team,pl);};
 const _jetAirLocal11=jetAirLocal;jetAirLocal=function(J){const r=_jetAirLocal11(J);if(r||!J.m.aa||NET.role==='guest')return r;const fx=-Math.sin(J.a),fz=-Math.cos(J.a);let best=null,bs=1e9;

@@ -128,7 +128,9 @@ function genChunk(cx,cz){
   const qx=ox+(q&1?24:0)+8,qz=oz+(q&2?24:0)+8,r=R();
   if(ns(qx,qz))continue;
   const H=typeof houseAtQ==='function'&&houseAtQ(qx,qz);
-  if(H)bld(ch,'house',()=>makeHouse(ch,H,R,key)); // privātmāja pilsētas malā pie meža (21_privatmajas.js)
+  const LMq=typeof landmarkAtQ==='function'&&landmarkAtQ(qx,qz); // atpazīstama ēka (29_kars.js)
+  if(LMq)bld(ch,'lm',()=>makeLandmark(ch,LMq,R,key));
+  else if(H)bld(ch,'house',()=>makeHouse(ch,H,R,key)); // privātmāja pilsētas malā pie meža (21_privatmajas.js)
   else if(r<.1)bld(ch,'hut',()=>makeHut(ch,qx,qz,R,false,key));
   else if(r<.4)bld(ch,'tall',()=>makeTower(ch,qx,qz,R,false));
   else if(r<.6)bld(ch,'low',()=>makeTower(ch,qx,qz,R,true));

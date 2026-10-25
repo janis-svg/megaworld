@@ -270,7 +270,7 @@ const _netHostMsg=netHostMsg;netHostMsg=function(G,d){
  _netHostMsg(G,d);
 };
 const _netHostFrame=netHostFrame;netHostFrame=function(dt){
- for(const G of NET.guests.values())if(G.ready&&!G.dead&&G.y<1.5)for(const d of [...drops])if(d.kind&&Math.hypot(d.x-G.pos.x,d.z-G.pos.z)<1.5){const c0=PT.coins||0;takeDrop(d,{I:G.I,team:PT,pos:G.pos,hp:G.hp});if(d.kind==='apple')G.hp=Math.min(100,G.hp+15);netTo(G,{t:'msg',s:d.kind==='coin'?'+'+((PT.coins||0)-c0)+' 🪙':'🍎 +15',d:1.2});netMe(G);}
+ for(const G of NET.guests.values())if(G.ready&&!G.dead&&G.y<1.5)for(const d of [...drops])if(d.kind&&Math.hypot(d.x-G.pos.x,d.z-G.pos.z)<1.5){const c0=PT.coins||0;takeDrop(d,{I:G.I,team:PT,pos:G.pos,hp:G.hp});if(d.kind==='apple')G.hp=Math.min(100,G.hp+15);netTo(G,{t:'msg',s:d.kind==='coin'?'+'+((PT.coins||0)-c0)+' 🪙':String(d.kind).startsWith('w:')?'📦':'🍎 +15',d:1.2});netMe(G);}
  _netHostFrame(dt);
 };
 const _netWelcome=netWelcome;netWelcome=function(G){_netWelcome(G);netTo(G,{t:'pl',P:plants.map(p=>[p.id,p.k,r2(p.x),r2(p.z),r2(p.born)]),DH:doghouses.map(d=>[d.x,d.z])});};
@@ -280,7 +280,7 @@ const _netGuestMsg=netGuestMsg;netGuestMsg=function(d){
  if(d&&d.t==='pe'){PT.coins=d.co;if(d.pr)Object.assign(prices,d.pr);
   for(const [id,k,x,z,ry] of d.E){let o=netPets.get(id);if(!o){o={g:petMesh(PETK[k]||'dog')};o.g.position.set(x,0,z);netPets.set(id,o);}o.tx=x;o.tz=z;o.ry=ry;o.seen=gtime;}
   for(const [id,x,z,ki] of d.C){let o=netCk.get(id);if(!o){o={g:liveMesh(LIVEK[ki||0])};o.g.position.set(x,0,z);netCk.set(id,o);}o.tx=x;o.tz=z;o.seen=gtime;}
-  for(const [id,k,x,z] of d.D){let o=netDr.get(id);if(!o){const g=k==='coin'?coinMesh():(()=>{const q=new THREE.Group();q.add(cube(.25,.25,.25,0xd32f2f,.6));return q;})();g.position.set(x,.4,z);scene.add(g);o={g,coin:1};netDr.set(id,o);}o.tx=x;o.tz=z;o.seen=gtime;}
+  for(const [id,k,x,z] of d.D){let o=netDr.get(id);if(!o){const g=typeof dropMeshFor==='function'?dropMeshFor(k):k==='coin'?coinMesh():(()=>{const q=new THREE.Group();q.add(cube(.25,.25,.25,0xd32f2f,.6));return q;})();g.position.set(x,.4,z);scene.add(g);o={g,coin:1};netDr.set(id,o);}o.tx=x;o.tz=z;o.seen=gtime;}
   return;}
  if(d&&d.t==='pl'){for(const [id,k,x,z,b] of d.P)if(!plants.some(p=>p.id===id))addPlant(k,x,z,id,b);if(d.DH)for(const [x,z] of d.DH)placeDoghouse(x,z,null);return;}
  if(d&&d.t==='shop'){renderShop(d.kind);return;}

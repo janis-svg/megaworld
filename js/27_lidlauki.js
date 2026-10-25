@@ -60,10 +60,10 @@ function spawnJetRocket(x,y,z,tx,ty,tz,team,pl,owner,tj,boom){const dx=tx-x,dy=t
  JR.push({m,x,y,z,vx:dx/l*sp,vy:dy/l*sp,vz:dz/l*sp,life:tj?3.5:Math.min(3,l/sp+.6),tx,ty,tz,team,pl,owner,tj:tj||null,boom:boom||1});sfxAt('rocket',x,z,80);}
 function destroyTank(t,team){if(t.dead)return;t.dead=true;t.shells=0;t.g.userData.hull.material.color.setHex(0x2a2a22);explosionFx(t.g.position.x,1.5,t.g.position.z,4,0xff7a1a);
  if(inTank===t){exitTank();damagePlayer(30,team);}jsay('tank_kill');}
-function jetBoom(x,z,team,pl,power,rad){power=power||1;rad=rad||1;explosionFx(x,1,z,6*rad,0xff7a1a);explosionFx(x,2,z,3.5,0xffd23f);sfxAt('boom',x,z,130);
+function jetBoom(x,z,team,pl,power,rad,th){power=power||1;rad=rad||1;explosionFx(x,1,z,6*rad,0xff7a1a);explosionFx(x,2,z,3.5,0xffd23f);sfxAt('boom',x,z,130);
  for(const m of [...zombies]){if(m.userData.dead)continue;const d=Math.hypot(m.position.x-x,m.position.z-z);if(d<7*rad)dmgMonster(m,99999,pl,true);}
  for(const h of [...HL]){if(team&&h.team===team)continue;const d=Math.hypot(h.p.x-x,h.p.z-z);if(d<6*rad&&(h.y||0)<6)hurt(h,(h.b&&!h.gst?160:110)*power*(1-d/(7*rad)),team,pl);}
- for(const t of tanks){if(Math.hypot(t.g.position.x-x,t.g.position.z-z)<6*rad)destroyTank(t,team);}
+ for(const t of tanks){if(Math.hypot(t.g.position.x-x,t.g.position.z-z)<6*rad)destroyTank(t,team,th);}
  const hitB=new Set();eachOb(x,z,3.5,o=>{if(o.y1!==undefined&&!o.dead&&o.team!==team&&Math.hypot(o.x-x,o.z-z)<3.5)hitB.add(o);return false;});hitB.forEach(o=>damageBlock(o,300));
  for(const ch of chunks.values())for(const o of ch.inter)if(o.type==='door'&&o.hp>0&&Math.hypot(o.x-x,o.z-z)<4){o.hp=0;o.dob.off=true;o.piv.visible=false;o.r=0;o.open=true;}}
 // ---------- avārija: sprādziens, viss 5 m apkārt deg 2 minūtes, māja nodeg ----------
@@ -198,8 +198,8 @@ function jetsTick(dt){
   if(r.tj){const q=r.tj;if(q.st==='fly'||q.st==='fall'){const dx=q.x-r.x,dy=q.y-r.y,dz=q.z-r.z,l=Math.hypot(dx,dy,dz)||1,k=Math.min(1,dt*3.5);r.vx+=(dx/l*62-r.vx)*k;r.vy+=(dy/l*62-r.vy)*k;r.vz+=(dz/l*62-r.vz)*k;
     if(l<4.5){scene.remove(r.m);JR.splice(i,1);explosionFx(q.x,q.y,q.z,3,0xff9e40);jetDamage(q,2,r.team,r.pl);continue;}}
    r.x+=r.vx*dt;r.y+=r.vy*dt;r.z+=r.vz*dt;r.m.position.set(r.x,r.y,r.z);r.m.lookAt(r.x+r.vx,r.y+r.vy,r.z+r.vz);if(Math.random()<dt*20)debris(r.x,r.y,r.z,0xffb74d,1);
-   if(r.life<=0||r.y<.4){scene.remove(r.m);JR.splice(i,1);explosionFx(r.x,r.y,r.z,2,0xff9e40);if(r.y<.4)jetBoom(r.x,r.z,r.team,r.pl,1,r.boom);}continue;}r.x+=r.vx*dt;r.y+=r.vy*dt;r.z+=r.vz*dt;r.m.position.set(r.x,r.y,r.z);if(Math.random()<dt*20)debris(r.x,r.y,r.z,0xffb74d,1);
-  if(r.y<=.4||r.life<=0||Math.hypot(r.x-r.tx,r.y-r.ty,r.z-r.tz)<1.5||(r.y<45&&bldHit(r.x,r.z,r.y))){scene.remove(r.m);JR.splice(i,1);jetBoom(r.x,r.z,r.team,r.pl,1,r.boom);}}
+   if(r.life<=0||r.y<.4){scene.remove(r.m);JR.splice(i,1);explosionFx(r.x,r.y,r.z,2,0xff9e40);if(r.y<.4)jetBoom(r.x,r.z,r.team,r.pl,1,r.boom,r.th);}continue;}r.x+=r.vx*dt;r.y+=r.vy*dt;r.z+=r.vz*dt;r.m.position.set(r.x,r.y,r.z);if(Math.random()<dt*20)debris(r.x,r.y,r.z,0xffb74d,1);
+  if(r.y<=.4||r.life<=0||Math.hypot(r.x-r.tx,r.y-r.ty,r.z-r.tz)<1.5||(r.y<45&&bldHit(r.x,r.z,r.y))){scene.remove(r.m);JR.splice(i,1);jetBoom(r.x,r.z,r.team,r.pl,1,r.boom,r.th);}}
  for(let i=AAS.length-1;i>=0;i--){const s=AAS[i];s.life-=dt;if(s.J&&(s.J.st==='fly'||s.J.st==='fall')){const p=s.m.position,dx=s.J.x-p.x,dy=s.J.y-p.y,dz=s.J.z-p.z,l=Math.hypot(dx,dy,dz)||1,k=Math.min(1,dt*3);s.vx+=(dx/l*75-s.vx)*k;s.vy+=(dy/l*75-s.vy)*k;s.vz+=(dz/l*75-s.vz)*k;}s.m.position.x+=s.vx*dt;s.m.position.y+=s.vy*dt;s.m.position.z+=s.vz*dt;const p=s.m.position;let hit=null;
   for(const J of JETS)if((J.st==='fly'||J.st==='fall')&&J.pilot!=='P'&&!(J.pilot&&J.pilot.pos)&&Math.hypot(J.x-p.x,J.y-p.y,J.z-p.z)<5)hit=J;
   if(hit||s.life<=0){scene.remove(s.m);AAS.splice(i,1);explosionFx(p.x,p.y,p.z,hit?4:2,0xff9e40);if(hit)jetDamage(hit,2,PT,true);}}

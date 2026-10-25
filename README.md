@@ -77,6 +77,23 @@ Zombiju izdzīvošanas spēle pārlūkā. Strādā telefonā un datorā.
 - Boti arī lido ar helikopteriem un nosēdina tos savās bāzēs.
 - 🎯 Javelin ir spēcīgākais ierocis no zemes: raķete pati tēmē uz helikopteriem, lidmašīnām un tankiem (citādi uz briesmoņiem). To atrod reti vai nopērk pie ieroču tirgotāja. Prettanku ierocis (🚀) arī iznīcina tankus un helikopterus, kas ir zemu.
 
+## Režīms "Karš"
+
+- Sākuma ekrānā izvēlies **⚔️ Karš** (vai **🧟 Izdzīvošana**). Kopīgajā spēlē režīmu izvēlas tas, kurš uzaicina.
+- Divas armijas: 🔴 sarkanā (visi cilvēki + 30 boti) un 🟢 zaļā (30 boti). Katrai ir sava bāze pretējos kartes stūros.
+- Katrā bāzē ir 4 lidmašīnas, 2 tanki, 2 bruņmašīnas un noliktava 🎖️ (spied 🤚: ieroči, lodes, Javelin, bruņas; atkal pēc 45 s).
+- Briesmoņu nav. Pa visu karti parādās kastes 📦 ar ieročiem, lodēm, degvielu un bruņām.
+- Uzvara: iznīcini visus zaļos vai nozodz viņu karogu (minikartē tas mirgo), aiznes uz savu bāzi un noturi 2 diennaktis. Ja karogu nes kāds, kurš krīt, karogs paliek zemē; ja savējais to aizskar, tas atgriežas bāzē.
+- Boti uzbrūk, sargā karogu, medī, brauc ar tankiem un bruņmašīnām, lido ar lidmašīnām un helikopteriem.
+- Iznīcinātā tehnika nākamajā rītā atjaunojas bāzēs. Boti neatjaunojas.
+
+## Vēl jaunas lietas (abos režīmos)
+
+- 🚙 Bruņmašīna: ātra, ar ložmetēju, labs pret helikopteriem un kājniekiem. Vada tas, kurš uzaicina (tāpat kā tanku).
+- 🚁 Helikopterim ir 2 raķetes (telefonā 🔄, datorā R): bruņmašīnai pietiek ar 1, tankam vajag 2.
+- 🦺 Kaujas bruņas: tēls saņem ķiveri un vesti, un dzīvība ir +50% (mazāk sāp). Krītot tās pazūd.
+- Kartē ir atpazīstamas ēkas: ☢️ atomelektrostacija, 📡 TV tornis, 🏟️ stadions, 🏭 rūpnīca.
+
 ## Spēlēt kopā (līdz 4 spēlētājiem)
 
 1. Viens atver spēli, spiež 🌐 un "Sākt kopīgo spēli".
@@ -122,6 +139,7 @@ Pasauli skaita tā cilvēka ierīce, kurš uzaicināja. Ja viņš aizver lapu, s
 | `js/26_iestregsana.js` | Lai tēli neiesprūst (briesmoņi ēkās, spēlētājs stūros) |
 | `js/27_lidlauki.js` | Lidlauki, lidmašīnas, gaisa kaujas, izpletnis, avārijas ugunsgrēks |
 | `js/28_helikopteri.js` | Helikopteri, ložmetējs, degviela, Javelin |
+| `js/29_kars.js` | Režīms "Karš", bruņmašīna, helikoptera raķetes, kaujas bruņas, atpazīstamas ēkas |
 
 Faili tiek ielādēti pēc kārtas (01, 02, 03...). Nemaini to kārtību `index.html`.
 
