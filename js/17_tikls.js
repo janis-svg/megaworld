@@ -3,8 +3,8 @@
 // Savienojums caur PeerJS (bezmaksas starpnieks, lai pārlūki atrastu viens otru).
 const KIND=['z','w','zw','s','c','f'],MAXG=4,PCOL=[0x3a7ab8,0x27ae60,0xe67e22,0x8e44ad,0xf1c40f];
 const r2=v=>Math.round(v*100)/100;
-// savienojuma serveri: vairāki STUN (Google, Cloudflare), lai draugi atrastu viens otru arī caur dažādiem tīkliem
-const PEERCFG={iceServers:[{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302','stun:stun2.l.google.com:19302']},{urls:'stun:stun.cloudflare.com:3478'},{urls:['turn:eu-0.turn.peerjs.com:3478','turn:us-0.turn.peerjs.com:3478'],username:'peerjs',credential:'peerjsp'}]};
+// savienojuma serveri: vairāki STUN (Google, Cloudflare) un ExpressTURN starpnieks (bezmaksas 1000 GB/mēn) tīkliem, kas ierīces izolē vai ir dažādi
+const PEERCFG={iceServers:[{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302','stun:stun2.l.google.com:19302']},{urls:'stun:stun.cloudflare.com:3478'},{urls:['turn:free.expressturn.com:3478','turn:free.expressturn.com:3478?transport=tcp'],username:'000000002108404576',credential:'OOW2FE8VceiGAmUgjcKAmgcjZXc='}]};
 const GT=G=>G&&G.team||PT; // drauga komanda (karā var būt arī pretējā armijā)
 // spēles versija (no ?v= skripta adresē): draugam jābūt tai pašai, citādi viņa pārlūks ielādē jaunāko
 const MWV=((document.querySelector('script[src*="01_sakums"]')||{}).src||'').replace(/.*[?&]v=(\d+).*/,'$1');
