@@ -190,3 +190,53 @@ html.touch #nvb{right:auto;left:16px;bottom:350px}
 #gate button{width:100%;font-size:18px;padding:10px}
 #gateerr{color:#ff6b6b;min-height:22px;margin-top:8px;font-weight:700}
 #gatech{margin-top:8px;font-size:13px}
+/* v66 ekrāna sakopšana telefonā: kompaktāka veselība un ikonas, apmācība augšā, menu ritinās */
+html.touch .pconly{display:none}
+html.touch #health{width:178px;padding:7px 11px}
+html.touch #health .label{margin-bottom:4px;font-size:10px}
+html.touch #hpstate{display:none}
+html.touch #bar{height:8px}
+html.touch #armor{height:4px;margin-top:4px}
+html.touch #stats{top:62px;right:12px;line-height:1}
+html.touch #stats .corner{padding:4px 7px;font-size:14px;margin:0 0 0 4px;background:rgba(10,18,26,.55);border-color:rgba(255,255,255,.18)}
+html.touch #msg{font-size:16px;top:30%;padding:0 220px}
+@media (max-height:520px){
+ html.touch #stats{top:56px}
+ html.touch #tut{bottom:8px;width:min(340px,calc(100% - 520px));font-size:12px;line-height:1.45;padding:7px 11px}
+ #menu{align-items:flex-start;overflow:auto;padding:10px}
+ #menu .card{padding:16px 20px;margin:auto}
+ #menu h1{font-size:24px;margin-bottom:4px}
+ #menu p{line-height:1.5;font-size:13px}
+ #menu input{margin:8px 0}
+}
+@media (max-width:760px){html.touch #msg{padding:0 16px;top:34%}}
+/* v66 pavēles botiem: poga 📣 un izvēlne */
+#cmdb{display:none}
+html.touch #cmdb{display:flex;right:196px;bottom:22px;width:56px;height:56px;font-size:24px}
+#cmdb.on{background:rgba(255,179,0,.45);border-color:#ffb300}
+#cmdp{position:fixed;right:24px;bottom:120px;z-index:16;display:none;flex-direction:column;gap:6px;padding:8px;pointer-events:auto}
+#cmdp .corner{margin:0;padding:9px 14px;font-size:15px;text-align:left;display:flex;justify-content:space-between;gap:14px;min-width:170px}
+#cmdp .corner small{color:#9bb3c7;font-size:11px}
+html.touch #cmdp{right:150px;bottom:86px}
+html.touch #cmdp .corner small{display:none}
+@media (max-height:520px){html.touch #cmdb{right:166px;bottom:12px;width:50px;height:50px;font-size:22px}html.touch #cmdp{bottom:68px;right:160px;padding:6px;gap:4px}html.touch #cmdp .corner{padding:7px 12px;font-size:14px}}
+/* trāpījuma zīme tēmeklī un paziņojums par nošautu pretinieku */
+#hitm{position:fixed;left:50%;top:50%;width:30px;height:30px;transform:translate(-50%,-50%) rotate(45deg);pointer-events:none;z-index:12;opacity:0}
+#hitm::before,#hitm::after{content:'';position:absolute;left:50%;top:0;width:3px;height:100%;margin-left:-1.5px;background:linear-gradient(#fff 0 35%,transparent 35% 65%,#fff 65%)}
+#hitm::after{transform:rotate(90deg)}
+#hitm.on{animation:hitm .25s ease-out}
+#hitm.kill::before,#hitm.kill::after{background:linear-gradient(#ff3b3b 0 38%,transparent 38% 62%,#ff3b3b 62%)}
+@keyframes hitm{0%{opacity:1;transform:translate(-50%,-50%) rotate(45deg) scale(1.3)}100%{opacity:0;transform:translate(-50%,-50%) rotate(45deg) scale(1)}}
+#killf{position:fixed;top:38%;left:50%;transform:translateX(-50%);z-index:13;pointer-events:none;font-size:17px;font-weight:700;color:#fff;text-shadow:0 2px 8px #000;opacity:0;transition:opacity .25s;white-space:nowrap}
+#killf.on{opacity:1}
+/* kara beigu ekrāns ar rezultātiem */
+#warwin .wst{margin-top:10px;text-align:left;font-size:13px;line-height:1.55}
+#warwin .hero{margin:8px 0 10px;padding:8px 12px;border-radius:10px;background:rgba(255,193,7,.14);border:1px solid rgba(255,193,7,.5);text-align:center;font-size:15px}
+#warwin .hero b{display:block;font-size:20px;color:#ffd54f}
+#warwin table{width:100%;border-collapse:collapse}
+#warwin td{padding:2px 4px;white-space:nowrap}
+#warwin td.n{overflow:hidden;text-overflow:ellipsis;max-width:150px}
+#warwin td.v{text-align:right;color:#ffe082;font-variant-numeric:tabular-nums}
+#warwin tr.me td{color:#fff;font-weight:700}
+#warwin .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+@media (max-height:520px){#warwin{padding:14px 18px;max-height:calc(100% - 20px);overflow:auto}#warwin h1{font-size:24px;margin-bottom:4px}}

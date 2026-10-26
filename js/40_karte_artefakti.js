@@ -19,7 +19,8 @@ const _botFire27=botFire;botFire=function(b,tp,w,human){const W=WP[w];if(!W||W.r
 const _drawMap27=drawMap;drawMap=function(){if(!(typeof isWar==='function'&&isWar()))return _drawMap27();warMap();};
 function warMap(){const S=TOUCH?116:170;if(mm.width!==S*2){mm.width=mm.height=S*2;mm.style.width=mm.style.height=S+'px';}
  const g=mm.getContext('2d'),W=mm.width,R=mmZoom?70:EDGE,cx=mmZoom?player.position.x:0,cz=mmZoom?player.position.z:0,sc=W/2/R,X=x=>W/2+(x-cx)*sc,Y=z=>W/2+(z-cz)*sc,guest=NET.role==='guest';
- const OWN='#43e06b',FOE='#ff3b3b';
+ // krāsas kā pasaulē: sarkanā armija sarkana, zaļā zaļa
+ const OWN=MYSIDE===0?'#ff3b3b':'#43e06b',FOE=MYSIDE===0?'#43e06b':'#ff3b3b';
  // fons: mežs un pilsēta vienkāršos toņos
  g.fillStyle='#243326';g.fillRect(0,0,W,W);g.fillStyle='#3a4044';g.fillRect(X(-CITY),Y(-CITY),2*CITY*sc,2*CITY*sc);
  g.strokeStyle='rgba(0,0,0,.25)';g.lineWidth=Math.max(1,5*sc);g.beginPath();for(let k=-4;k<4;k++){const r=k*40+20;g.moveTo(X(r),Y(-CITY));g.lineTo(X(r),Y(CITY));g.moveTo(X(-CITY),Y(r));g.lineTo(X(CITY),Y(r));}g.stroke();

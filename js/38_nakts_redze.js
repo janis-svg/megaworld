@@ -27,7 +27,7 @@ function nvToggle(){if(!inv||!inv.nv)return;nvOff=!nvOff;say(t(nvOff?'nv_off':'n
 document.addEventListener('keydown',e=>{if(e.code==='KeyN'&&!e.repeat&&active&&document.activeElement.tagName!=='INPUT')nvToggle();});
 const isNight=()=>hour>=20||hour<6;
 let nvT=0;
-function nvTick(dt){const want=active&&inv&&inv.nv&&isNight()&&!nvOff;nvb.style.display=active&&inv&&inv.nv?'block':'none';nvb.classList.toggle('on',!!want);
+function nvTick(dt){const want=!!(active&&inv&&inv.nv&&isNight()&&!nvOff);nvb.style.display=active&&inv&&inv.nv?'block':'none';nvb.classList.toggle('on',!!want);
  if(want!==nvOn){nvOn=want;document.documentElement.classList.toggle('nv',nvOn);if(renderer)renderer.domElement.style.filter=nvOn?'brightness(2.3) contrast(1.15) sepia(1) hue-rotate(55deg) saturate(2.4)':'';if(!nvOn)nvHideAll();drawSky(nvK);}
  if(nvOn&&(nvT-=dt)<=0){nvT=.5;nvMarkAll();}if(nvOn)nvFace();}
 const _updateFx25=updateFx;updateFx=function(dt){_updateFx25(dt);nvTick(dt);};
