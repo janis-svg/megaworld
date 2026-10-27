@@ -4,8 +4,8 @@
 // Izvēle: admins sākuma ekrānā (nejauši, pilsēta, lauks); vienam spēlējot nejauši; misijās pārmaiņus (vienā misijā viena karte, nākamajā otra).
 Object.assign(T.lv,{wm_rnd:'🎲 Nejauša karte',wm_city:'🏙️ Pilsēta',wm_field:'🌾 Kaujas lauks',wm_now:'🗺️ Karte: {n}'});
 Object.assign(T.en,{wm_rnd:'🎲 Random map',wm_city:'🏙️ City',wm_field:'🌾 Battlefield',wm_now:'🗺️ Map: {n}'});
-let WMAP='city',WMC=LS.get('wmapc','rnd');if(!['rnd','city','field'].includes(WMC))WMC='rnd';
-const fieldOn=()=>WMAP==='field'&&isWar();
+let WMAP='city',WMC=LS.get('wmapc','rnd');if(!['rnd','city','field','ozo'].includes(WMC))WMC='rnd';
+const fieldOn=()=>(WMAP==='field'||WMAP==='ozo')&&isWar(); // Ozolnieki (56. fails) izmanto to pašu lauka ģenerēšanu
 // ---------- kartes plāns (vienreiz, no fiksētas sēklas; spoguļots ap centru) ----------
 let FPL=null,FROAD=[];
 function fieldPlan(){if(FPL)return FPL;const R=rng(424242),P=[],C=[],put=(p)=>{P.push(p);P.push({...p,x:-p.x,z:-p.z,a:(p.a||0)+Math.PI});};
@@ -92,10 +92,10 @@ const _buildBases51=buildBases;buildBases=function(){_buildBases51();if(WMAP==='
 // ---------- izvēle ----------
 function wmapPick(){if(!isWar())return'city';if(NET.role==='guest')return WMAP;const solo=!NET.guests.size&&!(typeof misLobby!=='undefined'&&misLobby);
  if(isAdmin()&&WMC!=='rnd')return WMC;
- if(solo&&typeof MIS!=='undefined'&&MIS){const last=LS.get('wmapLast','field'),m=last==='city'?'field':'city';LS.set('wmapLast',m);return m;}
- return Math.random()<.5?'city':'field';}
+ const WL=['city','field','ozo'];if(solo&&typeof MIS!=='undefined'&&MIS){const last=LS.get('wmapLast','ozo'),m=WL[(WL.indexOf(last)+1)%WL.length];LS.set('wmapLast',m);return m;}
+ return WL[Math.floor(Math.random()*WL.length)];}
 const _start51=start;start=function(){if(NET.role!=='guest')WMAP=wmapPick();_start51();if(isWar()&&NET.role!=='guest'){const m=WMAP;setTimeout(()=>{if(active&&isWar()&&WMAP===m)say(tf('wm_now',{n:t('wm_'+m)}),3);},8000);}};
-{const row=document.createElement('div');row.id='maprow';row.innerHTML=['rnd','city','field'].map(k=>'<button class="corner" data-k="'+k+'"></button>').join('');$('diffrow').before(row);
+{const row=document.createElement('div');row.id='maprow';row.innerHTML=['rnd','city','field','ozo'].map(k=>'<button class="corner" data-k="'+k+'"></button>').join('');$('diffrow').before(row);
  row.querySelectorAll('button').forEach(b=>b.onclick=e=>{e.preventDefault();WMC=b.dataset.k;LS.set('wmapc',WMC);paintMap();});}
 function paintMap(){const row=$('maprow');row.style.display=MODE==='war'&&isAdmin()&&!/[?&]join=/.test(location.search)?'flex':'none';row.querySelectorAll('button').forEach(b=>{b.textContent=t('wm_'+b.dataset.k);b.classList.toggle('on',b.dataset.k===WMC);});}
 const _paintMode51=paintMode;paintMode=function(){_paintMode51();paintMap();};paintMap();
@@ -103,7 +103,7 @@ const _gateApply51=gateApply;gateApply=function(){_gateApply51();paintMap();};
 const _applyLang51=applyLang;applyLang=function(){_applyLang51();paintMap();};
 // ---------- kopīgā spēle: karte draugam pirms pasaules ielādes ----------
 const _netWelcome51=netWelcome;netWelcome=function(G){netTo(G,{t:'wmap',m:WMAP});_netWelcome51(G);};
-const _netGuestMsg51=netGuestMsg;netGuestMsg=function(d){if(d&&d.t==='wmap'){WMAP=d.m==='field'?'field':'city';return;}_netGuestMsg51(d);};
+const _netGuestMsg51=netGuestMsg;netGuestMsg=function(d){if(d&&d.t==='wmap'){WMAP=['field','ozo'].includes(d.m)?d.m:'city';return;}_netGuestMsg51(d);};
 // ---------- minikarte ----------
 const _warMapBg51=warMapBg;warMapBg=function(g,X,Y,sc,W){if(WMAP!=='field')return _warMapBg51(g,X,Y,sc,W);g.fillStyle='#2b3a26';g.fillRect(0,0,W,W);g.fillStyle='#4d6633';g.fillRect(X(-EDGE),Y(-EDGE),2*EDGE*sc,2*EDGE*sc);
  const L=fieldPlan();g.lineWidth=Math.max(1,4*sc);for(const A of L.values())for(const p of A){const x=X(p.x),y=Y(p.z);
