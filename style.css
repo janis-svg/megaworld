@@ -245,3 +245,13 @@ html.touch #cmdp .corner small{display:none}
 html.touch.vfl #rmb{display:flex;right:36px;bottom:198px;width:62px;height:62px;font-size:28px;opacity:.55}
 html.touch.vfl.mlw #rmb{opacity:1;background:rgba(255,120,0,.65);border-color:#ffd180;animation:pulse .35s infinite}
 @media (max-height:520px){html.touch.vfl #rmb{bottom:156px;right:30px;width:56px;height:56px}#mlw{font-size:20px;padding-top:12%}}
+/* 49: misijas */
+#misrow{display:none;gap:6px;justify-content:center;flex-wrap:wrap;margin:0 0 8px}
+#misrow .corner{margin:0;padding:7px 10px;font-size:13px}
+#misdesc{flex-basis:100%;text-align:center;color:#9bb3c7;font-size:12px;line-height:1.4;margin-top:2px}
+#misbrief{position:fixed;top:18%;left:50%;transform:translateX(-50%);z-index:20;width:min(420px,calc(100% - 32px));text-align:center;display:none;cursor:pointer}
+#misbrief h2{margin:4px 0 6px;font-size:24px}
+#misbrief p{margin:0 0 8px;line-height:1.45}
+#misbrief small{color:#ffe082}
+#warwin .misres{margin:2px 0 10px;color:#ffe082}
+#misnext{margin-left:8px}
