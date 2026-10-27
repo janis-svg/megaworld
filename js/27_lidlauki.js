@@ -194,7 +194,7 @@ function jetsTick(dt){
   else if(J.st==='fall'){J.v=Math.max(16,J.v-dt*2);J.y-=dt*6;J.x+=-Math.sin(J.a)*J.v*dt;J.z+=-Math.cos(J.a)*J.v*dt;J.roll+=dt*2.5;J.g.position.set(J.x,J.y,J.z);J.g.rotation.set(.35,J.a,J.roll);
    if(Math.random()<dt*12)debris(J.x,J.y,J.z,J.burn?0xff7a1a:0x444444,1);if(jetHits(J.x,J.z,J.y))crashJet(J);}
   if(J.st!=='gone')jetPaint(J);}
- for(let i=JR.length-1;i>=0;i--){const r=JR[i];r.life-=dt;
+ for(let i=JR.length-1;i>=0;i--){const r=JR[i];if(r.gd)continue;r.life-=dt;
   if(r.tj){const q=r.tj;if(q.st==='fly'||q.st==='fall'){const dx=q.x-r.x,dy=q.y-r.y,dz=q.z-r.z,l=Math.hypot(dx,dy,dz)||1,k=Math.min(1,dt*3.5);r.vx+=(dx/l*62-r.vx)*k;r.vy+=(dy/l*62-r.vy)*k;r.vz+=(dz/l*62-r.vz)*k;
     if(l<4.5){scene.remove(r.m);JR.splice(i,1);explosionFx(q.x,q.y,q.z,3,0xff9e40);SHOOTER=ownId(r.owner);jetDamage(q,2,r.team,r.pl);SHOOTER=0;continue;}}
    r.x+=r.vx*dt;r.y+=r.vy*dt;r.z+=r.vz*dt;r.m.position.set(r.x,r.y,r.z);r.m.lookAt(r.x+r.vx,r.y+r.vy,r.z+r.vz);if(Math.random()<dt*20)debris(r.x,r.y,r.z,0xffb74d,1);
