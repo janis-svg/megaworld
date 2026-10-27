@@ -71,7 +71,7 @@ function moloMesh(){const m=new THREE.Group();vcyl(m,.09,.11,.34,0x2e7d32,0,0,0,
 const _selectW24=selectW;selectW=function(w){const gs=player&&player.userData.guns;if(gs&&!gs.ak&&gs.m16){const a=cube(.09,.15,.85,0x1d1d1d,.4),s=cube(.1,.13,.3,0x6d4c41,.8);s.position.z=.4;a.add(s);const mg=cube(.07,.24,.08,0x222222,.5);mg.position.set(0,-.15,-.1);mg.rotation.x=.4;a.add(mg);
   a.position.copy(gs.m16.position);a.rotation.copy(gs.m16.rotation);a.visible=false;gs.m16.parent.add(a);gs.ak=a;const b=moloMesh();b.position.copy(gs.pistol.position);b.rotation.x=-1.3;b.visible=false;gs.pistol.parent.add(b);gs.molo=b;}_selectW24(w);};
 // boti dod priekšroku Kalašņikovam, ja tas ir
-const _bestW24=bestW;bestW=function(b,e,d){const w=_bestW24(b,e,d);if((w==='m16'||w==='pistol')&&b.I.has.ak&&b.I.ammo.ak>0)return 'ak';return w;};
+const _bestW24=bestW;bestW=function(b,e,d){const w=_bestW24(b,e,d);if((w==='m16'||w==='pistol'||w==='hands'||(w==='shot'&&d>=9))&&b.I.has.ak&&b.I.ammo.ak>0)return 'ak';return w;};
 const MOLO=[];
 function moloThrow(x,y,z,a,pit,team,own){const el=Math.max(.2,Math.min(1.1,(pit||0)+.5)),v=17,m=moloMesh();m.position.set(x,y,z);scene.add(m);
  const vx=-Math.sin(a)*v*Math.cos(el),vz=-Math.cos(a)*v*Math.cos(el),vy=v*Math.sin(el);MOLO.push({m,x,y,z,vx,vy,vz,team,own,t:0,vis:NET.role==='guest'});sfxAt('door',x,z,30);
@@ -165,16 +165,17 @@ function flagVehTick(){for(const t of tanks){const d=t.driver;if(!d||!d.team)con
 let akT=20;
 function akTick(dt){akT-=dt;if(akT>0)return;akT=60;let any=false;WB.forEach((B,i)=>{const n=drops.filter(d=>d.kind==='w:ak'&&Math.hypot(d.x-B.x,d.z-B.z)<BR).length;
   for(let k=n;k<2;k++){dropItem(B.x+(k?-5:5),B.z-B.d*8,'w:ak');any=true;}if(any)radio(ARMY[i],'ak_base');});}
-const _warSetup24=warSetup;warSetup=function(){_warSetup24();akT=3;for(const k in FLS)delete FLS[k];for(const b of humans)if(ARMY.includes(b.team)&&Math.random()<.2){b.I.has.ak=true;b.I.ammo.ak=40;}};
+const _warSetup24=warSetup;warSetup=function(){_warSetup24();akT=3;for(const k in FLS)delete FLS[k];for(const b of humans)if(ARMY.includes(b.team))warKit(b.I);};
 // ---------- 7. kopīgajā spēlē: atdzimst pie drauga, ja viņš nav kaujā ----------
 function friendSpot(T,exclude){const list=[];if(active&&PT===T&&exclude!=='P'&&!inTank&&!jetMode&&!heliMode&&!paraMode&&pY<1)list.push({n:$('nickname').value,p:player.position});
  for(const G of NET.guests.values())if(G!==exclude&&G.ready&&!G.dead&&GT(G)===T&&!G.inJet&&!G.inHeli&&(G.y||0)<1)list.push({n:G.name,p:G.pos});
  for(const f of list.sort(()=>Math.random()-.5)){let safe=true;for(const h of HL)if(h.team!==T&&T.enemies.has(h.team)&&Math.hypot(h.p.x-f.p.x,h.p.z-f.p.z)<30){safe=false;break;}if(!safe)continue;
   for(let k=0;k<12;k++){const a=k/12*6.283,x=f.p.x+Math.cos(a)*2.5,z=f.p.z+Math.sin(a)*2.5;if(!overlapAt(x,z,.4,0,T))return{n:f.n,x,z};}}return null;}
 // karā atdzimstot vienmēr ir M16 vai Kalašņikovs (nejauši) ar pilnu lodju komplektu
-function warKit(I){const w=Math.random()<.5?'m16':'ak';I.has[w]=true;I.ammo[w]=Math.max(I.ammo[w]||0,WP[w].max);return w;}
-const _resume24=resume;resume=function(){_resume24();if(isWar()&&NET.role!=='guest'){const w=warKit(inv);selectW(w);updateAmmo();renderInv();renderW();say(WP[w].ic+' '+t('w'+w)+' +'+WP[w].max,2.5);}if(!isWar()||!NET.guests.size||NET.role!=='host')return;const s=friendSpot(PT,'P');if(s){player.position.set(s.x,0,s.z);say(tf('rs_friend',{n:s.n}),3);}};
-function friendRespTick(){if(NET.role!=='host')return;for(const G of NET.guests.values()){const was=G._wd;G._wd=!!G.dead;if(!was||G.dead||!isWar())continue;{const w=warKit(G.I);netTo(G,{t:'msg',s:WP[w].ic+' '+t('w'+w)+' +'+WP[w].max,d:2.5});netMe(G);}const s=friendSpot(GT(G),G);
+const WKN=50; // kājnieka komplekts: M16 vai AK ar 50 lodēm sākumā un katrā atdzimšanā
+function warKit(I){const w=Math.random()<.5?'m16':'ak';I.has[w]=true;I.ammo[w]=Math.max(I.ammo[w]||0,WKN);return w;}
+const _resume24=resume;resume=function(){_resume24();if(isWar()&&NET.role!=='guest'){const w=warKit(inv);selectW(w);updateAmmo();renderInv();renderW();say(WP[w].ic+' '+t('w'+w)+' +'+WKN,2.5);}if(!isWar()||!NET.guests.size||NET.role!=='host')return;const s=friendSpot(PT,'P');if(s){player.position.set(s.x,0,s.z);say(tf('rs_friend',{n:s.n}),3);}};
+function friendRespTick(){if(NET.role!=='host')return;for(const G of NET.guests.values()){const was=G._wd;G._wd=!!G.dead;if(!was||G.dead||!isWar())continue;{const w=warKit(G.I);netTo(G,{t:'msg',s:WP[w].ic+' '+t('w'+w)+' +'+WKN,d:2.5});netMe(G);}const s=friendSpot(GT(G),G);
   if(s){G.pos.set(s.x,0,s.z);G.y=0;netTo(G,{t:'tp',x:r2(s.x),z:r2(s.z)});netTo(G,{t:'msg',s:tf('rs_friend',{n:s.n}),d:3});netMe(G);}}}
 // ---------- cikls ----------
 const _updateFx24=updateFx;updateFx=function(dt){_updateFx24(dt);if(MOLO.length)moloTick(dt);moloFireTick(dt);

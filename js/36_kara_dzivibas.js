@@ -27,7 +27,7 @@ const RESP=[];
 const _killBot23=killBot;killBot=function(b,src){const was=!b.dead,info=was&&isWar()&&ARMY.includes(b.team)&&!b.trader&&(b.lives??2)>1?{team:b.team,name:b.name,heavy:!!b.heavy,wrole:b.wrole,sq:b.sq,cmd:b.cmd,lives:(b.lives??2)-1,t:gtime+8}:null;
  _killBot23(b,src);if(info&&NET.role!=='guest')RESP.push(info);};
 function respTick(){for(let i=RESP.length-1;i>=0;i--){const r=RESP[i];if(gtime<r.t)continue;RESP.splice(i,1);if(!ARMY.includes(r.team))continue;const B=WB[ARMY.indexOf(r.team)];
-  const I=botInv(true);if(Math.random()<.25){I.has.jav=true;I.ammo.jav=2;}I.has.m16=true;I.ammo.m16=Math.max(I.ammo.m16,40);
+  const I=botInv(true);if(Math.random()<.25){I.has.jav=true;I.ammo.jav=2;}warKit(I);
   const b=newBot(r.team,B.x+(Math.random()-.5)*20,B.z+(Math.random()-.5)*20,r.name,I,r.heavy);b.heavy=r.heavy;b.lives=r.lives;b.wrole=r.wrole;b.cmd=r.cmd||'gather';b.role='gather';
   // atdzimušais sāk bāzes aizsardzībā; kad aizsargu kļūst daudz, viņus sūta jaunā uzbrukumā
   const S=SQ.find(q=>q.team===r.team&&q.role==='def');if(S){b.sq=S;b.wrole='def';S.mem.push(b);b.fo=[((S.mem.length%3)-1)*3,-Math.floor(S.mem.length/3)*3];}else makeSquad(r.team,[b],'def');
