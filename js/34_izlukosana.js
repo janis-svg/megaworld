@@ -1,4 +1,4 @@
-// 34_izlukosana.js - Karā: pamanītie pretinieki kartē (3 min), trepes uz augsto māju plakanajiem jumtiem (karā tur Javelin komplekts),
+// 34_izlukosana.js - Karā (Javelin komplekti uz jumtiem arī izdzīvošanā): pamanītie pretinieki kartē (3 min), trepes uz augsto māju plakanajiem jumtiem (karā tur Javelin komplekts),
 // boti ziņo par pretinieku uz jumta un helikopteriem, Javelin jāuzvada 3 s (sarkans rāmis), pārlāde 5 s, ar Javelin rokās stāv uz vietas, gaisa trauksme
 Object.assign(T.lv,{rf_up:'🪜 Kāpt uz jumta',rf_down:'🪜 Kāpt lejā',rf_kit:'🎯 Uz jumta Javelin komplekts: +3 raķetes!',rf_empty:'Javelin komplekts jau paņemts (būs atkal rīt)',
  r_roof:'📻 {n}: pretinieks uz jumta! Gaisa vienības, iznīciniet!',r_heli:'📻 {n}: redzu ienaidnieka helikopteru! Javelin, uz turieni!',r_air:'📻 Gaisa trauksme! Ienaidnieka tehnika virs bāzes!',
@@ -13,7 +13,7 @@ function setupRoof(ch,b){if(b.kind!=='tall'||b.burnt||b.lad)return;const R=rng(h
  const ax=side<2,sg=side%2?1:-1,lx=ax?b.x+sg*(b.hx+.35):b.x+(R()-.5)*b.hx,lz=ax?b.z+(R()-.5)*b.hz:b.z+sg*(b.hz+.35);
  const g=new THREE.Group(),c=0x37474f;for(const o of [-.35,.35]){const r=cube(ax?.08:.08,h+1.2,.08,c,.6);r.position.set(lx+(ax?0:o),(h+1.2)/2,lz+(ax?o:0));g.add(r);}
  for(let y=.4;y<h;y+=.45){const r=cube(ax?.06:.7,.05,ax?.7:.06,c,.6);r.position.set(lx,y,lz);g.add(r);}
- if(isWar()){const k=cube(1.4,.6,.7,0x556b2f,.8);k.position.set(b.x,h+.3,b.z);g.add(k);const s=cube(1.42,.08,.72,0xd4a537,.5);s.position.set(b.x,h+.62,b.z);g.add(s);}
+ {const k=cube(1.4,.6,.7,0x556b2f,.8);k.position.set(b.x,h+.3,b.z);g.add(k);const s=cube(1.42,.08,.72,0xd4a537,.5);s.position.set(b.x,h+.62,b.z);g.add(s);}
  g.updateMatrixWorld(true);mergeInto(g);b.g.add(g);
  b.lad={x:lx+(ax?sg*.8:0),z:lz+(ax?0:sg*.8),tx:ax?b.x+sg*(b.hx-1.2):lx,tz:ax?lz:b.z+sg*(b.hz-1.2)};}
 const _genChunk21=genChunk;genChunk=function(cx,cz){_genChunk21(cx,cz);const ch=chunks.get(cx+','+cz);if(ch)for(const b of ch.blds||[])setupRoof(ch,b);};
@@ -21,7 +21,7 @@ function roofNear(){const p=player.position;for(const ch of chunks.values())for(
  if(pY<1.5&&Math.hypot(p.x-L.x,p.z-L.z)<1.8)return{b,up:true};if(Math.abs(pY-b.h)<1&&Math.hypot(p.x-L.tx,p.z-L.tz)<2)return{b,up:false};}return null;}
 const KIT=new Map();
 function roofOf(x,z,y){const b=bldAt(x,z,0);return b&&b.lad&&Math.abs(y-b.h)<1.2?b:null;}
-function kitTry(b,I,who){if(!isWar()||!b||Math.abs(b.x-(who?who.pos.x:player.position.x))>2.5||Math.abs(b.z-(who?who.pos.z:player.position.z))>2.5)return;if(KIT.get(b.id)===false){if(!who&&gtime>(b.kmT||0)){b.kmT=gtime+8;say(t('rf_empty'),2);}return;}
+function kitTry(b,I,who){if(!b||Math.abs(b.x-(who?who.pos.x:player.position.x))>2.5||Math.abs(b.z-(who?who.pos.z:player.position.z))>2.5)return;if(KIT.get(b.id)===false){if(!who&&gtime>(b.kmT||0)){b.kmT=gtime+8;say(t('rf_empty'),2);}return;}
  KIT.set(b.id,false);I.has.jav=true;I.ammo.jav=Math.min(WP.jav.max,(I.ammo.jav||0)+3);if(who){netTo(who,{t:'msg',s:t('rf_kit'),d:3});netMe(who);}else{say(t('rf_kit'),3);renderInv();renderW();}}
 const _dawn21=dawn;dawn=function(){_dawn21();KIT.clear();};
 // ---------- Javelin: uzvadīšana 3 s, pārlāde 5 s, stāv uz vietas ----------
@@ -90,7 +90,7 @@ const _netHostMsg21=netHostMsg;netHostMsg=function(G,d){if(d&&G.ready&&d.t==='rk
 const _netGuestMsg21=netGuestMsg;netGuestMsg=function(d){if(d&&d.t==='spot'){myMarks=d.L;return;}if(d&&d.t==='siren'){siren();return;}_netGuestMsg21(d);};
 let kitT=0;
 const _updateFx21=updateFx;updateFx=function(dt){_updateFx21(dt);jlTick(dt);jvView();if(isWar()&&NET.role!=='guest'&&(active||NET.guests.size)){spotT-=dt;if(spotT<=0){spotT=1;spotTick();}}
- kitT-=dt;if(kitT<=0&&isWar()&&active){kitT=.5;const b=roofOf(player.position.x,player.position.z,pY);if(b&&Math.hypot(b.x-player.position.x,b.z-player.position.z)<2.5){if(NET.role==='guest'){if(!b.kreq){b.kreq=true;netSend({t:'rkit'});}}else kitTry(b,inv,null);}}};
+ kitT-=dt;if(kitT<=0&&active){kitT=.5;const b=roofOf(player.position.x,player.position.z,pY);if(b&&Math.hypot(b.x-player.position.x,b.z-player.position.z)<2.5){if(NET.role==='guest'){if(!b.kreq){b.kreq=true;netSend({t:'rkit'});}}else kitTry(b,inv,null);}}};
 // minikartē: pamanītie pretinieki (izgaist 3 minūtēs)
 const _drawMap21=drawMap;drawMap=function(){_drawMap21();if(!isWar())return;const g=mm.getContext('2d'),W=mm.width,R=mmZoom?70:EDGE,cx=mmZoom?player.position.x:0,cz=mmZoom?player.position.z:0,sc=W/2/R,X=x=>W/2+(x-cx)*sc,Y=z=>W/2+(z-cz)*sc;
  const L=NET.role==='guest'?myMarks.map(([x,z,a,k])=>({x,z,a,k})):[...SPOT.values()].filter(m=>m.T===PT).map(m=>({x:m.x,z:m.z,a:gtime-m.t,k:m.kind}));
