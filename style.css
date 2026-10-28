@@ -278,4 +278,17 @@ html.touch.vfl.mlw #rmb{opacity:1;background:rgba(255,120,0,.65);border-color:#f
 #mmap.fr-foe{border-color:#ff3b3b;animation:frb .5s steps(2) infinite}
 #mmap.fr-art{border-color:#ff9100;border-width:3px;animation:frb .35s steps(2) infinite}
 @keyframes frb{50%{border-color:rgba(255,255,255,.2);box-shadow:none}0%{box-shadow:0 0 18px currentColor}}
-html.nobuild #bld,html.nobuild #bmb,html.nobuild #bbar{display:none!important}
+html.nobuild #bld,html.nobuild:not(.hfly) #bmb,html.nobuild #bbar{display:none!important}
+/* v83: telefona HUD - karā nav pulksteņa, mazās ikonas zem ⚙️, Mērķi un ⛽ blakus ⚙️ */
+html.war #clock{display:none}
+html.touch:not(.cfg) #stats .corner:not(#cfg){display:none!important}
+html.touch.cfg #stats{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+html.touch.cfg #stats #cfg{order:-1}
+html.touch.cfg #stats .corner{margin:0}
+#topr{display:none}
+html.touch #topr{display:flex;position:fixed;top:62px;right:53px;z-index:11;gap:6px;align-items:flex-start;pointer-events:none}
+html.touch #topr #quests{position:static;max-width:calc(100vw - 140px);padding:5px 10px}
+#fuelc{display:none;padding:5px 10px;font-size:13px;font-weight:700;white-space:nowrap}
+#fuelc.low{color:#ff6b6b;border-color:rgba(255,80,80,.7)}
+html.touch.cfg #stats{max-height:calc(100vh - 70px);flex-wrap:wrap-reverse;align-content:flex-end}
+@media (max-height:520px){html.touch #topr{top:56px}html.touch #warbar{transform:translate(-50%,86px)}}
