@@ -159,7 +159,7 @@ function warSetup(){winner=null;winEl.style.display='none';buildBases();
  const hs=MYSIDE;PT.color=hs?0x2e7d32:0xd32f2f;PT.base={x:WB[hs].x,z:WB[hs].z};PT.inner=0;PT.plan=[];
  const G=newTeam(hs?0xd32f2f:0x2e7d32);G.noOffer=true;G.base={x:WB[1-hs].x,z:WB[1-hs].z};G.inner=0;G.plan=[];G.blocks=0;ARMY=hs?[G,PT]:[PT,G];war(PT,G);for(const g of NET.guests.values())g.team=g.side===undefined?PT:ARMY[g.side];
  const nm=[...NAMES].sort(()=>Math.random()-.5);let ni=0;
- ARMY.forEach((T,ai)=>{const B=WB[ai];for(let i=0;i<30;i++){const I=botInv(true);if(Math.random()<.25){I.has.jav=true;I.ammo.jav=2;}warKit(I);
+ const nB=typeof warBotN==='function'?warBotN():30;ARMY.forEach((T,ai)=>{const B=WB[ai];for(let i=0;i<nB;i++){const I=botInv(true);if(Math.random()<.25){I.has.jav=true;I.ammo.jav=2;}warKit(I);
   const heavy=Math.random()<.25,b=newBot(T,B.x+(Math.random()-.5)*40,B.z+(Math.random()-.5)*40,nm[ni++%nm.length],I,heavy);b.heavy=heavy;b.wrole=T===PT&&i<4?'esc':['att','def','hunt'][i%3];b.cmd=b.wrole==='esc'?'follow':'gather';b.role='gather';}});
  for(const t of tanks){scene.remove(t.g);freeObj(t.g);remOb(t.ob);}tanks.length=0;inTank=null;
  WB.forEach((B,ai)=>{const a=B.d>0?Math.PI:0;for(let k=0;k<2;k++){const t=addTank(B.x-12+k*8,B.z-18*B.d,a);t.home={x:t.g.position.x,z:t.g.position.z,a};t.army=ARMY[ai];const c=addApc(B.x+6+k*7,B.z-18*B.d,a);c.home={x:c.g.position.x,z:c.g.position.z,a};c.army=ARMY[ai];}});

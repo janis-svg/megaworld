@@ -281,7 +281,7 @@ html.touch.vfl.mlw #rmb{opacity:1;background:rgba(255,120,0,.65);border-color:#f
 html.nobuild #bld,html.nobuild:not(.hfly) #bmb,html.nobuild #bbar{display:none!important}
 /* v83: telefona HUD - karā nav pulksteņa, mazās ikonas zem ⚙️, Mērķi un ⛽ blakus ⚙️ */
 html.war #clock{display:none}
-html.touch:not(.cfg) #stats .corner:not(#cfg){display:none!important}
+html.touch:not(.cfg) #stats .corner:not(#cfg):not(#rotb){display:none!important}
 html.touch.cfg #stats{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
 html.touch.cfg #stats #cfg{order:-1}
 html.touch.cfg #stats .corner{margin:0}
@@ -292,3 +292,22 @@ html.touch #topr #quests{position:static;max-width:calc(100vw - 140px);padding:5
 #fuelc.low{color:#ff6b6b;border-color:rgba(255,80,80,.7)}
 html.touch.cfg #stats{max-height:calc(100vh - 70px);flex-wrap:wrap-reverse;align-content:flex-end}
 @media (max-height:520px){html.touch #topr{top:56px}html.touch #warbar{transform:translate(-50%,86px)}}
+/* v84: 📱 ekrāna pagriešana pirms ⚙️, pogu skaidrojums sākumā */
+#rotb{display:none}
+html.touch #rotb{display:inline-block;transition:transform .2s}
+html.touch #rotb:not(.land){transform:rotate(90deg)}
+html.touch.cfg #stats #rotb{order:-2}
+html.touch #topr{right:94px}
+#hlp{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;background:rgba(6,10,16,.78);padding:12px;box-sizing:border-box}
+#hlp .card{max-width:640px;width:100%;max-height:100%;overflow:auto;padding:14px 16px;box-sizing:border-box}
+#hlp h2{margin:0 0 8px;text-align:center;font-size:20px}
+#hlp .hg{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px}
+#hlp .hc b{display:block;margin:4px 0 3px;color:#ffd36b;font-size:14px}
+#hlp .hc div{font-size:13px;line-height:1.35;display:flex;gap:6px;align-items:flex-start}
+#hlp .hc span{width:24px;flex:none;text-align:center}
+#hlp #hlgo{display:block;width:100%;margin-top:12px;font-size:18px;padding:10px}
+@media (min-width:600px) and (max-height:520px){#hlp .hg{grid-template-columns:repeat(4,1fr)}}
+#bnrow{display:none;gap:6px;justify-content:center;align-items:center;flex-wrap:wrap;margin:8px 0 0}
+#bnrow small{color:#9bb3c7;font-size:12px}
+#bnrow .corner{margin:0;padding:7px 12px}
+#hlp .hc div{text-align:left}
