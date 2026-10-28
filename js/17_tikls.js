@@ -1,7 +1,7 @@
 // 17_tikls.js - Kopīgā spēle (multiplayer) līdz 5 spēlētājiem.
 // Saimnieks (kurš uzaicina) skaita visu pasauli; viesi sūta savu kustību un darbības, un saņem stāvokli 10x sekundē.
 // Savienojums caur PeerJS (bezmaksas starpnieks, lai pārlūki atrastu viens otru).
-const KIND=['z','w','zw','s','c','f'],MAXG=4,PCOL=[0x3a7ab8,0x27ae60,0xe67e22,0x8e44ad,0xf1c40f];
+const KIND=['z','w','zw','s','c','f'],MAXG=5,PCOL=[0x3a7ab8,0x27ae60,0xe67e22,0x8e44ad,0xf1c40f,0x16a0a0];
 const r2=v=>Math.round(v*100)/100;
 // savienojuma serveri: vairāki STUN (Google, Cloudflare) un ExpressTURN starpnieks (bezmaksas 1000 GB/mēn) tīkliem, kas ierīces izolē vai ir dažādi
 const PEERCFG={iceServers:[{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302','stun:stun2.l.google.com:19302']},{urls:'stun:stun.cloudflare.com:3478'},{urls:['turn:free.expressturn.com:3478','turn:free.expressturn.com:3478?transport=tcp'],username:'000000002108404576',credential:'OOW2FE8VceiGAmUgjcKAmgcjZXc='}]};
@@ -43,7 +43,7 @@ function netHost(){
   for(const O of [...NET.guests.values()])if(!O.ready&&(O.conn.peer===conn.peer||Date.now()-O.t0>20000)){try{O.conn.close();}catch(e){}NET.guests.delete(O.id);}
   const others=new Set([...NET.guests.values()].map(O=>O.conn.peer));others.delete(conn.peer);
   if(others.size>=MAXG){conn.on('open',()=>{conn.send({t:'full'});setTimeout(()=>conn.close(),500);});return;}
-  const id=netNextId++,G={id,conn,t0:Date.now(),name:'?',pos:new THREE.Vector3(player.position.x+2,0,player.position.z+2),y:0,yaw:0,hp:100,dead:false,I:newInv(),ready:false,col:PCOL[id%5]};
+  const id=netNextId++,G={id,conn,t0:Date.now(),name:'?',pos:new THREE.Vector3(player.position.x+2,0,player.position.z+2),y:0,yaw:0,hp:100,dead:false,I:newInv(),ready:false,col:PCOL[id%6]};
   conn.on('data',d=>netHostMsg(G,d));
   conn.on('close',()=>netDropGuest(G));
   NET.guests.set(id,G);
@@ -178,9 +178,9 @@ function netJoin(code){
   hostConn=peer.connect('megaworld-'+code,{reliable:true,serialization:'json'});const hc=hostConn;
   hc.on('open',()=>{step='mp_s3';$('mperr').textContent=t('mp_s3');hc.send({t:'hello',name:$('nickname').value,v:MWV});});
   hc.on('error',e=>{err='conn:'+((e&&e.type)||e);$('mperr').textContent=t('mp_retry')+' ['+err+']';});
-  hc.on('data',d=>{if(d&&d.t==='wel'){done=true;clearTimeout(fail);}netGuestMsg(d);});
+  hc.on('data',d=>{if(d&&(d.t==='wel'||d.t==='full')){done=true;clearTimeout(fail);if(d.t==='full')hc.full=true;}netGuestMsg(d);}); // pilns: vairs nemēģina, ziņa paliek ekrānā
   // aizvērts pirms spēles ielādes (piem., PeerJS pie peer-unavailable aizver savienojumu): mēģina vēlreiz, nevis padodas
-  hc.on('close',()=>{if(hc!==hostConn)return;if(!active&&!done){retry(err||'close@'+step.slice(-2));return;}clearTimeout(fail);netFail(t(active?'mp_hostleft':'mp_fail'));});};
+  hc.on('close',()=>{if(hc!==hostConn||hc.full)return;if(!active&&!done){retry(err||'close@'+step.slice(-2));return;}clearTimeout(fail);netFail(t(active?'mp_hostleft':'mp_fail'));});};
  peer.on('open',tryConn);
  peer.on('disconnected',()=>{if(!done&&peer&&!peer.destroyed)try{peer.reconnect();}catch(e){}});
  peer.on('error',e=>{const ty=e&&e.type;if(done)return;
@@ -203,6 +203,7 @@ function guestClear(){
 }
 function netGuestMsg(d){
  if(!d||!d.t)return;
+ if(d.t==='full'){netFail(t('mp_full'));return;} // pirms ielādes, citādi draugs to nekad neredz
  if(d.t==='wel'){
   guestClear();NET.myId=d.id;NET.meDead=false;
   player.children[0].material.color.setHex(d.col);player.children[1].material.color.set(new THREE.Color(d.col).lerp(new THREE.Color(0xffffff),.2)); // tava krāsa, kā tevi redz citi
@@ -220,7 +221,6 @@ function netGuestMsg(d){
  if(d.t==='tp'){player.position.set(d.x,0,d.z);pY=0;vy=0;return;}
  if(d.t==='bi'){NET.bi=new Map(d.bi.map(([id,n,h])=>[id,{n,h}]));for(const [id,o] of netBot){const i=NET.bi.get(id);if(i&&o.name!==i.n){o.name=i.n;o.rel=-1;}}return;}
  if(d.t==='dr'){for(const [id,o,hp] of d.dr){doorState.set(id,{o,hp});for(const ch of chunks.values())for(const q of ch.inter)if(q.id===id)applyDoor(q,{o,hp});}return;}
- if(d.t==='full'){netFail(t('mp_full'));return;}
  if(d.t==='bye'){netFail(t('mp_hostleft'));return;}
 }
 function applyDoor(o,s){o.open=!!s.o;o.hp=s.hp;if(o.hp<=0){o.dob.off=true;o.piv.visible=false;o.r=0;o.open=true;}else{o.piv.rotation.y=o.open?-Math.PI/2:0;o.dob.off=o.open;o.dm.material.color.setHex(o.hp>60?0x5a3d22:o.hp>30?0x4a2a18:0x2e170d);}}
