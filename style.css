@@ -329,3 +329,15 @@ html.touch.jfly #wsw{display:none}
  html.touch.vfl.hfly #rmb{right:104px;bottom:140px;width:50px;height:50px;font-size:22px}
  html.touch.vfl:not(.hfly) #rmb{right:32px;bottom:156px;width:54px;height:54px}
 }
+/* v86: tehnikas dzīvība, tēmekļa fiksēšana, lidmašīnas pogas */
+#vhp{display:none;align-items:center;gap:6px;margin-top:5px;font-size:11px}
+#vhp span{font-size:13px;width:18px;text-align:center}
+#vhp div{flex:1;height:6px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden}
+#vhp i{display:block;height:100%;width:100%;transition:width .2s}
+#vhp b{font-variant-numeric:tabular-nums;color:#cfe3f1;font-size:11px;white-space:nowrap}
+#lock{position:fixed;display:none;z-index:9;pointer-events:none;transform:translate(-50%,-50%);border:2px dashed #ffd54f;border-radius:50%;box-shadow:0 0 6px rgba(0,0,0,.6);transition:width .08s,height .08s}
+#lock.on{border:3px solid #ff3b3b;box-shadow:0 0 12px #ff3b3b}
+#lock.on::after{content:'';position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;background:#ff3b3b}
+.tbtn small.j2{font-size:11px;white-space:nowrap}
+html.touch.jfly #rmb{bottom:100px}
+@media (max-height:520px){html.touch.jfly #rmb{bottom:80px}}
