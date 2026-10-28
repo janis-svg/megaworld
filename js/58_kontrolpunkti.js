@@ -17,8 +17,8 @@ const CPON=()=>isWar()&&!misOn();
 // ---------- punktu vietas: katrā kartē simetriski pret abām bāzēm ----------
 const CPR=12,CPWIN=300;
 const CPN={city:[['A','☢️ AES',-74,-74],['B','🏟️ Stadions',-72,56],['C','📡 TV tornis',74,74]],
- field:[['A','🏚️ Rietumu ciems',-80,80],['B','✚ Krustojums',0,0],['C','🏚️ Austrumu ciems',80,-80]]};
-function cpDefs(){if(WMAP==='ozo')return[['A','🌳 Jāņu pļava',...ozP(205,-30)],['B','🌉 Tilts',...ozP(281,-2)],['C','🏟️ OZO Halle',...ozP(366,-6)]];return CPN[WMAP]||CPN.city;}
+ field:[['A','🏚️ Rietumu ciems',-80,80],['B','⛰️ Kalns',0,0],['C','🏚️ Austrumu ciems',80,-80]]};
+function cpDefs(){if(WMAP==='ozo')return[['A','🌳 Jāņu pļava',...ozP(205,-30)],['B','🌉 Tilts',...ozP(270,-4)],['C','🏟️ OZO Halle',...ozP(366,-6)]];return CPN[WMAP]||CPN.city;}
 let CP=[],CPS=[0,0],cpNetT=0,cpTick=0,mEnd=null,MLEN=+LS.get('mlen',20);if(![0,10,20].includes(MLEN))MLEN=20;
 let CPG=null,cpMap='';
 function cpBuild(){if(CPG){scene.remove(CPG);freeObj(CPG);CPG=null;}CP=[];cpMap='';if(!CPON())return;cpMap=WMAP;CPG=new THREE.Group();

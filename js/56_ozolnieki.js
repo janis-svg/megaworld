@@ -6,6 +6,7 @@
 Object.assign(T.lv,{wm_ozo:'🏘️ Ozolnieki'});Object.assign(T.en,{wm_ozo:'🏘️ Ozolnieki'});
 const OZS=Math.SQRT1_2,ozP=(U,V)=>[WB[0].x+OZS*(U-V),WB[0].z+OZS*(U+V)],ozA=(dU,dV)=>Math.atan2(OZS*(dU-dV),OZS*(dU+dV));
 let OZPL=null,OZR=[],OZB=[],FFR=null;
+const ozRiv=V=>255+5*Math.sin(V/40),OZBR=[.5,-121.3]; // upes U pēc V un tiltu V
 const ozOn=()=>WMAP==='ozo'&&isWar();
 // ---------- plāns (U - no skolas uz ezeru, V - uz ziemeļiem; viss vienreiz no fiksētas sēklas) ----------
 function ozoPlan(){if(OZPL)return OZPL;const R=rng(5150),P=[],C=[],RS=[];OZB=[];OZR=[];
@@ -30,6 +31,9 @@ function ozoPlan(){if(OZPL)return OZPL;const R=rng(5150),P=[],C=[],RS=[];OZB=[];
  road([[205,-125],[300,-118],[380,-126]],5,true);road([[215,-175],[215,175]],4,true);road([[400,8],[470,90]],5);           // Spartaka, meža ceļš, Iecavas krastmala
  // apaļais laukums Skolas / Rīgas / Eglaines krustojumā
  {const[x,z]=ozP(470,-12);P.push({k:'rbt',x,z});}
+ // Iecavas upe pāri visai kartei starp mežaparku un centru, divi tilti (Skolas iela un Spartaka iela)
+ for(let V=-320;V<=320;V+=4.5){if(OZBR.some(b=>Math.abs(V-b)<11))continue;const[x,z]=ozP(ozRiv(V),V);if(!inMap(x,z,-4)||nearAirfield(x,z,4))continue;claim(x,z,6,6);P.push({k:'riv',x,z,r:6.5});}
+ for(const b of OZBR){const[x,z]=ozP(ozRiv(b),b);P.push({k:'bridge',x,z,a:ozA(1,0)});}
  // ezers ar jahtklubu "5 masti"
  for(const[U,V,r]of[[452,-74,18],[470,-97,17],[446,-104,15],[488,-82,14]]){const[x,z]=ozP(U,V);claim(x,z,r,r);P.push({k:'pond',x,z,r});}
  put(434,-60,{k:'pier',a:ozA(1,-1)});
@@ -71,7 +75,7 @@ function ozoPlan(){if(OZPL)return OZPL;const R=rng(5150),P=[],C=[],RS=[];OZB=[];
  for(let i=0;i<34;i++){const U=40+R()*500,V=(R()-.5)*300,[x,z]=ozP(U,V);if(inMap(x,z,2)&&!inBase(x,z,0)&&!nearAirfield(x,z,2))P.push({k:'crater',x,z,r:1.3+R()*2});}
  // mežaparks starp skolu un centru (ar Jāņu pļavu un Bulderberga kalna klajumu) un meža joslas malās
  const forest=(U0,U1,V0,V1,st)=>{for(let U=U0;U<=U1;U+=st)for(let V=V0;V<=V1;V+=st){const u=U+(R()-.5)*st*.9,v=V+(R()-.5)*st*.9;
-   if(Math.hypot(u-205,v+30)<17||Math.hypot(u-262,v-36)<14)continue;const[x,z]=ozP(u,v);if(!free(x,z,.6,.6))continue;P.push({k:'tree',x,z,s:.8+R()*.7});}};
+   if(Math.hypot(u-205,v+30)<17||Math.hypot(u-226,v-62)<14)continue;const[x,z]=ozP(u,v);if(!free(x,z,.6,.6))continue;P.push({k:'tree',x,z,s:.8+R()*.7});}};
  forest(152,282,-190,190,8.5);forest(40,150,-175,-136,9);forest(40,140,120,180,9);forest(300,420,-230,-178,9);forest(470,540,96,140,9);forest(520,560,-90,-40,8);
  OZPL=new Map();for(const p of P){const key=Math.floor(p.x/CS)+','+Math.floor(p.z/CS);if(!OZPL.has(key))OZPL.set(key,[]);OZPL.get(key).push(p);}
  for(const p of P)if((p.k==='block'||p.k==='school'||p.k==='hall')&&(p.ruin?p.h*.55:p.h)>7)OZB.push({x:p.x,z:p.z,hx:p.w/2,hz:p.d/2,h:p.h});
@@ -101,12 +105,12 @@ Object.assign(FB,{
   const sgn=R()<.5?-1:1,la=L*.55,lb=L-la,ca=sgn*(L/2-la/2),cb=-sgn*(L/2-lb/2),hb=2.7*(1+Math.floor(R()*2)),pa=ax==='x'?[p.x+ca,p.z]:[p.x,p.z+ca],pb=ax==='x'?[p.x+cb,p.z]:[p.x,p.z+cb];
   const wa=ax==='x'?la:S,da=ax==='x'?S:la,wb=ax==='x'?lb:S,db=ax==='x'?S:lb;
   vadd(g,wa,p.h,da,p.c,pa[0],p.h/2,pa[1],.95).castShadow=true;for(let f=0;f*2.7+1.4<p.h-.6;f++)for(const s of[-1,1])ozWin(g,la*.85,ax,pa[0],pa[1],1.4+f*2.7,s*(S/2+.02),f>2&&R()<.5?0x141210:0);
-  vadd(g,wb,hb,db,p.c,pb[0],hb/2,pb[1],.95);for(let i=0;i<4;i++){const q=R(),hh=1+R()*2.5;ax==='x'?vadd(g,lb*.2,hh,S*.9,p.c,pb[0]+(q-.5)*lb*.8,hb+hh/2,pb[1],.95):vadd(g,S*.9,hh,lb*.2,p.c,pb[0],hb+hh/2,pb[1]+(q-.5)*lb*.8,.95);}
+  // sabrukušajā galā var ieiet: paliekas no sienām, iekšā drupas
+  ozRuinWalls(ch,{x:pb[0],z:pb[1],w:wb,d:db},hb,p.c,R);
   for(let i=0;i<9;i++){const s=.8+R()*1.8,o=(R()-.5)*lb,side=(R()<.5?-1:1)*(S/2+.6+R()*2.4);vadd(g,s,s*.55,s,[0x8c867a,0x6f685c,0x9a9488][i%3],ax==='x'?pb[0]+o:pb[0]+side,s*.27,ax==='x'?pb[1]+side:pb[1]+o,1);}
-  ch.obs.push({x:pa[0],z:pa[1],hx:wa/2,hz:da/2},{x:pb[0],z:pb[1],hx:wb/2,hz:db/2,y0:0,y1:hb+1});},
- bld(ch,p){const g=ch.group;vadd(g,p.w,p.h,p.d,p.c,p.x,p.h/2,p.z,.85).castShadow=true;vadd(g,p.w+.2,.25,p.d+.2,0x5c5f63,p.x,p.h+.12,p.z,.9);
+  ch.obs.push({x:pa[0],z:pa[1],hx:wa/2,hz:da/2});},
+ bld(ch,p){const g=ch.group;if(p.ruin){ozRuinWalls(ch,p,p.h*.85,p.c,rng(Math.floor(Math.abs(p.x*131+p.z*17))+7));return;}vadd(g,p.w,p.h,p.d,p.c,p.x,p.h/2,p.z,.85).castShadow=true;vadd(g,p.w+.2,.25,p.d+.2,0x5c5f63,p.x,p.h+.12,p.z,.9);
   const ax=p.w>=p.d?'x':'z';for(const s of[-1,1])ozWin(g,Math.max(p.w,p.d)*.7,ax,p.x,p.z,p.h*.5,s*(Math.min(p.w,p.d)/2+.02));
-  if(p.ruin){for(let i=0;i<4;i++)vadd(g,1.2,.6,1.2,0x6f685c,p.x+(Math.random()-.5)*p.w,.3,p.z+(Math.random()-.5)*p.d,1);vadd(g,p.w*.4,.08,p.d*.4,0x141210,p.x,p.h+.3,p.z,1);}
   ch.obs.push({x:p.x,z:p.z,hx:p.w/2,hz:p.d/2});},
  school(ch,p){const g=ch.group;vadd(g,p.w,p.h,p.d,0xdedcd6,p.x,p.h/2,p.z,.9).castShadow=true;vadd(g,p.w+.4,.35,p.d+.4,0x8d9196,p.x,p.h+.17,p.z,.8);
   for(let f=0;f<3;f++)for(const s of[-1,1]){const y=1.5+f*3.2;ozWin(g,p.w*.94,'x',p.x,p.z,y,s*(p.d/2+.02));ozWin(g,p.w*.94,'x',p.x,p.z,y-1,s*(p.d/2+.03),f===2?0x3f9a4a:0xc4643a);}
@@ -150,9 +154,10 @@ const _warMapBg56=warMapBg;warMapBg=function(g,X,Y,sc,W){if(WMAP!=='ozo')return 
  const L=ozoPlan(),box=(p,c)=>{g.fillStyle=c;g.fillRect(X(p.x-p.w/2),Y(p.z-p.d/2),Math.max(2,p.w*sc),Math.max(2,p.d*sc));};
  for(const A of L.values())for(const p of A){const x=X(p.x),y=Y(p.z);
   if(p.k==='tree'){g.fillStyle='#23422a';g.fillRect(x-2.2*sc,y-2.2*sc,4.4*sc,4.4*sc);}
-  else if(p.k==='pond'){g.fillStyle='#2e6d8c';g.beginPath();g.arc(x,y,p.r*sc,0,6.283);g.fill();}}
+  else if(p.k==='pond'||p.k==='riv'){g.fillStyle='#2e6d8c';g.beginPath();g.arc(x,y,p.r*sc,0,6.283);g.fill();}}
  for(const A of L.values())for(const p of A){const x=X(p.x),y=Y(p.z);
   if(p.k==='aroad'){g.fillStyle=p.dirt?'#7a6849':'#8d9094';g.beginPath();g.arc(x,y,Math.max(1,p.w*.5*sc),0,6.283);g.fill();}
+  else if(p.k==='bridge'){g.fillStyle='#b9b4a8';g.beginPath();g.arc(x,y,Math.max(2,5*sc),0,6.283);g.fill();}
   else if(p.k==='stadium'){g.fillStyle='#b5442e';g.beginPath();g.ellipse(x,y,p.rx*sc,p.rz*sc,0,0,6.283);g.fill();}}
  for(const A of L.values())for(const p of A){
   if(p.k==='house'||p.k==='block'||p.k==='bld')box(p,p.ruin?'#5d564c':'#c9c2b4');else if(p.k==='school')box(p,'#e0a070');else if(p.k==='hall')box(p,'#9fb6d1');
