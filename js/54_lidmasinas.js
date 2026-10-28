@@ -1,15 +1,15 @@
 // 54_lidmasinas.js - Reālākas lidmašīnas: F-16, Rafale, MiG-29 un Su-25. Visām ir gaiss-gaiss raķetes (🎯, notriec lidmašīnas un helikopterus)
 // un gaiss-zeme raķetes (🚀, pa zemi). Šaujot: ja priekšā ir pretinieka lidaparāts un ir 🎯, lido gaiss-gaiss raķete, citādi gaiss-zeme.
 // Modeļu atslēgas paliek vecās (hawk, bison, bolt, eagle), jo tās izmanto kopīgā spēle.
-Object.assign(T.lv,{jm_hawk:'F-16: ātrs un līdzsvarots, 2 🎯 + 2 🚀',jm_bison:'Su-25: uzbrukuma lidmašīna, lēna, ļoti izturīga, 1 🎯 + 5 🚀',jm_bolt:'MiG-29: visātrākā, gaisa kaujai, 4 🎯 + 1 🚀',jm_eagle:'Rafale: visveiklākā, 3 🎯 + 3 🚀',
+Object.assign(T.lv,{jm_hawk:'F-16: ātrs un līdzsvarots, 2 🎯 + 3 🚀',jm_bison:'Su-25: uzbrukuma lidmašīna, lēna, ļoti izturīga, 1 🎯 + 6 🚀',jm_bolt:'MiG-29: visātrākā, gaisa kaujai, 4 🎯 + 2 🚀',jm_eagle:'Rafale: visveiklākā, 3 🎯 + 4 🚀',
  jet_in2:'✈️ {m} (❤️ {h})',jet_fly2:'✈️ ❤️ {h} · 🎯 {a} gaiss-gaiss · 🚀 {n} gaiss-zeme · 🤚 katapultēties'});
-Object.assign(T.en,{jm_hawk:'F-16: fast and balanced, 2 🎯 + 2 🚀',jm_bison:'Su-25: attack jet, slow, very tough, 1 🎯 + 5 🚀',jm_bolt:'MiG-29: fastest, built for dogfights, 4 🎯 + 1 🚀',jm_eagle:'Rafale: most agile, 3 🎯 + 3 🚀',
+Object.assign(T.en,{jm_hawk:'F-16: fast and balanced, 2 🎯 + 3 🚀',jm_bison:'Su-25: attack jet, slow, very tough, 1 🎯 + 6 🚀',jm_bolt:'MiG-29: fastest, built for dogfights, 4 🎯 + 2 🚀',jm_eagle:'Rafale: most agile, 3 🎯 + 4 🚀',
  jet_in2:'✈️ {m} (❤️ {h})',jet_fly2:'✈️ ❤️ {h} · 🎯 {a} air-to-air · 🚀 {n} air-to-ground · 🤚 eject'});
 // rk = gaiss-zeme, aam = gaiss-gaiss
-Object.assign(JM.hawk,{c:0x8c949c,s:1,spd:30,turn:1.35,rk:2,aam:2,hp:2,boom:1,aa:true});
-Object.assign(JM.bison,{c:0x6f6a48,s:1.12,spd:21,turn:.95,rk:5,aam:1,hp:4,boom:1.5,aa:true});
-Object.assign(JM.bolt,{c:0x7d95a3,s:.98,spd:36,turn:1.45,rk:1,aam:4,hp:2,boom:1,aa:true});
-Object.assign(JM.eagle,{c:0x5f6873,s:1,spd:29,turn:1.6,rk:3,aam:3,hp:3,boom:1.2,aa:true});
+Object.assign(JM.hawk,{c:0x8c949c,s:1,spd:30,turn:1.35,rk:3,aam:2,hp:2,boom:1,aa:true});
+Object.assign(JM.bison,{c:0x6f6a48,s:1.12,spd:21,turn:.95,rk:6,aam:1,hp:4,boom:1.5,aa:true});
+Object.assign(JM.bolt,{c:0x7d95a3,s:.98,spd:36,turn:1.45,rk:2,aam:4,hp:2,boom:1,aa:true});
+Object.assign(JM.eagle,{c:0x5f6873,s:1,spd:29,turn:1.6,rk:4,aam:3,hp:3,boom:1.2,aa:true});
 const jaInit=J=>{if(J.aa===undefined)J.aa=(JM[J.mk]||JM.hawk).aam;};
 // ---------- modeļi ----------
 function jPlate(g,pts,y,c,vert){const s=new THREE.Shape();pts.forEach(([a,b],i)=>i?s.lineTo(a,b):s.moveTo(a,b));const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:.1,bevelEnabled:false}),mat(c,.6));
@@ -23,27 +23,27 @@ function jetMesh2(k){const M=JM[k]||JM.hawk,g=new THREE.Group(),c=M.c,dk=0x3d434
   jTube(g,.55,.6,7.6,c,0,0,.4);const n=new THREE.Mesh(new THREE.ConeGeometry(.55,2.3,14),mat(c,.55));n.rotation.x=-Math.PI/2;n.position.z=-4.6;g.add(n);
   vadd(g,.95,.55,2.2,dk,0,-.55,-.9);plate([[.4,-1.6],[4.1,1.3],[4.1,1.9],[.4,2.2]],-.05);plate([[-.4,-1.6],[-4.1,1.3],[-4.1,1.9],[-.4,2.2]],-.05);
   plate([[.4,3.2],[2.1,4.1],[2.1,4.5],[.4,4.4]],-.05);plate([[-.4,3.2],[-2.1,4.1],[-2.1,4.5],[-.4,4.4]],-.05);
-  fin([[-2.6,.4],[-4.3,2.6],[-4.8,2.6],[-4.4,.4]],0);aaP=[[4.15,-.05,1.5],[-4.15,-.05,1.5]];agP=[[2.3,-.35,1],[-2.3,-.35,1]];noz=[[0,4.3]];}
+  fin([[-2.6,.4],[-4.3,2.6],[-4.8,2.6],[-4.4,.4]],0);aaP=[[4.15,-.05,1.5],[-4.15,-.05,1.5]];agP=[[2.3,-.35,1],[-2.3,-.35,1],[0,-.65,.4]];noz=[[0,4.3]];}
  else if(k==='eagle'){ // Rafale: delta spārni, priekšējie spārniņi, divi dzinēji
   jTube(g,.6,.6,7.4,c,0,0,.5);const n=new THREE.Mesh(new THREE.ConeGeometry(.6,2.4,14),mat(c,.55));n.rotation.x=-Math.PI/2;n.position.z=-4.4;g.add(n);
   plate([[.45,-1.4],[3.9,2.4],[3.9,2.8],[.45,3.3]],-.1);plate([[-.45,-1.4],[-3.9,2.4],[-3.9,2.8],[-.45,3.3]],-.1);
   plate([[.4,-2.9],[1.5,-2.2],[1.5,-1.9],[.4,-2.1]],.15);plate([[-.4,-2.9],[-1.5,-2.2],[-1.5,-1.9],[-.4,-2.1]],.15);
   for(const s of [-1,1])vadd(g,.55,.5,1.8,dk,s*.75,-.35,-.4);fin([[-1.9,.4],[-3.8,2.4],[-4.3,2.4],[-4.1,.4]],0);
-  aaP=[[3.9,-.1,2.6],[-3.9,-.1,2.6],[1.6,-.4,1.6]];agP=[[2.4,-.45,1.6],[-2.4,-.45,1.6],[-1.6,-.4,1.6]];noz=[[-.35,4.3],[.35,4.3]];}
+  aaP=[[3.9,-.1,2.6],[-3.9,-.1,2.6],[1.6,-.4,1.6]];agP=[[2.4,-.45,1.6],[-2.4,-.45,1.6],[-1.6,-.4,1.6],[0,-.65,.6]];noz=[[-.35,4.3],[.35,4.3]];}
  else if(k==='bolt'){ // MiG-29: divi dzinēji zem korpusa, divas ķīļa virsmas
   jTube(g,.5,.55,7,c,0,.15,.2);const n=new THREE.Mesh(new THREE.ConeGeometry(.5,2.4,14),mat(c,.55));n.rotation.x=-Math.PI/2;n.position.set(0,.15,-4.5);g.add(n);
   for(const s of [-1,1]){jTube(g,.42,.45,5.4,c,s*.8,-.2,1.2);vadd(g,.75,.6,1,dk,s*.8,-.25,-1.6);}
   plate([[.9,-.9],[4.3,1.7],[4.3,2.3],[.9,2.6]],-.1);plate([[-.9,-.9],[-4.3,1.7],[-4.3,2.3],[-.9,2.6]],-.1);
   plate([[1,3.3],[2.6,4.2],[2.6,4.6],[1,4.5]],-.15);plate([[-1,3.3],[-2.6,4.2],[-2.6,4.6],[-1,4.5]],-.15);
   for(const s of [-1,1]){const f=fin([[-2.4,.3],[-3.9,2.3],[-4.4,2.3],[-4.3,.3]],s*.85);f.rotation.z=-s*.25;}
-  aaP=[[4.2,-.15,2],[-4.2,-.15,2],[2.8,-.4,1.6],[-2.8,-.4,1.6]];agP=[[1.9,-.45,1.3]];noz=[[-.8,4]];noz.push([.8,4]);}
+  aaP=[[4.2,-.15,2],[-4.2,-.15,2],[2.8,-.4,1.6],[-2.8,-.4,1.6]];agP=[[1.9,-.45,1.3],[-1.9,-.45,1.3]];noz=[[-.8,4]];noz.push([.8,4]);}
  else{ // Su-25: taisni spārni, divi dzinēju pākstis sānos, augsta ķīļa virsma, kamuflāža
   jTube(g,.6,.55,7.2,c,0,0,.3);const n=new THREE.Mesh(new THREE.ConeGeometry(.6,1.6,12),mat(c,.6));n.rotation.x=-Math.PI/2;n.position.z=-4.7;g.add(n);
   for(const s of [-1,1])jTube(g,.5,.5,3.6,0x5a5638,s*.95,-.05,1.4);
   plate([[.6,-.6],[5.3,.5],[5.3,1.3],[.6,1.7]],0);plate([[-.6,-.6],[-5.3,.5],[-5.3,1.3],[-.6,1.7]],0);
   plate([[.4,3.1],[2.2,3.5],[2.2,4],[.4,4.1]],.4);plate([[-.4,3.1],[-2.2,3.5],[-2.2,4],[-.4,4.1]],.4);fin([[-2.6,.4],[-3.8,3],[-4.4,3],[-4.3,.4]],0);
   for(let i=0;i<6;i++)vadd(g,.9+Math.random()*.8,.02,.6+Math.random()*.8,0x4e4a30,(Math.random()-.5)*7,.04,Math.random()*1.4-.3);
-  aaP=[[4.9,-.15,.9]];agP=[[1.6,-.4,.6],[-1.6,-.4,.6],[2.6,-.4,.7],[-2.6,-.4,.7],[3.7,-.4,.8]];noz=[[-.95,3.3],[.95,3.3]];}
+  aaP=[[4.9,-.15,.9]];agP=[[1.6,-.4,.6],[-1.6,-.4,.6],[2.6,-.4,.7],[-2.6,-.4,.7],[3.7,-.4,.8],[-3.7,-.4,.8]];noz=[[-.95,3.3],[.95,3.3]];}
  // kabīne, zvaigznes, sprauslas, liesma, šasija
  const cp=new THREE.Mesh(new THREE.SphereGeometry(.5,14,10),new THREE.MeshStandardMaterial({color:gl,roughness:.1,metalness:.3,transparent:true,opacity:.85}));cp.scale.set(.85,.7,2.2);cp.position.set(0,k==='bolt'?.75:.55,-2.4);g.add(cp);
  for(const s of [-1,1]){const st=cube(.6,.03,.6,0xc62828,.6);st.position.set(s*2.6,k==='bison'?.06:-.0,k==='bison'?.6:1.2);g.add(st);}

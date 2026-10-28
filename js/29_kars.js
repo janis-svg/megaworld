@@ -1,6 +1,6 @@
 // 29_kars.js - Spēles režīms "Karš": sarkanā (spēlētāji + 30 boti) pret zaļo (30 boti) armiju, bāzes stūros ar lidmašīnām, tankiem un bruņmašīnām,
 // karogs (aiznes uz savu bāzi un notur 2 diennaktis), bez briesmoņiem, ieroči un lodes parādās visā kartē.
-// Abos režīmos: bruņmašīna, helikoptera 2 raķetes, kaujas bruņas (+50% dzīvība), atpazīstamas ēkas (AES, TV tornis, stadions, rūpnīca)
+// Abos režīmos: bruņmašīna, helikoptera 6 raķetes, kaujas bruņas (+50% dzīvība), atpazīstamas ēkas (AES, TV tornis, stadions, rūpnīca)
 Object.assign(T.lv,{m_surv:'🧟 Izdzīvošana',m_war:'⚔️ Karš',red:'Sarkanā armija',green:'Zaļā armija',w_start:'⚔️ Karš! Tu esi {a} armijā. Iznīcini pretiniekus vai nozodz viņu karogu, aiznes uz savu bāzi un noturi 2 diennaktis.',in_red:'sarkanajā',in_green:'zaļajā',
  w_take:'🚩 {n} paņēma {f} karogu!',w_drop:'🚩 Nomests {f} karogs!',w_ret:'🚩 Atgriezts {f} karogs',w_cap:'🚩 Atnests {f} karogs uz {a} bāzi! Noturiet to 2 diennaktis.',g_red:'sarkano',g_green:'zaļo',w_hold:'🚩 Noturiet vēl {n} h',
  w_win:'🏆 Uzvara! Sarkanā armija uzvarēja!',w_lose:'💀 Zaudējums. Zaļā armija uzvarēja.',w_new:'Jauna spēle',w_wait:'Gaidām, kad saimnieks sāks jaunu spēli',w_arm:'🎖️ Bāzes noliktava: paņemt ieročus',w_armok:'🎖️ Paņemti ieroči, lodes un bruņas',w_armcd:'🎖️ Noliktava atkal būs pēc {n} s',
@@ -123,7 +123,7 @@ const _updateHint13=updateHint;updateHint=function(){const o=nearInter(),h=$('hi
  if(o&&o.type==='tank'&&o.t.kind==='apc'&&!o.t.dead){h.textContent=(TOUCH?'':'E / ')+tf('apc_in',{n:o.t.ammo||0});h.style.display='block';setAct('🚙');return;}
  if(o&&o.type==='armory'){h.textContent=(TOUCH?'':'E / ')+t('w_arm');h.style.display='block';setAct('🎖️');return;}_updateHint13();};
 // ---------- helikoptera raķetes (2): pret tehniku (bruņmašīnai 1, tankam 2) vai pa zemi ----------
-const _spawnHeli13=spawnHeli;spawnHeli=function(i){const H=_spawnHeli13(i);H.rk=2;return H;};
+const _spawnHeli13=spawnHeli;spawnHeli=function(i){const H=_spawnHeli13(i);H.rk=6;return H;};
 function heliRocketTarget(H,team){const fx=-Math.sin(H.a),fz=-Math.cos(H.a);let best=null,bs=1e9;const look=(x,z,y)=>{const dx=x-H.x,dz=z-H.z,d=Math.hypot(dx,dz);if(d>85)return;const df=d<2?0:Math.acos(Math.max(-1,Math.min(1,(dx*fx+dz*fz)/d)));if(df>.6)return;if(df*40+d*.2<bs){bs=df*40+d*.2;best={x,y,z};}};
  for(const t of tanks)if(!t.dead&&t!==inTank&&(!t.driver||t.driver.team!==team))look(t.g.position.x,t.g.position.z,1.2);
  if(team!==PT&&inTank&&team.enemies.has(PT))look(inTank.g.position.x,inTank.g.position.z,1.2);
@@ -177,7 +177,7 @@ const _newQuests13=newQuests;newQuests=function(){_newQuests13();if(isWar()){con
 // rītā iznīcinātā tehnika atjaunojas bāzēs (boti nē)
 const _dawn13=dawn;dawn=function(){_dawn13();if(!isWar()||NET.role==='guest')return;let n=0;
  for(const t of tanks)if(t.home&&t.dead&&!t.driver){t.dead=false;t.hp=t.kind==='apc'?1:2;t.shells=10;t.ammo=300;t.g.userData.hull.material.color.setHex(t.kind==='apc'?0x5b6b3a:0x4b5320);t.g.position.set(t.home.x,0,t.home.z);t.g.rotation.y=t.home.a;t.ob.x=t.home.x;t.ob.z=t.home.z;remOb(t.ob);addOb(t.ob);n++;}
- for(const H of HELIS)if(H.st==='gone')H.rs=1;else H.rk=2;for(const J of JETS){J.army=ARMY[J.slot<4?0:1];if(J.st==='park'){J.a=WB[J.slot<4?0:1].d>0?Math.PI:0;J.g.rotation.y=J.a;}}if(n)fsay2('w_veh');taken.clear();};
+ for(const H of HELIS)if(H.st==='gone')H.rs=1;else H.rk=6;for(const J of JETS){J.army=ARMY[J.slot<4?0:1];if(J.st==='park'){J.a=WB[J.slot<4?0:1].d>0?Math.PI:0;J.g.rotation.y=J.a;}}if(n)fsay2('w_veh');taken.clear();};
 const _destroyHeli13=destroyHeli;destroyHeli=function(H,team){_destroyHeli13(H,team);if(isWar())H.rs=1e9;};
 // ---------- karā boti: uzbrūk, sargā karogu, medī; brauc ar tankiem, lido ----------
 function enemyArmy(T){return T===ARMY[0]?ARMY[1]:ARMY[0];}
