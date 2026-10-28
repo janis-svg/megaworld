@@ -291,7 +291,7 @@ html.touch #topr #quests{position:static;max-width:calc(100vw - 140px);padding:5
 #fuelc{display:none;padding:5px 10px;font-size:13px;font-weight:700;white-space:nowrap}
 #fuelc.low{color:#ff6b6b;border-color:rgba(255,80,80,.7)}
 html.touch.cfg #stats{max-height:calc(100vh - 70px);flex-wrap:wrap-reverse;align-content:flex-end}
-@media (max-height:520px){html.touch #topr{top:56px}html.touch #warbar{transform:translate(-50%,86px)}}
+@media (max-height:520px){html.touch #topr{top:56px}}
 /* v84: 📱 ekrāna pagriešana pirms ⚙️, pogu skaidrojums sākumā */
 #rotb{display:none}
 html.touch #rotb{display:inline-block;transition:transform .2s}
@@ -311,3 +311,21 @@ html.touch #topr{right:94px}
 #bnrow small{color:#9bb3c7;font-size:12px}
 #bnrow .corner{margin:0;padding:7px 12px}
 #hlp .hc div{text-align:left}
+/* v85: zīmēti ieroči pogās, pogas vienā augstumā augšā, kara josla guļus augšā, helikopterā ⬆/⬇ stabiņā virs šaušanas */
+.gi{display:block;line-height:0}.gi svg{width:1.15em;height:1.15em;display:block}
+#atk .gi svg{width:1.25em;height:1.25em}
+#wsw small .gi svg{width:1.6em;height:1.6em}
+html.touch #stats .corner{height:34px;min-width:34px;box-sizing:border-box;vertical-align:top}
+html.touch #topr #quests:not(.open),html.touch #fuelc{height:34px;box-sizing:border-box;padding:0 10px;line-height:32px;overflow:hidden;white-space:nowrap}
+html.touch.hfly #bmb{right:32px;bottom:124px;width:62px;height:62px;font-size:26px}
+html.touch.hfly #jump{bottom:192px}
+html.touch.vfl.hfly #rmb{right:124px;bottom:170px;width:56px;height:56px;font-size:24px}
+html.touch.vfl:not(.hfly) #rmb{right:32px;bottom:192px;width:62px;height:62px}
+html.touch.jfly #wsw{display:none}
+@media (max-height:520px){
+ html.touch #warbar{top:8px;bottom:auto;transform:translateX(-50%)}
+ html.touch.hfly #bmb{right:32px;bottom:94px;width:54px;height:54px;font-size:22px}
+ html.touch.hfly #jump{bottom:156px}
+ html.touch.vfl.hfly #rmb{right:104px;bottom:140px;width:50px;height:50px;font-size:22px}
+ html.touch.vfl:not(.hfly) #rmb{right:32px;bottom:156px;width:54px;height:54px}
+}
