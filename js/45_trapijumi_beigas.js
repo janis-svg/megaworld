@@ -23,7 +23,7 @@ const shNow=()=>typeof SHOOTER==='number'?SHOOTER:0;
 const _dmgMonster45=dmgMonster;dmgMonster=function(z,d,pl,rocket){const was=z.userData.dead,sh=shNow();_dmgMonster45(z,d,pl,rocket);if(pl&&sh>=0&&!was)hitFor(sh,!!z.userData.dead,'');};
 // ---------- kara statistika (saimnieks skaita, draugiem aizsūta beigās) ----------
 let WS=new Map(),WST=null;
-function wsGet(key,n,side){let s=WS.get(key);if(!s){s={n,side,k:0,f:0,r:0,d:0};WS.set(key,s);}if(n)s.n=n;return s;}
+function wsGet(key,n,side){let s=WS.get(key);if(!s){s={n,side,k:0,f:0,r:0,d:0,v:0,c:0};WS.set(key,s);}if(n)s.n=n;return s;}
 const keyOf=c=>c==='P'?'P':c&&c.conn?'G'+c.id:c&&c.g?'B'+c.nid:null;
 function humanKey(sh){if(sh===0)return['P',$('nickname').value||'?',MYSIDE];const G=NET.guests.get(sh);return G?['G'+G.id,G.name,ARMY.indexOf(GT(G))]:null;}
 // bots, kurš šāva uz kritušo (ja nošāva bots)
@@ -47,17 +47,17 @@ const _flagTick45=flagTick;flagTick=function(dt){const pre=FL.map(F=>F.carrier);
   const side=c==='P'?MYSIDE:c.conn?ARMY.indexOf(GT(c)):ARMY.indexOf(c.team),n=c==='P'?($('nickname').value||'?'):c.name;
   if(F.held&&F.held!==F.team)wsGet(k,n,side).f++;else if(!F.held&&Math.hypot(F.x-F.home[0],F.z-F.home[1])<1)wsGet(k,n,side).r++;});};
 const _warSetup45=warSetup;warSetup=function(){_warSetup45();WS=new Map();WST=null;};
-const wsScore=s=>s.k+s.f*5+s.r*2;
-function wsPack(){const L=[...WS.entries()].map(([key,s])=>[key[0]==='B'?0:1,s.n,s.side,s.k,s.f,s.r,s.d]);
+const wsScore=s=>s.k+s.f*5+s.r*2+s.v*3+s.c*2;
+function wsPack(){const L=[...WS.entries()].map(([key,s])=>[key[0]==='B'?0:1,s.n,s.side,s.k,s.f,s.r,s.d,s.v,s.c]);
  // cilvēki vienmēr sarakstā, arī ar nullēm
- const add=(key,n,side)=>{if(!WS.has(key))L.push([1,n,side,0,0,0,0]);};add('P',$('nickname').value||'?',MYSIDE);for(const G of NET.guests.values())if(G.ready)add('G'+G.id,G.name,ARMY.indexOf(GT(G)));return L;}
+ const add=(key,n,side)=>{if(!WS.has(key))L.push([1,n,side,0,0,0,0,0,0]);};add('P',$('nickname').value||'?',MYSIDE);for(const G of NET.guests.values())if(G.ready)add('G'+G.id,G.name,ARMY.indexOf(GT(G)));return L;}
 const _warWin45=warWin;warWin=function(T){if(NET.role!=='guest'&&isWar()){WST=wsPack();for(const G of NET.guests.values())if(G.ready)netTo(G,{t:'wst',S:WST});}_warWin45(T);};
 function wstRender(){if(!WST||!winEl)return;const old=winEl.querySelector('.wst');if(old)old.remove();
- const sc=r=>r[3]+r[4]*5+r[5]*2,all=WST.slice().sort((a,b)=>sc(b)-sc(a)||b[0]-a[0]),hero=all[0],me=$('nickname').value||'?';
- const col=s=>s===0?'#ff3b3b':'#43e06b',row=r=>'<tr class="'+(r[0]&&r[1]===me?'me':'')+'"><td class="n"><span class="dot" style="background:'+col(r[2])+'"></span>'+(r[0]?'👤 ':'')+esc(r[1])+'</td><td class="v">🎯 '+r[3]+'</td><td class="v">🚩 '+(r[4]+r[5])+'</td><td class="v">💀 '+r[6]+'</td></tr>';
+ const sc=r=>r[3]+r[4]*5+r[5]*2+(r[7]||0)*3+(r[8]||0)*2,all=WST.slice().sort((a,b)=>sc(b)-sc(a)||b[0]-a[0]),hero=all[0],me=$('nickname').value||'?';
+ const col=s=>s===0?'#ff3b3b':'#43e06b',row=r=>'<tr class="'+(r[0]&&r[1]===me?'me':'')+'"><td class="n"><span class="dot" style="background:'+col(r[2])+'"></span>'+(r[0]?'👤 ':'')+esc(r[1])+'</td><td class="v">🎯 '+r[3]+'</td><td class="v">🛡️ '+(r[7]||0)+'</td><td class="v">⭕ '+(r[8]||0)+'</td><td class="v">🚩 '+(r[4]+r[5])+'</td><td class="v">💀 '+r[6]+'</td></tr>';
  const mine=all.filter(r=>r[2]===MYSIDE),hum=mine.filter(r=>r[0]),top=mine.filter(r=>!r[0]).slice(0,Math.max(2,6-hum.length)),foe=all.filter(r=>r[2]!==MYSIDE).slice(0,3);
  const d=document.createElement('div');d.className='wst';
- d.innerHTML=(hero&&sc(hero)>0?'<div class="hero">'+t('ws_hero')+'<b>'+(hero[0]?'👤 ':'')+esc(hero[1])+'</b>🎯 '+hero[3]+' '+t('ws_k')+' · 🚩 '+(hero[4]+hero[5])+' '+t('ws_f')+'</div>':'')+
+ d.innerHTML=(hero&&sc(hero)>0?'<div class="hero">'+t('ws_hero')+'<b>'+(hero[0]?'👤 ':'')+esc(hero[1])+'</b>🎯 '+hero[3]+' '+t('ws_k')+' · 🛡️ '+(hero[7]||0)+' '+t('ws_v')+' · ⭕ '+(hero[8]||0)+' '+t('ws_c')+' · 🚩 '+(hero[4]+hero[5])+' '+t('ws_f')+'</div>':'')+
   '<b>'+t('ws_mine')+'</b><table>'+hum.concat(top).sort((a,b)=>sc(b)-sc(a)).map(row).join('')+'</table>'+(foe.length?'<b>'+t('ws_foe')+'</b><table>'+foe.map(row).join('')+'</table>':'');
  const h1=winEl.querySelector('h1');if(h1)h1.after(d);else winEl.prepend(d);}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));

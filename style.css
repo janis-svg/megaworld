@@ -272,3 +272,9 @@ html.touch.vfl.mlw #rmb{opacity:1;background:rgba(255,120,0,.65);border-color:#f
 #menu .card[data-st="ws"] #misrow,#menu .card[data-st="wm"] #siderow{margin-top:4px}
 #wxrow{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:0 0 14px}
 #wxrow .corner{margin:0;padding:8px 11px}
+/* v77: kontrolpunkti, sērijas */
+#mlrow{display:none;gap:6px;justify-content:center;flex-wrap:wrap}
+#mmap.fr-own{border-color:#4fc3f7;box-shadow:0 0 16px #4fc3f7}
+#mmap.fr-foe{border-color:#ff3b3b;animation:frb .5s steps(2) infinite}
+#mmap.fr-art{border-color:#ff9100;border-width:3px;animation:frb .35s steps(2) infinite}
+@keyframes frb{50%{border-color:rgba(255,255,255,.2);box-shadow:none}0%{box-shadow:0 0 18px currentColor}}
